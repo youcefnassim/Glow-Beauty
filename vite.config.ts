@@ -4,9 +4,6 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // Pour GitHub Pages : le site sera servi depuis /<repo-name>/
-  // En local, VITE_BASE_PATH n'est pas défini donc base = '/'
-  base: process.env.VITE_BASE_PATH || '/',
   plugins: [react()],
   resolve: {
     alias: {
