@@ -406,8 +406,8 @@ export const AdminSettingsPage: React.FC = () => {
               required
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Ex: glowadmin2025"
-              className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50"
+              placeholder="••••••••••••"
+              className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-mono"
             />
           </div>
 
