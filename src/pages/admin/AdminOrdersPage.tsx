@@ -2,16 +2,20 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StorageService } from '@/services/storage';
 import { Order, OrderStatus } from '@/types';
-import { formatPriceDZD } from '@/data/wilayas';
-import { Package, Search, Filter, Eye, Truck, CheckCircle, Clock, Download, FileSpreadsheet } from 'lucide-react';
+import { formatPriceDZD, ALGERIA_WILAYAS } from '@/data/wilayas';
+import { Package, Search, Filter, Eye, Truck, CheckCircle, Clock, Download, FileSpreadsheet, MapPin, Building2 } from 'lucide-react';
 
 export const AdminOrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>(() => StorageService.getOrders());
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [wilayaFilter, setWilayaFilter] = useState<string>('all');
+  const [deliveryTypeFilter, setDeliveryTypeFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
 
   const filteredOrders = orders.filter(o => {
     if (statusFilter !== 'all' && o.status !== statusFilter) return false;
+    if (wilayaFilter !== 'all' && String(o.shippingAddress.wilayaCode) !== wilayaFilter) return false;
+    if (deliveryTypeFilter !== 'all' && o.shippingAddress.deliveryType !== deliveryTypeFilter) return false;
     if (search.trim()) {
       const q = search.toLowerCase().trim();
       const matchNum = o.orderNumber.toLowerCase().includes(q);
@@ -106,20 +110,50 @@ export const AdminOrdersPage: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-stone-200/80 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
-        <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Rechercher par n° commande, nom, tél..."
-            className="w-full text-xs pl-9 pr-3 py-2 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-none"
-          />
+      <div className="bg-white p-4 rounded-2xl border border-stone-200/80 shadow-xs space-y-3">
+        <div className="flex flex-col md:flex-row gap-3 items-center justify-between">
+          <div className="relative w-full md:w-80">
+            <Search className="w-4 h-4 text-stone-400 absolute left-3 top-2.5" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Rechercher par n° commande, nom, tél..."
+              className="w-full text-xs pl-9 pr-3 py-2 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-none"
+            />
+          </div>
+
+          {/* Quick Selectors: Wilaya and Delivery Type */}
+          <div className="flex flex-wrap gap-2 w-full md:w-auto text-xs">
+            {/* Wilaya Filter */}
+            <select
+              value={wilayaFilter}
+              onChange={(e) => setWilayaFilter(e.target.value)}
+              className="py-1.5 px-3 rounded-xl border border-stone-200 bg-stone-50 text-stone-700 font-medium focus:outline-none"
+            >
+              <option value="all">📍 Toutes les wilayas (58)</option>
+              {ALGERIA_WILAYAS.map(w => (
+                <option key={w.code} value={String(w.code)}>
+                  {w.code} - {w.nameFr}
+                </option>
+              ))}
+            </select>
+
+            {/* Delivery Type */}
+            <select
+              value={deliveryTypeFilter}
+              onChange={(e) => setDeliveryTypeFilter(e.target.value)}
+              className="py-1.5 px-3 rounded-xl border border-stone-200 bg-stone-50 text-stone-700 font-medium focus:outline-none"
+            >
+              <option value="all">🚚 Tous modes</option>
+              <option value="home">🏠 À Domicile</option>
+              <option value="desk">🏢 Stop-Desk (Bureau)</option>
+            </select>
+          </div>
         </div>
 
         {/* Status Filter Buttons */}
-        <div className="flex flex-wrap gap-1.5 w-full md:w-auto">
+        <div className="flex flex-wrap gap-1.5 pt-2 border-t border-stone-100">
           {[
             { label: 'Toutes', value: 'all' },
             { label: 'À Confirmer', value: 'pending' },

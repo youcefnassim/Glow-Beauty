@@ -19,6 +19,7 @@ const KEYS = {
   WISHLIST: 'glow_beauty_wishlist_v1',
   CART: 'glow_beauty_cart_v1',
   NEWSLETTER: 'glow_beauty_newsletter_v1',
+  ADMIN_PASSWORD: 'glow_beauty_admin_password_v1',
 };
 
 function getFromStorage<T>(key: string, defaultValue: T): T {
@@ -286,6 +287,59 @@ export const StorageService = {
     saveToStorage(KEYS.CURRENT_USER, user);
   },
 
+  // Admin Password Management
+  getAdminPassword(): string {
+    return getFromStorage<string>(KEYS.ADMIN_PASSWORD, 'glowadmin2025');
+  },
+
+  setAdminPassword(newPassword: string): void {
+    saveToStorage(KEYS.ADMIN_PASSWORD, newPassword);
+  },
+
+  verifyAdminPassword(password: string): boolean {
+    const current = this.getAdminPassword();
+    return password.trim() === current.trim();
+  },
+
+  // Full Database Backup & Restore
+  backupAllData(): string {
+    const data = {
+      version: '1.0',
+      exportedAt: new Date().toISOString(),
+      store: 'Glow Beauty',
+      products: this.getProducts(),
+      categories: this.getCategories(),
+      settings: this.getSettings(),
+      coupons: this.getCoupons(),
+      orders: this.getOrders(),
+      reviews: getFromStorage(KEYS.REVIEWS, []),
+      users: this.getUsers(),
+      newsletter: this.getNewsletterSubscribers(),
+    };
+    return JSON.stringify(data, null, 2);
+  },
+
+  restoreAllData(jsonStr: string): { success: boolean; message: string } {
+    try {
+      const data = JSON.parse(jsonStr);
+      if (!data || typeof data !== 'object') {
+        return { success: false, message: 'Format de fichier de sauvegarde invalide.' };
+      }
+      if (Array.isArray(data.products)) saveToStorage(KEYS.PRODUCTS, data.products);
+      if (Array.isArray(data.categories)) saveToStorage(KEYS.CATEGORIES, data.categories);
+      if (data.settings && typeof data.settings === 'object') saveToStorage(KEYS.SETTINGS, data.settings);
+      if (Array.isArray(data.coupons)) saveToStorage(KEYS.COUPONS, data.coupons);
+      if (Array.isArray(data.orders)) saveToStorage(KEYS.ORDERS, data.orders);
+      if (Array.isArray(data.reviews)) saveToStorage(KEYS.REVIEWS, data.reviews);
+      if (Array.isArray(data.users)) saveToStorage(KEYS.USERS, data.users);
+      if (Array.isArray(data.newsletter)) saveToStorage(KEYS.NEWSLETTER, data.newsletter);
+      return { success: true, message: 'Données restaurées avec succès !' };
+    } catch (e: unknown) {
+      const err = e instanceof Error ? e.message : 'Erreur de lecture';
+      return { success: false, message: `Erreur lors de la restauration: ${err}` };
+    }
+  },
+
   // Reset to initial demo data
   resetAllData(): void {
     localStorage.removeItem(KEYS.PRODUCTS);
@@ -299,5 +353,6 @@ export const StorageService = {
     localStorage.removeItem(KEYS.WISHLIST);
     localStorage.removeItem(KEYS.CART);
     localStorage.removeItem(KEYS.NEWSLETTER);
+    localStorage.removeItem(KEYS.ADMIN_PASSWORD);
   }
 };

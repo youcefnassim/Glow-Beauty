@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { StorageService } from '@/services/storage';
 import { 
   LayoutDashboard, ShoppingBag, FolderTree, Package, Users, 
-  Tag, FileText, Settings, ArrowLeft, LogOut, ShieldAlert, Sparkles 
+  Tag, FileText, Settings, ArrowLeft, LogOut, ShieldAlert, Lock, Eye, EyeOff, KeyRound 
 } from 'lucide-react';
 
 export const AdminLayout: React.FC = () => {
@@ -11,36 +12,96 @@ export const AdminLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Role Protection Guard
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!password.trim()) {
+      setError('Veuillez saisir votre mot de passe administrateur.');
+      return;
+    }
+
+    const isValid = StorageService.verifyAdminPassword(password);
+    if (isValid) {
+      loginAsDemoAdmin();
+      navigate('/admin');
+    } else {
+      setError('Mot de passe incorrect. Veuillez réessayer.');
+    }
+  };
+
+  // Role Protection Guard with Secure Password Login
   if (!user || !isAdmin) {
     return (
       <div className="min-h-screen bg-ivory flex items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-3xl border border-rose-200 shadow-luxury max-w-md w-full text-center space-y-5">
-          <div className="w-14 h-14 rounded-2xl bg-rose-100 text-rose-800 mx-auto flex items-center justify-center">
-            <ShieldAlert className="w-8 h-8" />
+        <div className="bg-white p-8 rounded-3xl border border-rose-200 shadow-luxury max-w-md w-full text-center space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-rose-100 text-rose-800 mx-auto flex items-center justify-center shadow-soft">
+            <Lock className="w-8 h-8" />
           </div>
+
           <div>
-            <h1 className="font-serif text-2xl font-bold text-deep">Accès Réservé à l'Administration</h1>
+            <h1 className="font-serif text-2xl font-bold text-deep">Espace Administration</h1>
             <p className="text-xs text-mutedText mt-1">
-              Cette zone nécessite des privilèges d'administrateur de Glow Beauty.
+              Veuillez saisir votre mot de passe sécurisé pour accéder au tableau de bord.
             </p>
           </div>
 
-          <div className="space-y-3 pt-2">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs flex items-center gap-2 text-left">
+              <ShieldAlert className="w-4 h-4 text-red-600 shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleAdminLogin} className="space-y-4 text-left">
+            <div>
+              <label className="text-xs font-semibold text-deep block mb-1.5">
+                Mot de passe Administrateur
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Entrez votre mot de passe..."
+                  className="w-full text-xs p-3 pr-10 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-none focus:border-rose-400"
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-stone-400 hover:text-stone-600 cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              <p className="text-[10px] text-mutedText mt-1.5 flex items-center gap-1">
+                <KeyRound className="w-3 h-3 text-rose-500" />
+                <span>Mot de passe par défaut : <code className="font-mono bg-stone-100 px-1 py-0.5 rounded text-rose-900 font-bold">glowadmin2025</code> (modifiable dans les paramètres)</span>
+              </p>
+            </div>
+
             <button
-              onClick={() => {
-                loginAsDemoAdmin();
-                navigate('/admin');
-              }}
-              className="w-full bg-deep hover:bg-rose-950 text-ivory text-xs font-semibold py-3 px-4 rounded-xl transition shadow-md cursor-pointer"
+              type="submit"
+              className="w-full bg-deep hover:bg-rose-950 text-ivory text-xs font-semibold py-3 px-4 rounded-xl transition shadow-md cursor-pointer flex items-center justify-center gap-2"
             >
-              Se connecter en tant qu'Administrateur Démo
+              <Lock className="w-4 h-4" />
+              <span>Déverrouiller l'accès</span>
             </button>
+          </form>
+
+          <div className="pt-2 border-t border-stone-100">
             <Link
               to="/"
-              className="block text-xs text-mutedText hover:text-deep underline"
+              className="inline-flex items-center gap-1.5 text-xs text-mutedText hover:text-deep transition"
             >
-              ← Retourner à la boutique
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Retourner à la boutique publique</span>
             </Link>
           </div>
         </div>

@@ -71,3 +71,28 @@
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(234, 213, 210, 0.6);
 }
+
+/* Print Styles for Delivery Slip / Invoice */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-delivery-slip, #printable-delivery-slip * {
+    visibility: visible;
+  }
+  #printable-delivery-slip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    background: white !important;
+    color: black !important;
+    font-size: 12pt !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+

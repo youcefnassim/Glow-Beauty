@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
 import { StorageService } from '@/services/storage';
 import { StoreSettings } from '@/types';
-import { Settings, Save, CheckCircle2, ShieldAlert, Bell } from 'lucide-react';
+import { 
+  Settings, Save, CheckCircle2, ShieldAlert, Bell, 
+  KeyRound, Download, Upload, FileJson, AlertCircle, Lock 
+} from 'lucide-react';
 
 export const AdminSettingsPage: React.FC = () => {
   const [settings, setSettings] = useState<StoreSettings>(() => StorageService.getSettings());
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  // Password Change States
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordFeedback, setPasswordFeedback] = useState<{ success: boolean; msg: string } | null>(null);
+
+  // Backup / Restore Feedback
+  const [backupFeedback, setBackupFeedback] = useState<{ success: boolean; msg: string } | null>(null);
 
   const handleChange = (field: keyof StoreSettings, val: any) => {
     setSettings(prev => ({ ...prev, [field]: val }));
@@ -16,6 +28,71 @@ export const AdminSettingsPage: React.FC = () => {
     StorageService.saveSettings(settings);
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
+  };
+
+  const handlePasswordChange = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordFeedback(null);
+
+    if (!StorageService.verifyAdminPassword(currentPassword)) {
+      setPasswordFeedback({ success: false, msg: 'Le mot de passe actuel est incorrect.' });
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordFeedback({ success: false, msg: 'Le nouveau mot de passe doit comporter au moins 6 caractères.' });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordFeedback({ success: false, msg: 'Les deux nouveaux mots de passe ne correspondent pas.' });
+      return;
+    }
+
+    StorageService.setAdminPassword(newPassword);
+    setPasswordFeedback({ success: true, msg: 'Votre mot de passe administrateur a été modifié avec succès !' });
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setTimeout(() => setPasswordFeedback(null), 4000);
+  };
+
+  const handleDownloadBackup = () => {
+    try {
+      const backupJson = StorageService.backupAllData();
+      const blob = new Blob([backupJson], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `glow-beauty-backup-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setBackupFeedback({ success: true, msg: 'Sauvegarde téléchargée avec succès sur votre ordinateur.' });
+    } catch (e: unknown) {
+      const err = e instanceof Error ? e.message : 'Erreur inconnue';
+      setBackupFeedback({ success: false, msg: `Erreur d'export: ${err}` });
+    }
+  };
+
+  const handleRestoreFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (content) {
+        const res = StorageService.restoreAllData(content);
+        setBackupFeedback({ success: res.success, msg: res.message });
+        if (res.success) {
+          setSettings(StorageService.getSettings());
+        }
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   };
 
   return (
@@ -289,6 +366,163 @@ export const AdminSettingsPage: React.FC = () => {
         </div>
 
       </form>
+
+      {/* Security & Admin Password Section */}
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-5 text-xs">
+        <div className="flex items-center gap-2 pb-2 border-b border-stone-100">
+          <KeyRound className="w-5 h-5 text-rose-600" />
+          <div>
+            <h2 className="font-serif text-base font-bold text-deep">
+              Sécurité & Mot de Passe Administrateur
+            </h2>
+            <p className="text-[11px] text-mutedText">
+              Modifiez le mot de passe secret protégeant votre panneau d'administration.
+            </p>
+          </div>
+        </div>
+
+        {passwordFeedback && (
+          <div className={`p-3 rounded-2xl flex items-center gap-2 ${
+            passwordFeedback.success 
+              ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' 
+              : 'bg-red-50 border border-red-200 text-red-800'
+          }`}>
+            {passwordFeedback.success ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            )}
+            <span>{passwordFeedback.msg}</span>
+          </div>
+        )}
+
+        <form onSubmit={handlePasswordChange} className="space-y-4 max-w-lg">
+          <div>
+            <label className="font-semibold text-deep block mb-1">
+              Mot de passe actuel *
+            </label>
+            <input
+              type="password"
+              required
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder="Ex: glowadmin2025"
+              className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="font-semibold text-deep block mb-1">
+                Nouveau mot de passe *
+              </label>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="6 caractères min."
+                className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50"
+              />
+            </div>
+            <div>
+              <label className="font-semibold text-deep block mb-1">
+                Confirmer le nouveau mot de passe *
+              </label>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Répétez le mot de passe"
+                className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="bg-stone-800 hover:bg-stone-900 text-white font-semibold px-5 py-2.5 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs transition"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>Mettre à jour le mot de passe</span>
+          </button>
+        </form>
+      </div>
+
+      {/* Database Backup & Restore Section */}
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-5 text-xs">
+        <div className="flex items-center gap-2 pb-2 border-b border-stone-100">
+          <FileJson className="w-5 h-5 text-rose-600" />
+          <div>
+            <h2 className="font-serif text-base font-bold text-deep">
+              Sauvegarde & Restauration Complète (Export JSON)
+            </h2>
+            <p className="text-[11px] text-mutedText">
+              Téléchargez une copie intégrale de tous vos produits, commandes, clientes et réglages pour ne jamais rien perdre.
+            </p>
+          </div>
+        </div>
+
+        {backupFeedback && (
+          <div className={`p-3 rounded-2xl flex items-center gap-2 ${
+            backupFeedback.success 
+              ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' 
+              : 'bg-red-50 border border-red-200 text-red-800'
+          }`}>
+            {backupFeedback.success ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            )}
+            <span>{backupFeedback.msg}</span>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+          {/* Download Backup */}
+          <div className="p-4 rounded-2xl border border-stone-200 bg-stone-50/50 space-y-3">
+            <h3 className="font-semibold text-deep flex items-center gap-1.5">
+              <Download className="w-4 h-4 text-rose-700" />
+              <span>Exporter mes données</span>
+            </h3>
+            <p className="text-mutedText text-[11px] leading-relaxed">
+              Crée un fichier de sauvegarde au format standard JSON contenant l'ensemble de votre catalogue, commandes et avis.
+            </p>
+            <button
+              type="button"
+              onClick={handleDownloadBackup}
+              className="bg-deep hover:bg-rose-950 text-ivory font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer shadow-xs transition"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Télécharger la Sauvegarde JSON</span>
+            </button>
+          </div>
+
+          {/* Restore Backup */}
+          <div className="p-4 rounded-2xl border border-stone-200 bg-stone-50/50 space-y-3">
+            <h3 className="font-semibold text-deep flex items-center gap-1.5">
+              <Upload className="w-4 h-4 text-emerald-700" />
+              <span>Restaurer une sauvegarde</span>
+            </h3>
+            <p className="text-mutedText text-[11px] leading-relaxed">
+              Sélectionnez un fichier JSON préalablement exporté pour réinjecter vos données.
+            </p>
+            <label className="inline-flex items-center gap-2 bg-white hover:bg-stone-50 text-stone-700 font-semibold px-4 py-2 rounded-xl border border-stone-200 shadow-xs cursor-pointer transition">
+              <Upload className="w-3.5 h-3.5" />
+              <span>Importer un fichier JSON</span>
+              <input
+                type="file"
+                accept=".json,application/json"
+                onChange={handleRestoreFile}
+                className="hidden"
+              />
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

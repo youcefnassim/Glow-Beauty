@@ -317,6 +317,107 @@ export const AdminOrderDetailPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Hidden on screen, visible only on print: Professional Delivery Slip (A4/A5) */}
+      <div id="printable-delivery-slip" className="hidden print:block font-sans text-black p-4">
+        {/* Header */}
+        <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight uppercase">Glow Beauty DZ</h1>
+            <p className="text-xs text-gray-600">Cosmétiques & Soins de Beauté Haut de Gamme</p>
+            <p className="text-xs text-gray-600 mt-1">14 Rue Didouche Mourad, Alger Centre</p>
+            <p className="text-xs text-gray-600">Tél: 0550 12 34 56 | contact@glowbeauty.dz</p>
+          </div>
+          <div className="text-right">
+            <div className="inline-block border-2 border-black px-3 py-1 font-mono font-bold text-lg mb-1">
+              {order.orderNumber}
+            </div>
+            <p className="text-xs text-gray-600">Date: {new Date(order.createdAt).toLocaleDateString('fr-FR')}</p>
+            <p className="text-xs font-bold uppercase mt-0.5">Transporteur : {order.trackingCarrier || 'Yalidine Express'}</p>
+          </div>
+        </div>
+
+        {/* Recipient & Shipping Frame */}
+        <div className="grid grid-cols-2 gap-4 border-2 border-black p-3 rounded-lg mb-4 text-xs">
+          <div>
+            <p className="font-bold uppercase text-[10px] text-gray-500 mb-1">DESTINATAIRE (CLIENTE) :</p>
+            <p className="text-sm font-bold text-black">{order.customerName}</p>
+            <p className="font-mono font-bold text-sm text-black mt-0.5">Tél: {order.customerPhone}</p>
+            {order.customerEmail && <p className="text-gray-600">{order.customerEmail}</p>}
+          </div>
+          <div>
+            <p className="font-bold uppercase text-[10px] text-gray-500 mb-1">ADRESSE DE LIVRAISON :</p>
+            <p className="font-bold text-black">Wilaya : {order.shippingAddress.wilayaCode} - {order.shippingAddress.wilayaName}</p>
+            <p className="font-bold text-black">Commune : {order.shippingAddress.commune}</p>
+            <p className="text-black">{order.shippingAddress.streetAddress}</p>
+            <p className="mt-1 font-bold inline-block px-2 py-0.5 bg-gray-200 border border-gray-400 rounded text-[11px]">
+              Type : {order.shippingAddress.deliveryType === 'home' ? '🏠 À Domicile' : '🏢 Stop-Desk (Bureau)'}
+            </p>
+          </div>
+        </div>
+
+        {/* Items Table */}
+        <table className="w-full text-xs border-collapse border border-black mb-4">
+          <thead>
+            <tr className="bg-gray-100 border-b border-black text-left">
+              <th className="p-2 border-r border-black">Désignation Produit</th>
+              <th className="p-2 border-r border-black text-center">Variante</th>
+              <th className="p-2 border-r border-black text-center">Qté</th>
+              <th className="p-2 border-r border-black text-right">Prix Unitaire</th>
+              <th className="p-2 text-right">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {order.items.map((item, idx) => (
+              <tr key={idx} className="border-b border-gray-300">
+                <td className="p-2 border-r border-black font-semibold">{item.productName}</td>
+                <td className="p-2 border-r border-black text-center text-gray-600">{item.variantName || '-'}</td>
+                <td className="p-2 border-r border-black text-center font-bold">{item.quantity}</td>
+                <td className="p-2 border-r border-black text-right font-mono">{formatPriceDZD(item.unitPrice)}</td>
+                <td className="p-2 text-right font-mono font-bold">{formatPriceDZD(item.totalPrice)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Totals & Net COD to Collect */}
+        <div className="flex justify-between items-end border-t border-black pt-2 mb-6">
+          <div className="text-[11px] text-gray-600 max-w-xs">
+            {order.notes && (
+              <p className="mb-2 p-1.5 bg-gray-100 border border-gray-300 rounded">
+                <strong>Note cliente :</strong> {order.notes}
+              </p>
+            )}
+            <p>Paiement : Espèces à la livraison (Cash on Delivery)</p>
+            <p className="italic mt-1">Merci pour votre confiance avec Glow Beauty !</p>
+          </div>
+          <div className="text-right space-y-1 text-xs">
+            <p>Sous-total : <span className="font-mono font-semibold">{formatPriceDZD(order.subtotal)}</span></p>
+            {order.discount > 0 && <p className="text-red-600">Remise : -{formatPriceDZD(order.discount)}</p>}
+            <p>Frais de livraison : <span className="font-mono font-semibold">{order.deliveryFee === 0 ? 'Gratuit' : formatPriceDZD(order.deliveryFee)}</span></p>
+            <div className="border-2 border-black p-2.5 rounded bg-gray-100 text-center mt-2">
+              <span className="block text-[10px] font-bold uppercase tracking-wider">MONTANT NET À ENCAISSER (COD)</span>
+              <span className="text-xl font-bold font-mono text-black">{formatPriceDZD(order.total)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Signatures */}
+        <div className="grid grid-cols-2 gap-8 text-[11px] pt-4 border-t border-dashed border-gray-400">
+          <div>
+            <p className="font-semibold">Signature & Cachet Vendeur :</p>
+            <div className="h-16 mt-1 border border-gray-300 rounded bg-gray-50 flex items-center justify-center text-gray-400 text-[10px]">
+              Glow Beauty DZ
+            </div>
+          </div>
+          <div>
+            <p className="font-semibold">Émargement Cliente / Réception :</p>
+            <div className="h-16 mt-1 border border-gray-300 rounded bg-gray-50 flex items-center justify-center text-gray-400 text-[10px]">
+              Colis reçu conforme
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };
