@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Glow Beauty DZ</title>
+    <script>
+      // Technique SPA pour GitHub Pages
+      // Encode le chemin actuel dans la query string puis redirige vers index.html
+      var pathSegmentsToKeep = 1; // 1 pour un repo sur un compte utilisateur (pas d'organisation)
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.host +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body>
+    Redirection en cours...
+  </body>
+</html>

@@ -1,0 +1,72 @@
+import { Category, Brand } from '@/types';
+
+export const CATEGORIES: Category[] = [
+  {
+    id: 'cat-skincare',
+    slug: 'soins-du-visage',
+    nameFr: 'Soins du visage',
+    nameAr: 'العناية بالبشرة',
+    nameEn: 'Skincare',
+    description: 'Sérums botaniques, crèmes hydratantes, nettoyants doux et soins ciblés haute performance.',
+    imageUrl: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80',
+    productCount: 14,
+  },
+  {
+    id: 'cat-makeup',
+    slug: 'maquillage',
+    nameFr: 'Maquillage',
+    nameAr: 'المكياج',
+    nameEn: 'Makeup',
+    description: 'Rouges à lèvres veloutés, fonds de teint soyeux et illuminateurs pour sublimer vos traits.',
+    imageUrl: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=80',
+    productCount: 10,
+  },
+  {
+    id: 'cat-haircare',
+    slug: 'cheveux',
+    nameFr: 'Cheveux',
+    nameAr: 'العناية بالشعر',
+    nameEn: 'Haircare',
+    description: 'Huiles précieuses, masques régénérants et soins nourrissants pour une chevelure éclatante.',
+    imageUrl: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80',
+    productCount: 8,
+  },
+  {
+    id: 'cat-perfumes',
+    slug: 'parfums',
+    nameFr: 'Parfums',
+    nameAr: 'العطور الفاخرة',
+    nameEn: 'Perfumes',
+    description: 'Eaux de parfum raffinées aux notes ambrées, florales et musquées d’une élégance intemporelle.',
+    imageUrl: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=800&q=80',
+    productCount: 6,
+  },
+  {
+    id: 'cat-sets',
+    slug: 'coffrets',
+    nameFr: 'Coffrets & Cadeaux',
+    nameAr: 'أطقم الهدايا',
+    nameEn: 'Gift Sets',
+    description: 'Des rituels de beauté complets présentés dans des écrins luxueux, parfaits à offrir.',
+    imageUrl: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=800&q=80',
+    productCount: 5,
+  },
+  {
+    id: 'cat-sun',
+    slug: 'solaires',
+    nameFr: 'Protections Solaires',
+    nameAr: 'الحماية من الشمس',
+    nameEn: 'Sun Protection',
+    description: 'Écrans invisibles SPF50+ haute protection anti-taches formulés pour tous types de peaux.',
+    imageUrl: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=800&q=80',
+    productCount: 4,
+  },
+];
+
+export const BRANDS: Brand[] = [
+  { id: 'b-1', name: 'Glow Botanical', slug: 'glow-botanical', country: 'Algérie / France' },
+  { id: 'b-2', name: "L'Élixir Doré", slug: 'elixir-dore', country: 'France' },
+  { id: 'b-3', name: 'Pureté Minérale', slug: 'purete-minerale', country: 'Suisse' },
+  { id: 'b-4', name: 'Rose & Nectar', slug: 'rose-nectar', country: 'Algérie' },
+  { id: 'b-5', name: 'Aura Sublime', slug: 'aura-sublime', country: 'Italie' },
+];
