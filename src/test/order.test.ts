@@ -62,14 +62,14 @@ describe('Order Creation, Stock Management and Status History', () => {
       order.id, 
       'confirmed', 
       'Client joint par appel téléphonique à 10h30', 
-      'Amira (Admin)'
+      'Ramzi (Admin)'
     );
 
     expect(updated).not.toBeNull();
     expect(updated?.status).toBe('confirmed');
     expect(updated?.history[0].status).toBe('confirmed');
     expect(updated?.history[0].note).toBe('Client joint par appel téléphonique à 10h30');
-    expect(updated?.history[0].updatedBy).toBe('Amira (Admin)');
+    expect(updated?.history[0].updatedBy).toBe('Ramzi (Admin)');
   });
 
   it('assigns courier tracking carrier and tracking number', () => {

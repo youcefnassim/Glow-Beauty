@@ -58,7 +58,7 @@ export const INITIAL_USERS: UserProfile[] = [
   {
     id: 'usr-admin-1',
     email: 'admin@glowbeauty.dz',
-    fullName: 'Amira Benali (Gérante)',
+    fullName: 'Ramzi (Gérant)',
     phone: '0550123456',
     role: 'admin',
     createdAt: '2024-01-01T08:00:00Z',

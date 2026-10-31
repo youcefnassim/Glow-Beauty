@@ -5,8 +5,10 @@ import { StorageService } from '@/services/storage';
 import { 
   LayoutDashboard, ShoppingBag, FolderTree, Package, Users, 
   Tag, FileText, Settings, ArrowLeft, LogOut, ShieldAlert, Lock, 
-  Eye, EyeOff, ChevronLeft, ChevronRight, Menu, X, PanelLeftClose, PanelLeftOpen 
+  Eye, EyeOff, ChevronLeft, ChevronRight, Menu, X, PanelLeftClose, PanelLeftOpen,
+  UserCheck, Edit3 
 } from 'lucide-react';
+import { AdminProfileModal } from '@/components/admin/AdminProfileModal';
 
 export const AdminLayout: React.FC = () => {
   const { user, isAdmin, logout, loginAsDemoAdmin } = useAuth();
@@ -17,6 +19,9 @@ export const AdminLayout: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Admin Profile Modal state
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   // Sidebar responsive & collapse states
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
@@ -237,15 +242,38 @@ export const AdminLayout: React.FC = () => {
           <div className={`flex items-center justify-between pt-2 border-t border-stone-800/80 px-2 text-xs ${
             isSidebarCollapsed ? 'flex-col gap-2' : ''
           }`}>
-            {!isSidebarCollapsed && (
-              <div className="truncate">
-                <p className="font-semibold text-white truncate text-[11px]">{user.fullName}</p>
-                <p className="text-[10px] text-stone-400">Administrateur</p>
-              </div>
+            {!isSidebarCollapsed ? (
+              <button
+                type="button"
+                onClick={() => setIsProfileModalOpen(true)}
+                className="text-left group cursor-pointer flex-1 min-w-0 mr-2 p-1.5 rounded-xl hover:bg-stone-800/80 transition"
+                title="Cliquer pour modifier les informations de l'administrateur"
+              >
+                <div className="flex items-center justify-between gap-1">
+                  <p className="font-semibold text-white truncate text-[11px] group-hover:text-rose-300 transition">
+                    {user.fullName}
+                  </p>
+                  <Edit3 className="w-3 h-3 text-stone-400 group-hover:text-rose-300 shrink-0" />
+                </div>
+                <p className="text-[10px] text-stone-400 flex items-center gap-1.5 mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  <span className="truncate">Administrateur • Modifier</span>
+                </p>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsProfileModalOpen(true)}
+                className="text-stone-400 hover:text-rose-300 p-1.5 rounded-lg hover:bg-stone-800 transition cursor-pointer"
+                title="Modifier mon profil administrateur"
+              >
+                <UserCheck className="w-4 h-4" />
+              </button>
             )}
+
             <button
               onClick={() => logout()}
-              className="text-stone-400 hover:text-red-400 p-1.5 rounded-lg hover:bg-stone-800 transition cursor-pointer"
+              className="text-stone-400 hover:text-red-400 p-1.5 rounded-lg hover:bg-stone-800 transition cursor-pointer shrink-0"
               title="Déconnexion sécurisée"
             >
               <LogOut className="w-4 h-4" />
@@ -302,11 +330,20 @@ export const AdminLayout: React.FC = () => {
             </Link>
 
             <div className="flex items-center gap-2 pl-3 border-l border-stone-200">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="font-semibold text-deep hidden md:inline text-[11px]">{user.fullName}</span>
+              <button
+                type="button"
+                onClick={() => setIsProfileModalOpen(true)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200/80 text-deep transition cursor-pointer border border-stone-200/60"
+                title="Cliquer pour modifier les informations de l'administrateur"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="font-semibold text-deep text-[11px]">{user.fullName}</span>
+                <Edit3 className="w-3 h-3 text-stone-400" />
+              </button>
+
               <button
                 onClick={() => logout()}
-                className="text-stone-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition cursor-pointer"
+                className="text-stone-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition cursor-pointer"
                 title="Déconnexion"
               >
                 <LogOut className="w-4 h-4" />
@@ -320,6 +357,12 @@ export const AdminLayout: React.FC = () => {
           <Outlet />
         </main>
       </div>
+
+      {/* Admin Profile & Credentials Modal */}
+      <AdminProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+      />
 
     </div>
   );

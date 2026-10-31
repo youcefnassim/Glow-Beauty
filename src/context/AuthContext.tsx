@@ -186,9 +186,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     const updated = { ...user, ...data };
     setUser(updated);
-    if (!isSupabaseConfigured) {
-      StorageService.setCurrentUser(updated);
-    } else if (supabase) {
+    StorageService.saveUser(updated);
+    StorageService.setCurrentUser(updated);
+    if (isSupabaseConfigured && supabase) {
       await supabase.from('profiles').update({
         full_name: updated.fullName,
         phone: updated.phone,
@@ -200,7 +200,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const adminUser = StorageService.getUsers().find(u => u.role === 'admin') || {
       id: 'usr-admin-1',
       email: 'admin@glowbeauty.dz',
-      fullName: 'Amira Benali (Gérante)',
+      fullName: 'Ramzi (Gérant)',
       role: 'admin',
       createdAt: '2024-01-01T08:00:00Z',
     };

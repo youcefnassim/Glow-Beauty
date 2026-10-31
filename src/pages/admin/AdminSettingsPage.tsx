@@ -1,14 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { StorageService } from '@/services/storage';
 import { StoreSettings } from '@/types';
 import { 
   Settings, Save, CheckCircle2, ShieldAlert, Bell, 
-  KeyRound, Download, Upload, FileJson, AlertCircle, Lock, Package 
+  KeyRound, Download, Upload, FileJson, AlertCircle, Lock, Package,
+  UserCheck, Edit3 
 } from 'lucide-react';
 
 export const AdminSettingsPage: React.FC = () => {
+  const { user, updateProfile } = useAuth();
   const [settings, setSettings] = useState<StoreSettings>(() => StorageService.getSettings());
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  // Admin Profile States
+  const [adminFullName, setAdminFullName] = useState(user?.fullName || 'Ramzi (Gérant)');
+  const [adminEmail, setAdminEmail] = useState(user?.email || 'admin@glowbeauty.dz');
+  const [adminPhone, setAdminPhone] = useState(user?.phone || '0550123456');
+  const [adminProfileFeedback, setAdminProfileFeedback] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      setAdminFullName(user.fullName);
+      setAdminEmail(user.email);
+      setAdminPhone(user.phone || '');
+    }
+  }, [user]);
+
+  const handleSaveAdminProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await updateProfile({
+      fullName: adminFullName.trim() || 'Ramzi (Gérant)',
+      email: adminEmail.trim() || 'admin@glowbeauty.dz',
+      phone: adminPhone.trim() || '0550123456',
+    });
+    setAdminProfileFeedback('Informations administrateur enregistrées avec succès !');
+    setTimeout(() => setAdminProfileFeedback(null), 3500);
+  };
 
   // Password Change States
   const [currentPassword, setCurrentPassword] = useState('');
@@ -110,6 +138,98 @@ export const AdminSettingsPage: React.FC = () => {
           <span>Paramètres de la boutique enregistrés avec succès !</span>
         </div>
       )}
+
+      {/* Administrator Profile Card */}
+      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-4 text-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold">
+              <UserCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="font-serif text-base font-bold text-deep flex items-center gap-2">
+                <span>Profil & Identité de l'Administrateur</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 font-bold border border-rose-200/60 uppercase tracking-wider">
+                  Gérant
+                </span>
+              </h2>
+              <p className="text-[11px] text-mutedText">
+                Modifiez le nom, l'email et le numéro de contact du gérant principal (affichés dans le menu et sur les bordereaux).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {adminProfileFeedback && (
+          <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs flex items-center gap-2 animate-fadeIn">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span className="font-semibold">{adminProfileFeedback}</span>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label className="font-semibold text-deep block mb-1">
+              Nom complet & Titre affiché *
+            </label>
+            <input
+              type="text"
+              required
+              value={adminFullName}
+              onChange={(e) => setAdminFullName(e.target.value)}
+              placeholder="Ex: Ramzi (Gérant)"
+              className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-bold text-deep"
+            />
+            <span className="text-[10px] text-mutedText mt-1 block">
+              Nom officiel du gérant du compte.
+            </span>
+          </div>
+
+          <div>
+            <label className="font-semibold text-deep block mb-1">
+              Email de l'administrateur *
+            </label>
+            <input
+              type="email"
+              required
+              value={adminEmail}
+              onChange={(e) => setAdminEmail(e.target.value)}
+              placeholder="admin@glowbeauty.dz"
+              className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50"
+            />
+            <span className="text-[10px] text-mutedText mt-1 block">
+              Adresse e-mail administrative.
+            </span>
+          </div>
+
+          <div>
+            <label className="font-semibold text-deep block mb-1">
+              Téléphone / WhatsApp
+            </label>
+            <input
+              type="tel"
+              value={adminPhone}
+              onChange={(e) => setAdminPhone(e.target.value)}
+              placeholder="0550123456"
+              className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-semibold"
+            />
+            <span className="text-[10px] text-mutedText mt-1 block">
+              Ligne directe du gérant.
+            </span>
+          </div>
+        </div>
+
+        <div className="flex justify-end pt-1">
+          <button
+            type="button"
+            onClick={handleSaveAdminProfile}
+            className="bg-deep hover:bg-rose-950 text-white font-semibold px-4 py-2.5 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs transition text-xs"
+          >
+            <Save className="w-3.5 h-3.5" />
+            <span>Mettre à jour mes informations</span>
+          </button>
+        </div>
+      </div>
 
       <form onSubmit={handleSave} className="space-y-6 text-xs">
         

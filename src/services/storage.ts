@@ -335,15 +335,46 @@ export const StorageService = {
 
   // Users
   getUsers(): UserProfile[] {
-    return getFromStorage<UserProfile[]>(KEYS.USERS, INITIAL_USERS);
+    const users = getFromStorage<UserProfile[]>(KEYS.USERS, INITIAL_USERS);
+    let changed = false;
+    users.forEach((u) => {
+      if (u.role === 'admin' && u.fullName && u.fullName.includes('Amira')) {
+        u.fullName = 'Ramzi (Gérant)';
+        changed = true;
+      }
+    });
+    if (changed) {
+      saveToStorage(KEYS.USERS, users);
+    }
+    return users;
   },
 
   getCurrentUser(): UserProfile | null {
-    return getFromStorage<UserProfile | null>(KEYS.CURRENT_USER, null);
+    const user = getFromStorage<UserProfile | null>(KEYS.CURRENT_USER, null);
+    if (user && user.role === 'admin' && user.fullName && user.fullName.includes('Amira')) {
+      user.fullName = 'Ramzi (Gérant)';
+      this.setCurrentUser(user);
+    }
+    return user;
   },
 
   setCurrentUser(user: UserProfile | null): void {
     saveToStorage(KEYS.CURRENT_USER, user);
+  },
+
+  saveUser(user: UserProfile): void {
+    const users = this.getUsers();
+    const index = users.findIndex(u => u.id === user.id);
+    if (index >= 0) {
+      users[index] = user;
+    } else {
+      users.push(user);
+    }
+    saveToStorage(KEYS.USERS, users);
+    const current = this.getCurrentUser();
+    if (current && current.id === user.id) {
+      this.setCurrentUser(user);
+    }
   },
 
   // Admin Password Management
