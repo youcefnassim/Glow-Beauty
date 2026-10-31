@@ -435,8 +435,8 @@ export const CatalogPage: React.FC = () => {
       {isMobileFiltersOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden lg:hidden">
           <div className="absolute inset-0 bg-deep/50 backdrop-blur-xs" onClick={() => setIsMobileFiltersOpen(false)} />
-          <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-sm bg-white p-6 shadow-2xl flex flex-col justify-between overflow-y-auto">
+          <div className="fixed inset-y-0 right-0 max-w-full flex">
+            <div className="w-full sm:w-80 max-w-full bg-white p-6 shadow-2xl flex flex-col justify-between overflow-y-auto animate-slideInRight h-full">
               <div className="space-y-6">
                 <div className="flex items-center justify-between pb-3 border-b border-rose-100">
                   <h3 className="font-serif text-lg font-bold text-deep">Filtres</h3>

@@ -31,20 +31,23 @@ export const CartDrawer: React.FC = () => {
         onClick={() => setIsCartOpen(false)}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <aside aria-label="Panier d'achat" className="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+      <div className="fixed inset-y-0 right-0 max-w-full flex">
+        <aside 
+          aria-label="Panier d'achat" 
+          className="w-full sm:w-[440px] max-w-full bg-white shadow-2xl flex flex-col relative z-10 animate-slideInRight h-full"
+        >
           {/* Header */}
-          <div className="p-5 border-b border-rose-100 flex items-center justify-between bg-ivory/50">
+          <div className="p-4 sm:p-5 border-b border-rose-100 flex items-center justify-between bg-ivory/60 shrink-0">
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-rose-500" />
-              <h2 className="font-serif text-xl font-bold text-deep">Votre Panier</h2>
+              <h2 className="font-serif text-lg sm:text-xl font-bold text-deep">Votre Panier</h2>
               <span className="text-xs bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full">
                 {items.reduce((s, i) => s + i.quantity, 0)}
               </span>
             </div>
             <button
               onClick={() => setIsCartOpen(false)}
-              className="text-stone-400 hover:text-deep p-1.5 rounded-full hover:bg-rose-100 transition cursor-pointer"
+              className="text-stone-500 hover:text-deep p-2 rounded-xl hover:bg-rose-100 transition cursor-pointer"
               aria-label="Fermer le panier"
             >
               <X className="w-5 h-5" />
