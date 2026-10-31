@@ -81,108 +81,108 @@ export const WholesalePage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-12 pb-16">
+    <div className="space-y-8 sm:space-y-12 pb-12">
       {/* Hero Header */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-deep via-stone-900 to-rose-950 text-ivory rounded-3xl p-8 sm:p-14 shadow-luxury">
+      <section className="relative overflow-hidden bg-gradient-to-br from-deep via-stone-900 to-rose-950 text-ivory rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-luxury">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none" />
         
-        <div className="relative max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-300/30 text-amber-300 text-xs font-bold uppercase tracking-widest">
+        <div className="relative max-w-3xl space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-300/30 text-amber-300 text-[11px] font-bold uppercase tracking-wider">
             <Package className="w-3.5 h-3.5" />
             <span>Espace Vente en Gros & Professionnels</span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
+          <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight">
             Approvisionnez votre Salon, Parapharmacie ou Boutique de Beauté
           </h1>
 
-          <p className="text-sm sm:text-base text-rose-100/90 leading-relaxed font-light max-w-2xl">
-            Bénéficiez de remises directes jusqu'à <strong>-40%</strong> sur nos soins haut de gamme. Conditionnements en lots scellés, facturation pro, et livraison sécurisée sur les <strong>58 wilayas d’Algérie</strong> avec paiement à la réception.
+          <p className="text-xs sm:text-sm text-rose-100/90 leading-relaxed font-light max-w-2xl">
+            Bénéficiez de remises directes jusqu'à <strong>-40%</strong> sur nos soins haut de gamme. Conditionnements en lots scellés et livraison sécurisée sur les <strong>58 wilayas d’Algérie</strong> avec paiement à la réception.
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 pt-3">
+          <div className="flex flex-wrap items-center gap-3 pt-2">
             <a
               href="#catalogue-gros"
-              className="bg-brand-rose hover:bg-rose-600 text-white font-semibold text-xs sm:text-sm px-6 py-3 rounded-full transition shadow-md flex items-center gap-2"
+              className="bg-brand-rose hover:bg-rose-600 text-white font-semibold text-xs px-5 py-2.5 rounded-full transition shadow-md flex items-center gap-1.5"
             >
               <span>Découvrir les Lots Grossiste</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5" />
             </a>
 
             <a
               href="#demande-devis"
-              className="bg-white/10 hover:bg-white/20 text-ivory font-semibold text-xs sm:text-sm px-6 py-3 rounded-full transition border border-white/20 flex items-center gap-2 backdrop-blur-xs"
+              className="bg-white/10 hover:bg-white/20 text-ivory font-semibold text-xs px-5 py-2.5 rounded-full transition border border-white/20 flex items-center gap-1.5 backdrop-blur-xs"
             >
-              <FileText className="w-4 h-4 text-amber-300" />
+              <FileText className="w-3.5 h-3.5 text-amber-300" />
               <span>Demander un devis sur mesure</span>
             </a>
           </div>
         </div>
       </section>
 
-      {/* 4 Pillars of B2B Service */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-rose-100/80 shadow-xs space-y-2">
-          <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-700 flex items-center justify-center font-bold">
-            <Package className="w-5 h-5" />
+      {/* 4 Pillars of B2B Service - 2 by 2 on mobile */}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-100/80 shadow-xs space-y-1.5">
+          <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center font-bold">
+            <Package className="w-4 h-4" />
           </div>
-          <h3 className="font-serif font-bold text-deep text-sm">Lots Dégressifs dès 6 Pièces</h3>
-          <p className="text-xs text-mutedText leading-relaxed">
-            Tarifs grossistes automatiques dès 6 ou 10 unités par référence, sans formalités complexes.
+          <h3 className="font-serif font-bold text-deep text-xs sm:text-sm">Lots dès 6 Pièces</h3>
+          <p className="text-[10px] sm:text-xs text-mutedText leading-relaxed">
+            Tarifs grossistes automatiques dès 6 ou 10 unités par référence.
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-rose-100/80 shadow-xs space-y-2">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
-            <Truck className="w-5 h-5" />
+        <div className="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-100/80 shadow-xs space-y-1.5">
+          <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
+            <Truck className="w-4 h-4" />
           </div>
-          <h3 className="font-serif font-bold text-deep text-sm">Expédition Pro 58 Wilayas</h3>
-          <p className="text-xs text-mutedText leading-relaxed">
-            Cartons renforcés scellés, acheminés sous 24h à 48h directement dans votre local ou entrepôt.
+          <h3 className="font-serif font-bold text-deep text-xs sm:text-sm">Expédition 58 Wilayas</h3>
+          <p className="text-[10px] sm:text-xs text-mutedText leading-relaxed">
+            Cartons scellés sous 24h à 48h directement dans votre local.
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-rose-100/80 shadow-xs space-y-2">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
-            <ShieldCheck className="w-5 h-5" />
+        <div className="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-100/80 shadow-xs space-y-1.5">
+          <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
+            <ShieldCheck className="w-4 h-4" />
           </div>
-          <h3 className="font-serif font-bold text-deep text-sm">100% Produits Authentiques</h3>
-          <p className="text-xs text-mutedText leading-relaxed">
-            Formulations dermatologiques contrôlées, dates de validité optimales et traçabilité fabricant.
+          <h3 className="font-serif font-bold text-deep text-xs sm:text-sm">100% Authentiques</h3>
+          <p className="text-[10px] sm:text-xs text-mutedText leading-relaxed">
+            Dates optimales, conformité et traçabilité fabricant garantie.
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-rose-100/80 shadow-xs space-y-2">
-          <div className="w-10 h-10 rounded-xl bg-stone-100 text-deep flex items-center justify-center font-bold">
-            <MessageCircle className="w-5 h-5 text-emerald-600" />
+        <div className="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-100/80 shadow-xs space-y-1.5">
+          <div className="w-8 h-8 rounded-lg bg-stone-100 text-deep flex items-center justify-center font-bold">
+            <MessageCircle className="w-4 h-4 text-emerald-600" />
           </div>
-          <h3 className="font-serif font-bold text-deep text-sm">Ligne WhatsApp B2B Dédiée</h3>
-          <p className="text-xs text-mutedText leading-relaxed">
-            Un gestionnaire de compte à votre écoute pour préparer vos devis, réassorts et fiches conseils.
+          <h3 className="font-serif font-bold text-deep text-xs sm:text-sm">WhatsApp B2B Dédié</h3>
+          <p className="text-[10px] sm:text-xs text-mutedText leading-relaxed">
+            Conseiller attitré pour préparer vos devis et réassorts rapides.
           </p>
         </div>
       </section>
 
       {/* Wholesale Product Catalog */}
-      <section id="catalogue-gros" className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <section id="catalogue-gros" className="space-y-4 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
           <div>
-            <span className="text-xs font-bold text-rose-700 uppercase tracking-widest">Offres en Vigueur</span>
-            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-deep">
+            <span className="text-[10px] sm:text-xs font-bold text-rose-700 uppercase tracking-widest">Offres en Vigueur</span>
+            <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-deep">
               Catalogue des Lots Grossistes
             </h2>
-            <p className="text-xs text-mutedText mt-1">
+            <p className="text-[11px] sm:text-xs text-mutedText mt-0.5">
               Commandez directement vos packs en ligne. Les remises grossiste s'appliquent automatiquement au panier.
             </p>
           </div>
 
           {/* Category filter pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition cursor-pointer capitalize shrink-0 ${
+                className={`px-3 py-1 rounded-full text-[11px] font-medium transition cursor-pointer capitalize shrink-0 ${
                   selectedCategory === cat
                     ? 'bg-deep text-ivory shadow-xs'
                     : 'bg-white text-stone-600 border border-rose-100 hover:border-rose-300'
@@ -195,11 +195,11 @@ export const WholesalePage: React.FC = () => {
         </div>
 
         {filteredProducts.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-3xl border border-rose-100 p-6">
-            <p className="text-sm text-stone-500">Aucun lot disponible dans cette catégorie pour le moment.</p>
+          <div className="text-center py-8 bg-white rounded-2xl border border-rose-100 p-6">
+            <p className="text-xs text-stone-500">Aucun lot disponible dans cette catégorie pour le moment.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
             {filteredProducts.map(product => {
               const minQty = product.wholesaleMinQty || 6;
               const wholesaleUnitPrice = product.wholesalePrice || product.price;
@@ -213,62 +213,65 @@ export const WholesalePage: React.FC = () => {
               return (
                 <div 
                   key={product.id}
-                  className="bg-white rounded-2xl border border-rose-100/80 shadow-card hover:shadow-luxury transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                  className="bg-white rounded-xl sm:rounded-2xl border border-rose-100 shadow-xs hover:shadow-card hover:border-rose-200 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
                 >
-                  <div className="p-4 space-y-3">
-                    <div className="relative aspect-4/3 rounded-xl overflow-hidden bg-ivory">
+                  <div className="p-2 sm:p-2.5 space-y-1.5 sm:space-y-2">
+                    <div className="relative aspect-square rounded-lg sm:rounded-xl overflow-hidden bg-ivory">
                       <img 
                         src={product.images[0]?.url} 
                         alt={product.nameFr} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
                       />
-                      <span className="absolute top-2.5 left-2.5 bg-amber-500 text-stone-950 text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs">
-                        Lot Pro : {minQty} pcs
+                      <span className="absolute top-1.5 left-1.5 bg-amber-500 text-stone-950 text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md shadow-2xs">
+                        Lot : {minQty} pcs
                       </span>
-                      <span className="absolute top-2.5 right-2.5 bg-deep text-ivory text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
+                      <span className="absolute top-1.5 right-1.5 bg-deep text-ivory text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-2xs">
                         -{savingsPercent}%
                       </span>
                     </div>
 
                     <div>
-                      <p className="text-[10px] font-bold text-rose-700 uppercase tracking-wider">{product.brand}</p>
+                      <span className="text-[9px] sm:text-[10px] font-bold text-rose-700/80 uppercase tracking-wider truncate block">
+                        {product.brand}
+                      </span>
                       <Link 
                         to={`/products/${product.slug}`} 
-                        className="font-serif text-sm font-bold text-deep hover:text-rose-800 transition line-clamp-1 block"
+                        className="font-serif text-xs sm:text-sm font-semibold text-deep hover:text-rose-800 transition line-clamp-2 leading-tight min-h-[2rem] block"
                       >
                         {product.nameFr}
                       </Link>
-                      <p className="text-xs text-stone-500 line-clamp-2 mt-1 font-light">
-                        {product.wholesalePackDescription || `Lot économique de ${minQty} unités pour réassort salon.`}
+                      <p className="text-[10px] text-stone-500 line-clamp-1 mt-0.5 font-light">
+                        {product.wholesalePackDescription || `Lot économique de ${minQty} unités.`}
                       </p>
                     </div>
 
-                    {/* Pricing grid */}
-                    <div className="bg-rose-50/50 rounded-xl p-3 border border-rose-100 space-y-1.5 text-xs">
-                      <div className="flex justify-between items-center text-mutedText">
-                        <span>Tarif unitaire grossiste :</span>
-                        <strong className="text-deep font-bold">{formatPriceDZD(wholesaleUnitPrice)}</strong>
+                    {/* Compact Pricing grid */}
+                    <div className="bg-rose-50/60 rounded-lg p-1.5 sm:p-2 border border-rose-100/70 space-y-0.5 sm:space-y-1 text-[10px] sm:text-xs">
+                      <div className="flex justify-between items-baseline">
+                        <span className="text-mutedText">Tarif gros :</span>
+                        <strong className="text-deep font-bold font-serif">{formatPriceDZD(wholesaleUnitPrice)}</strong>
                       </div>
-                      <div className="flex justify-between items-center text-mutedText">
-                        <span>Tarif unitaire public :</span>
+                      <div className="flex justify-between items-baseline text-[9px] sm:text-[10px] text-mutedText">
+                        <span>Prix public :</span>
                         <span className="line-through">{formatPriceDZD(retailUnitPrice)}</span>
                       </div>
-                      <div className="pt-1.5 border-t border-rose-200/60 flex justify-between items-baseline">
-                        <span className="font-semibold text-deep">Total du lot ({minQty} pcs) :</span>
-                        <span className="font-serif font-bold text-base text-deep">
+                      <div className="pt-1 border-t border-rose-200/50 flex justify-between items-baseline">
+                        <span className="font-semibold text-deep text-[10px] sm:text-[11px]">Total ({minQty} pcs) :</span>
+                        <span className="font-bold text-rose-900 text-xs sm:text-sm font-serif">
                           {formatPriceDZD(packTotal)}
                         </span>
                       </div>
-                      <p className="text-[11px] text-emerald-700 font-medium">
-                        ✓ Économie de {formatPriceDZD(savings)} sur ce lot
-                      </p>
+                      <div className="text-[9px] text-emerald-700 font-semibold truncate">
+                        ✓ Éco : {formatPriceDZD(savings)}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="p-4 pt-0">
+                  <div className="p-2 sm:p-2.5 pt-0">
                     <button
                       onClick={() => handleAddPack(product)}
-                      className={`w-full py-2.5 px-4 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 cursor-pointer shadow-xs ${
+                      className={`w-full py-1.5 sm:py-2 px-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs ${
                         isAdded
                           ? 'bg-emerald-600 text-white'
                           : 'bg-deep hover:bg-rose-950 text-ivory'
@@ -276,13 +279,13 @@ export const WholesalePage: React.FC = () => {
                     >
                       {isAdded ? (
                         <>
-                          <Check className="w-4 h-4" />
-                          <span>Lot ajouté au panier !</span>
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Ajouté !</span>
                         </>
                       ) : (
                         <>
-                          <Package className="w-4 h-4 text-amber-300" />
-                          <span>Ajouter le Lot ({minQty} pcs)</span>
+                          <Package className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+                          <span className="truncate">Ajouter le Lot ({minQty} pcs)</span>
                         </>
                       )}
                     </button>

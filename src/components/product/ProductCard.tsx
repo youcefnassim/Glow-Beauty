@@ -124,20 +124,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </Link>
 
       {/* Compact Content */}
-      <div className="p-2.5 sm:p-3 flex flex-col flex-1 justify-between gap-1">
+      <div className="p-2 sm:p-2.5 flex flex-col flex-1 justify-between gap-1">
         <div>
-          <span className="text-[10px] font-bold tracking-wider uppercase text-rose-700/80 truncate block mb-0.5">
+          <span className="text-[9px] sm:text-[10px] font-bold tracking-wider uppercase text-rose-700/80 truncate block mb-0.5">
             {product.brand}
           </span>
 
           <Link to={`/products/${product.slug}`}>
-            <h3 className="font-serif text-xs sm:text-sm font-semibold text-deep line-clamp-2 leading-tight hover:text-rose-700 transition min-h-[2.1rem] sm:min-h-[2.3rem]">
+            <h3 className="font-serif text-xs sm:text-sm font-semibold text-deep line-clamp-2 leading-tight hover:text-rose-700 transition min-h-[1.9rem] sm:min-h-[2.1rem]">
               {product.nameFr}
             </h3>
           </Link>
 
           {/* Rating */}
-          <div className="flex items-center gap-1 mt-1 text-[10px] sm:text-[11px]">
+          <div className="flex items-center gap-1 mt-0.5 text-[9px] sm:text-[10px]">
             <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-500 fill-current" />
             <span className="font-semibold text-deep">{product.rating.toFixed(1)}</span>
             <span className="text-mutedText">({product.reviewsCount})</span>
@@ -145,7 +145,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Price & Action Row */}
-        <div className="mt-1.5 pt-2 border-t border-rose-100/60 flex items-center justify-between gap-1">
+        <div className="mt-1 pt-1.5 border-t border-rose-100/60 flex items-center justify-between gap-1">
           <div className="min-w-0">
             <div className="flex items-baseline gap-1 sm:gap-1.5 flex-wrap">
               <span className="font-serif text-xs sm:text-sm md:text-base font-bold text-deep">
