@@ -237,10 +237,12 @@ export interface HomepageBanner {
   id: string;
   title: string;
   subtitle: string;
+  badge?: string;
   buttonText: string;
   buttonLink: string;
   imageUrl: string;
   isActive: boolean;
+  orderIndex?: number;
   endDate?: string;
 }
 

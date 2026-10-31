@@ -1,5 +1,5 @@
 import { 
-  Product, Category, Order, Coupon, StoreSettings, Review, UserProfile, OrderStatus, PaymentStatus 
+  Product, Category, Order, Coupon, StoreSettings, Review, UserProfile, OrderStatus, PaymentStatus, HomepageBanner 
 } from '@/types';
 import { INITIAL_PRODUCTS } from '@/data/mockProducts';
 import { CATEGORIES } from '@/data/categories';
@@ -20,7 +20,55 @@ const KEYS = {
   CART: 'glow_beauty_cart_v1',
   NEWSLETTER: 'glow_beauty_newsletter_v1',
   ADMIN_PASSWORD: 'glow_beauty_admin_password_v1',
+  BANNERS: 'glow_beauty_homepage_banners_v1',
 };
+
+export const INITIAL_BANNERS: HomepageBanner[] = [
+  {
+    id: 'banner-1',
+    title: 'Sérum Éclat Niacinamide 10% & Zinc',
+    subtitle: 'Révélez un teint radieux et purifié grâce à notre formule signature haute tolérance.',
+    badge: 'Formule Signature',
+    buttonText: 'Découvrir le soin',
+    buttonLink: '/products/serum-eclat-niacinamide-10-zinc',
+    imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=1200&q=85',
+    isActive: true,
+    orderIndex: 0,
+  },
+  {
+    id: 'banner-2',
+    title: 'Crème Confort Régénérante aux Céramides',
+    subtitle: '48 heures d’hydratation continue et réparation intensive de la barrière cutanée.',
+    badge: 'Nouveauté Soin',
+    buttonText: 'Commander le soin',
+    buttonLink: '/products/creme-confort-regenerante-ceramides',
+    imageUrl: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1200&q=85',
+    isActive: true,
+    orderIndex: 1,
+  },
+  {
+    id: 'banner-3',
+    title: 'Élixir Précieux Argan & Figue de Barbarie',
+    subtitle: 'Huile pure d’exception pressée à froid, secret de jeunesse ancestral certifié bio.',
+    badge: '100% Bio & Terroir',
+    buttonText: 'Voir l’élixir',
+    buttonLink: '/products/huile-argan-figue-barbarie',
+    imageUrl: 'https://images.unsplash.com/photo-1608248597359-57e05a065094?auto=format&fit=crop&w=1200&q=85',
+    isActive: true,
+    orderIndex: 2,
+  },
+  {
+    id: 'banner-4',
+    title: 'Vente en Gros : Salons, Parapharmacies & Pro',
+    subtitle: 'Bénéficiez de remises immédiates jusqu’à -40% dès 6 pièces avec expédition 58 wilayas.',
+    badge: 'Espace Gros PRO',
+    buttonText: 'Découvrir l’Espace Gros',
+    buttonLink: '/wholesale',
+    imageUrl: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1200&q=85',
+    isActive: true,
+    orderIndex: 3,
+  },
+];
 
 function getFromStorage<T>(key: string, defaultValue: T): T {
   try {
@@ -312,6 +360,37 @@ export const StorageService = {
     return password.trim() === current.trim();
   },
 
+  // Homepage Banners (Carousel Automatique)
+  getBanners(): HomepageBanner[] {
+    const banners = getFromStorage<HomepageBanner[]>(KEYS.BANNERS, INITIAL_BANNERS);
+    return banners.sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
+  },
+
+  getActiveBanners(): HomepageBanner[] {
+    return this.getBanners().filter(b => b.isActive);
+  },
+
+  saveBanner(banner: HomepageBanner): HomepageBanner {
+    const banners = this.getBanners();
+    const index = banners.findIndex(b => b.id === banner.id);
+    if (index >= 0) {
+      banners[index] = banner;
+    } else {
+      banners.push(banner);
+    }
+    saveToStorage(KEYS.BANNERS, banners);
+    return banner;
+  },
+
+  deleteBanner(id: string): void {
+    const banners = this.getBanners().filter(b => b.id !== id);
+    saveToStorage(KEYS.BANNERS, banners);
+  },
+
+  reorderBanners(banners: HomepageBanner[]): void {
+    saveToStorage(KEYS.BANNERS, banners);
+  },
+
   // Full Database Backup & Restore
   backupAllData(): string {
     const data = {
@@ -326,6 +405,7 @@ export const StorageService = {
       reviews: getFromStorage(KEYS.REVIEWS, []),
       users: this.getUsers(),
       newsletter: this.getNewsletterSubscribers(),
+      banners: this.getBanners(),
     };
     return JSON.stringify(data, null, 2);
   },
@@ -344,6 +424,7 @@ export const StorageService = {
       if (Array.isArray(data.reviews)) saveToStorage(KEYS.REVIEWS, data.reviews);
       if (Array.isArray(data.users)) saveToStorage(KEYS.USERS, data.users);
       if (Array.isArray(data.newsletter)) saveToStorage(KEYS.NEWSLETTER, data.newsletter);
+      if (Array.isArray(data.banners)) saveToStorage(KEYS.BANNERS, data.banners);
       return { success: true, message: 'Données restaurées avec succès !' };
     } catch (e: unknown) {
       const err = e instanceof Error ? e.message : 'Erreur de lecture';
@@ -365,5 +446,6 @@ export const StorageService = {
     localStorage.removeItem(KEYS.CART);
     localStorage.removeItem(KEYS.NEWSLETTER);
     localStorage.removeItem(KEYS.ADMIN_PASSWORD);
+    localStorage.removeItem(KEYS.BANNERS);
   }
 };

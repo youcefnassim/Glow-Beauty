@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { StorageService } from '@/services/storage';
 import { CATEGORIES } from '@/data/categories';
 import { ProductCard } from '@/components/product/ProductCard';
+import { HeroBannerSlider } from '@/components/home/HeroBannerSlider';
 import { 
   ArrowRight, Sparkles, Shield, Leaf, HeartHandshake, Star, 
   ChevronDown, ChevronUp, Droplets, Sun, CheckCircle2, Package 
@@ -94,31 +95,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           <div className="lg:col-span-5 relative">
-            <div className="relative mx-auto max-w-md lg:max-w-none">
-              {/* Decorative Frame */}
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-rose-200 to-blush opacity-40 blur-xl transform -rotate-3" />
-              
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white aspect-[4/5]">
-                <img
-                  src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=1000&q=85"
-                  alt="Rituel de beauté Glow Beauty"
-                  className="w-full h-full object-cover object-center"
-                />
-                
-                {/* Floating Aesthetic Tag */}
-                <div className="absolute bottom-5 left-5 right-5 glass-panel p-4 rounded-2xl shadow-luxury">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[10px] uppercase font-bold text-rose-700 tracking-wider">Formule Signature</p>
-                      <h4 className="font-serif text-sm font-bold text-deep">Sérum Éclat Niacinamide 10%</h4>
-                    </div>
-                    <span className="font-serif text-sm font-bold text-rose-900 bg-rose-100/80 px-2.5 py-1 rounded-lg">
-                      3 200 DA
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <HeroBannerSlider />
           </div>
         </div>
       </section>
