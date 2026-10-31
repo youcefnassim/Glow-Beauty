@@ -125,6 +125,12 @@ export const Footer: React.FC = () => {
                   Promotions en cours
                 </Link>
               </li>
+              <li>
+                <Link to="/wholesale" className="hover:text-amber-300 transition text-amber-300 font-semibold flex items-center gap-1.5">
+                  <span>Vente en Gros & Salons</span>
+                  <span className="px-1.5 py-0.2 bg-amber-400 text-stone-950 text-[9px] font-extrabold rounded">PRO</span>
+                </Link>
+              </li>
             </ul>
           </div>
 

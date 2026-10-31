@@ -114,12 +114,17 @@ export const AdminProductsPage: React.FC = () => {
                   </td>
 
                   <td className="py-3 px-4">
-                    <span className="font-bold text-deep font-serif text-sm">
+                    <span className="font-bold text-deep font-serif text-sm block">
                       {formatPriceDZD(product.price)}
                     </span>
                     {product.compareAtPrice && product.compareAtPrice > product.price && (
                       <p className="text-[11px] text-mutedText line-through">
                         {formatPriceDZD(product.compareAtPrice)}
+                      </p>
+                    )}
+                    {product.isWholesaleAvailable && product.wholesalePrice && (
+                      <p className="text-[10px] text-amber-800 font-semibold bg-amber-50 px-1 py-0.5 rounded mt-0.5 inline-block">
+                        Gros: {formatPriceDZD(product.wholesalePrice)} (min {product.wholesaleMinQty || 6})
                       </p>
                     )}
                   </td>
@@ -136,6 +141,11 @@ export const AdminProductsPage: React.FC = () => {
 
                   <td className="py-3 px-4">
                     <div className="flex flex-wrap gap-1">
+                      {product.isWholesaleAvailable && (
+                        <span className="bg-amber-100 text-amber-950 border border-amber-300 text-[9px] px-1.5 py-0.5 rounded font-extrabold uppercase">
+                          Gros PRO
+                        </span>
+                      )}
                       {product.isNewArrival && (
                         <span className="bg-deep text-ivory text-[9px] px-1.5 py-0.5 rounded font-bold uppercase">
                           New

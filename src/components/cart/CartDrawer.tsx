@@ -15,6 +15,7 @@ export const CartDrawer: React.FC = () => {
     removeItem, 
     freeDeliveryThreshold,
     amountNeededForFreeShipping,
+    getItemEffectivePrice,
   } = useCart();
   const navigate = useNavigate();
 
@@ -126,9 +127,17 @@ export const CartDrawer: React.FC = () => {
                         </p>
                       )}
 
-                      <p className="text-xs font-bold text-deep mt-1">
-                        {formatPriceDZD(item.priceAtAddition)}
-                      </p>
+                      {item.isWholesalePriceApplied ? (
+                        <div className="mt-1">
+                          <span className="inline-block text-[10px] font-bold text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-200">
+                            🏷️ Tarif Grossiste ({formatPriceDZD(getItemEffectivePrice(item).unitPrice)}/u)
+                          </span>
+                        </div>
+                      ) : (
+                        <p className="text-xs font-bold text-deep mt-1">
+                          {formatPriceDZD(item.priceAtAddition)}
+                        </p>
+                      )}
                     </div>
 
                     {/* Quantity controls */}
@@ -153,9 +162,16 @@ export const CartDrawer: React.FC = () => {
                         </button>
                       </div>
 
-                      <span className="text-xs font-bold text-rose-800">
-                        {formatPriceDZD(item.priceAtAddition * item.quantity)}
-                      </span>
+                      <div className="text-right">
+                        <span className="text-xs font-bold text-rose-800 block">
+                          {formatPriceDZD(getItemEffectivePrice(item).unitPrice * item.quantity)}
+                        </span>
+                        {item.isWholesalePriceApplied && (
+                          <span className="text-[10px] text-mutedText line-through">
+                            {formatPriceDZD(item.priceAtAddition * item.quantity)}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

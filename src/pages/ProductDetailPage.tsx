@@ -8,13 +8,13 @@ import { useWishlist } from '@/context/WishlistContext';
 import { ProductCard } from '@/components/product/ProductCard';
 import { 
   Heart, ShoppingBag, Star, Truck, ShieldCheck, RefreshCw, 
-  ChevronRight, Check, Minus, Plus, Sparkles, MessageSquare, AlertCircle 
+  ChevronRight, Check, Minus, Plus, Sparkles, MessageSquare, AlertCircle, Package, ArrowRight
 } from 'lucide-react';
 
 export const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { addItem } = useCart();
+  const { addItem, addWholesalePack } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -189,19 +189,47 @@ export const ProductDetailPage: React.FC = () => {
           </div>
 
           {/* Price Block */}
-          <div className="p-4 rounded-2xl bg-white border border-rose-100/80 shadow-xs flex items-baseline gap-3">
-            <span className="font-serif text-3xl font-bold text-deep">
-              {formatPriceDZD(currentPrice)}
-            </span>
-            {hasDiscount && (
-              <span className="text-sm text-mutedText line-through">
-                {formatPriceDZD(comparePrice!)}
+          <div className="p-4 rounded-2xl bg-white border border-rose-100/80 shadow-xs space-y-2">
+            <div className="flex items-baseline gap-3 flex-wrap">
+              <span className="font-serif text-3xl font-bold text-deep">
+                {product.isWholesaleAvailable && product.wholesalePrice && quantity >= (product.wholesaleMinQty || 6)
+                  ? formatPriceDZD(product.wholesalePrice)
+                  : formatPriceDZD(currentPrice)}
               </span>
+              {product.isWholesaleAvailable && product.wholesalePrice && quantity >= (product.wholesaleMinQty || 6) ? (
+                <span className="text-sm text-stone-400 line-through">
+                  {formatPriceDZD(currentPrice)} (Tarif détail)
+                </span>
+              ) : hasDiscount && (
+                <span className="text-sm text-mutedText line-through">
+                  {formatPriceDZD(comparePrice!)}
+                </span>
+              )}
+              <span className="text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                {currentStock > 0 ? 'En stock disponible' : 'Rupture de stock'}
+              </span>
+            </div>
+
+            {product.isWholesaleAvailable && product.wholesalePrice && (
+              <div className="pt-2 border-t border-rose-100 flex items-center justify-between text-xs">
+                <span className="text-mutedText">
+                  Tarif de gros : <strong className="text-deep font-bold">{formatPriceDZD(product.wholesalePrice)}</strong> / pièce (min. {product.wholesaleMinQty || 6} pcs)
+                </span>
+                <span className="font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md">
+                  Vente en Gros
+                </span>
+              </div>
             )}
-            <span className="text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-              {currentStock > 0 ? 'En stock disponible' : 'Rupture de stock'}
-            </span>
           </div>
+
+          {quantity >= (product.wholesaleMinQty || 6) && product.isWholesaleAvailable && product.wholesalePrice && (
+            <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>
+                <strong>Tarif Grossiste appliqué !</strong> Vos {quantity} articles seront facturés à <strong>{formatPriceDZD(product.wholesalePrice)}</strong> l'unité au lieu de {formatPriceDZD(currentPrice)}.
+              </span>
+            </div>
+          )}
 
           <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-light">
             {product.shortDescription}
@@ -298,8 +326,77 @@ export const ProductDetailPage: React.FC = () => {
               Commander maintenant (Paiement à la livraison)
             </button>
 
+            {/* Wholesale / Pro Lot Box */}
+            {product.isWholesaleAvailable && product.wholesalePrice && (
+              <div className="mt-4 p-4 rounded-2xl bg-gradient-to-br from-amber-50/70 via-rose-50/40 to-white border border-amber-200/80 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-deep text-amber-300 flex items-center justify-center">
+                      <Package className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold uppercase tracking-wider text-deep block">
+                        Offre Revendeurs & Salons (Gros)
+                      </span>
+                      <p className="text-[11px] text-mutedText">
+                        Tarif dégressif préférentiel à partir de {product.wholesaleMinQty || 6} pièces
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-bold bg-amber-200 text-amber-950 px-2.5 py-0.5 rounded-full">
+                    Économisez {Math.round(((currentPrice - product.wholesalePrice) / currentPrice) * 100)}%
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs py-2 px-3 bg-white/90 rounded-xl border border-amber-100">
+                  <div>
+                    <span className="text-[11px] text-mutedText block">Prix Grossiste unitaire</span>
+                    <span className="font-bold text-sm text-deep">{formatPriceDZD(product.wholesalePrice)}</span>
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-mutedText block">Format Lot Pro</span>
+                    <span className="font-bold text-sm text-deep">
+                      {product.wholesaleMinQty || 6} pcs {product.wholesalePackDescription ? `(${product.wholesalePackDescription})` : ''}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <button
+                    onClick={() => {
+                      const qty = product.wholesaleMinQty || 6;
+                      const res = addWholesalePack(product, selectedVariant, qty);
+                      if (res.success) {
+                        setAddMessage(`✓ Lot Pro (${qty} pièces) ajouté avec succès au tarif de gros !`);
+                      } else {
+                        setAddMessage(res.message || 'Stock insuffisant pour ce lot.');
+                      }
+                    }}
+                    disabled={currentStock < (product.wholesaleMinQty || 6)}
+                    className="flex-1 bg-stone-900 hover:bg-black text-ivory font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs cursor-pointer shadow-xs disabled:opacity-40"
+                  >
+                    <Package className="w-3.5 h-3.5 text-amber-400" />
+                    <span>
+                      {currentStock < (product.wholesaleMinQty || 6)
+                        ? 'Lot momentanément en rupture'
+                        : `Acheter le Lot Pro (${product.wholesaleMinQty || 6} pcs - ${formatPriceDZD(product.wholesalePrice * (product.wholesaleMinQty || 6))})`
+                      }
+                    </span>
+                  </button>
+
+                  <Link
+                    to="/wholesale"
+                    className="px-3 py-2 rounded-xl border border-stone-200 hover:border-deep text-[11px] font-medium text-stone-700 hover:text-deep transition flex items-center justify-center gap-1 text-center"
+                  >
+                    <span>Espace Gros</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </div>
+              </div>
+            )}
+
             {addMessage && (
-              <p className="text-xs text-amber-700 bg-amber-50 p-2.5 rounded-xl border border-amber-200 flex items-center gap-1.5">
+              <p className="text-xs text-amber-800 bg-amber-50 p-2.5 rounded-xl border border-amber-200 flex items-center gap-1.5">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 {addMessage}
               </p>

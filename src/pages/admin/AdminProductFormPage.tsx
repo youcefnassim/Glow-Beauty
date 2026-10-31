@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { StorageService } from '@/services/storage';
 import { CATEGORIES, BRANDS } from '@/data/categories';
 import { Product, ProductImage, ProductVariant } from '@/types';
-import { ArrowLeft, Save, Plus, Trash2, Image, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, Image, CheckCircle2, Package } from 'lucide-react';
 
 export const AdminProductFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +30,12 @@ export const AdminProductFormPage: React.FC = () => {
   const [isFeatured, setIsFeatured] = useState(false);
   const [isBestSeller, setIsBestSeller] = useState(false);
 
+  // Wholesale / Gros State
+  const [isWholesaleAvailable, setIsWholesaleAvailable] = useState(false);
+  const [wholesalePrice, setWholesalePrice] = useState<number | undefined>(undefined);
+  const [wholesaleMinQty, setWholesaleMinQty] = useState<number>(6);
+  const [wholesalePackDescription, setWholesalePackDescription] = useState<string>('');
+
   useEffect(() => {
     if (isEditing && id) {
       const p = StorageService.getProductById(id);
@@ -52,6 +58,10 @@ export const AdminProductFormPage: React.FC = () => {
         setIsPromo(Boolean(p.isPromo));
         setIsFeatured(Boolean(p.isFeatured));
         setIsBestSeller(Boolean(p.isBestSeller));
+        setIsWholesaleAvailable(Boolean(p.isWholesaleAvailable));
+        setWholesalePrice(p.wholesalePrice);
+        setWholesaleMinQty(p.wholesaleMinQty || 6);
+        setWholesalePackDescription(p.wholesalePackDescription || '');
       }
     }
   }, [id, isEditing]);
@@ -112,6 +122,10 @@ export const AdminProductFormPage: React.FC = () => {
       isPromo,
       isFeatured,
       isBestSeller,
+      isWholesaleAvailable,
+      wholesalePrice: isWholesaleAvailable && wholesalePrice ? Number(wholesalePrice) : undefined,
+      wholesaleMinQty: isWholesaleAvailable ? Number(wholesaleMinQty) : undefined,
+      wholesalePackDescription: isWholesaleAvailable ? wholesalePackDescription.trim() || undefined : undefined,
       createdAt: new Date().toISOString(),
     };
 
@@ -276,10 +290,107 @@ export const AdminProductFormPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Wholesale & B2B Configuration */}
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-stone-100">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-900 flex items-center justify-center font-bold">
+                <Package className="w-4 h-4" />
+              </div>
+              <h2 className="font-serif text-base font-bold text-deep">
+                3. Option Vente en Gros (B2B / Salons & Revendeurs)
+              </h2>
+            </div>
+            <label className="flex items-center gap-2 text-xs font-semibold text-deep cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isWholesaleAvailable}
+                onChange={(e) => {
+                  setIsWholesaleAvailable(e.target.checked);
+                  if (e.target.checked && !wholesalePrice) {
+                    setWholesalePrice(Math.round(price * 0.7));
+                  }
+                }}
+                className="w-4 h-4 rounded border-stone-300 text-rose-600 focus:ring-rose-500"
+              />
+              <span>Proposer à la vente en gros</span>
+            </label>
+          </div>
+
+          {isWholesaleAvailable && (
+            <div className="space-y-4 pt-1 animate-fadeIn">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-xs font-semibold text-deep block mb-1">
+                    Prix unitaire en gros (DZD) *
+                  </label>
+                  <input
+                    type="number"
+                    min="100"
+                    value={wholesalePrice || ''}
+                    onChange={(e) => setWholesalePrice(e.target.value ? Number(e.target.value) : undefined)}
+                    placeholder="Ex: 2200"
+                    className="w-full text-xs p-3 rounded-xl border border-amber-200 bg-amber-50/40 font-bold text-deep"
+                  />
+                  {wholesalePrice && price > wholesalePrice && (
+                    <p className="text-[11px] text-emerald-700 font-semibold mt-1">
+                      ✓ Remise grossiste : -{Math.round(((price - wholesalePrice) / price) * 100)}%
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-deep block mb-1">
+                    Quantité minimum par lot / carton *
+                  </label>
+                  <input
+                    type="number"
+                    min="2"
+                    value={wholesaleMinQty}
+                    onChange={(e) => setWholesaleMinQty(Math.max(2, Number(e.target.value)))}
+                    placeholder="6"
+                    className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50 font-bold"
+                  />
+                  <p className="text-[11px] text-mutedText mt-1">
+                    Ex: 6 ou 10 unités pour déclencher ce tarif
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-deep block mb-1">
+                    Description du conditionnement
+                  </label>
+                  <input
+                    type="text"
+                    value={wholesalePackDescription}
+                    onChange={(e) => setWholesalePackDescription(e.target.value)}
+                    placeholder="Ex: Carton scellé de 6 flacons"
+                    className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50"
+                  />
+                  <p className="text-[11px] text-mutedText mt-1">
+                    Mention affichée sur la fiche pro
+                  </p>
+                </div>
+              </div>
+
+              {wholesalePrice && (
+                <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-center justify-between">
+                  <span>
+                    Valeur totale du lot ({wholesaleMinQty} pcs) : <strong>{(wholesalePrice * wholesaleMinQty).toLocaleString('fr-DZ')} DZD</strong>
+                  </span>
+                  <span className="font-semibold text-emerald-800">
+                    Économie cliente pro : {((price - wholesalePrice) * wholesaleMinQty).toLocaleString('fr-DZ')} DZD
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Descriptions & Formulations */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
           <h2 className="font-serif text-base font-bold text-deep pb-2 border-b border-stone-100">
-            3. Fiche Technique & Formulations
+            4. Fiche Technique & Formulations
           </h2>
 
           <div>

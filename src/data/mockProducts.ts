@@ -24,6 +24,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     isPromo: true,
     isFeatured: true,
     isBestSeller: true,
+    isWholesaleAvailable: true,
+    wholesalePrice: 2100,
+    wholesaleMinQty: 6,
+    wholesalePackDescription: 'Lot Grossiste (Carton de 6 flacons)',
     createdAt: '2024-01-15T10:00:00Z',
     images: [
       {
@@ -70,6 +74,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     isPromo: false,
     isFeatured: true,
     isBestSeller: true,
+    isWholesaleAvailable: true,
+    wholesalePrice: 2950,
+    wholesaleMinQty: 6,
+    wholesalePackDescription: 'Lot Salons & Instituts (6 pots)',
     createdAt: '2024-02-01T12:00:00Z',
     images: [
       {
@@ -116,6 +124,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     isPromo: true,
     isFeatured: true,
     isBestSeller: true,
+    isWholesaleAvailable: true,
+    wholesalePrice: 1850,
+    wholesaleMinQty: 10,
+    wholesalePackDescription: 'Carton Grossiste Parapharmacie (10 tubes)',
     createdAt: '2024-02-10T09:30:00Z',
     images: [
       {
@@ -189,6 +201,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     isPromo: false,
     isFeatured: true,
     isBestSeller: true,
+    isWholesaleAvailable: true,
+    wholesalePrice: 1750,
+    wholesaleMinQty: 12,
+    wholesalePackDescription: 'Présentoir Boutiques & Salons (12 pcs)',
     createdAt: '2024-03-01T15:00:00Z',
     images: [
       {
@@ -236,6 +252,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     isPromo: true,
     isFeatured: true,
     isBestSeller: false,
+    isWholesaleAvailable: true,
+    wholesalePrice: 2700,
+    wholesaleMinQty: 6,
+    wholesalePackDescription: 'Lot Pro Maquilleurs & Salons (6 flacons)',
     createdAt: '2024-03-05T14:00:00Z',
     images: [
       {
@@ -274,6 +294,10 @@ export const INITIAL_PRODUCTS: Product[] = [
     isPromo: false,
     isFeatured: true,
     isBestSeller: true,
+    isWholesaleAvailable: true,
+    wholesalePrice: 2300,
+    wholesaleMinQty: 6,
+    wholesalePackDescription: 'Lot Pro Salons de Coiffure (6 flacons)',
     createdAt: '2024-02-18T11:00:00Z',
     images: [
       {

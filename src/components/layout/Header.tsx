@@ -48,6 +48,7 @@ export const Header: React.FC = () => {
     { label: 'Parfums', path: '/categories/parfums' },
     { label: 'Coffrets', path: '/categories/coffrets' },
     { label: 'Promotions', path: '/shop?filter=promo', isPromo: true },
+    { label: 'Vente en Gros', path: '/wholesale', isPro: true },
     { label: 'Nouveautés', path: '/shop?filter=new' },
   ];
 
@@ -92,17 +93,24 @@ export const Header: React.FC = () => {
                   <Link
                     key={link.path}
                     to={link.path}
-                    className={`text-xs font-medium tracking-wide uppercase transition-colors relative py-1 ${
+                    className={`text-xs font-medium tracking-wide uppercase transition-colors relative py-1 flex items-center ${
                       isActive
                         ? 'text-rose-900 font-semibold'
                         : link.isPromo
                         ? 'text-rose-600 font-semibold hover:text-rose-800'
+                        : link.isPro
+                        ? 'text-amber-900 font-bold hover:text-amber-700'
                         : 'text-deep/80 hover:text-rose-800'
                     }`}
                   >
-                    {link.label}
+                    <span>{link.label}</span>
                     {link.isPromo && (
                       <span className="inline-block w-1.5 h-1.5 rounded-full bg-rose-500 ml-1 mb-0.5" />
+                    )}
+                    {link.isPro && (
+                      <span className="ml-1 px-1.5 py-0.2 rounded-full bg-amber-400 text-stone-950 font-extrabold text-[9px] tracking-tight">
+                        PRO
+                      </span>
                     )}
                     {isActive && (
                       <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-rose-500 rounded-full" />
@@ -249,15 +257,22 @@ export const Header: React.FC = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`block px-3 py-2 rounded-xl text-sm font-medium ${
+                  className={`flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium ${
                     location.pathname === link.path
                       ? 'bg-rose-50 text-rose-900 font-bold'
                       : link.isPromo
                       ? 'text-rose-600 font-bold'
+                      : link.isPro
+                      ? 'text-amber-900 font-bold bg-amber-50/60'
                       : 'text-deep hover:bg-ivory'
                   }`}
                 >
-                  {link.label}
+                  <span>{link.label}</span>
+                  {link.isPro && (
+                    <span className="px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 font-extrabold text-[10px]">
+                      PRO
+                    </span>
+                  )}
                 </Link>
               ))}
             </div>

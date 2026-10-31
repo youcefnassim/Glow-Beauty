@@ -26,7 +26,8 @@ export const CartPage: React.FC = () => {
     selectedDeliveryType,
     setSelectedDeliveryType,
     freeDeliveryThreshold,
-    amountNeededForFreeShipping
+    amountNeededForFreeShipping,
+    getItemEffectivePrice
   } = useCart();
 
   const [couponInput, setCouponInput] = useState('');
@@ -127,9 +128,15 @@ export const CartPage: React.FC = () => {
                         Option: <strong className="text-deep">{item.variant.name}</strong>
                       </p>
                     )}
-                    <p className="text-xs font-bold text-deep sm:hidden">
-                      {formatPriceDZD(item.priceAtAddition)}
-                    </p>
+                    {item.isWholesalePriceApplied ? (
+                      <span className="inline-block text-[10px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded border border-amber-200">
+                        🏷️ Tarif Gros ({formatPriceDZD(getItemEffectivePrice(item).unitPrice)}/u)
+                      </span>
+                    ) : (
+                      <p className="text-xs font-bold text-deep sm:hidden">
+                        {formatPriceDZD(item.priceAtAddition)}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -157,12 +164,18 @@ export const CartPage: React.FC = () => {
 
                   {/* Subtotal for line */}
                   <div className="text-right min-w-24">
-                    <span className="font-serif text-sm sm:text-base font-bold text-deep">
-                      {formatPriceDZD(item.priceAtAddition * item.quantity)}
+                    <span className="font-serif text-sm sm:text-base font-bold text-deep block">
+                      {formatPriceDZD(getItemEffectivePrice(item).unitPrice * item.quantity)}
                     </span>
-                    <p className="text-[11px] text-mutedText hidden sm:block">
-                      {formatPriceDZD(item.priceAtAddition)} / unité
-                    </p>
+                    {item.isWholesalePriceApplied ? (
+                      <p className="text-[11px] text-mutedText line-through hidden sm:block">
+                        {formatPriceDZD(item.priceAtAddition * item.quantity)}
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-mutedText hidden sm:block">
+                        {formatPriceDZD(item.priceAtAddition)} / unité
+                      </p>
+                    )}
                   </div>
 
                   {/* Delete button */}

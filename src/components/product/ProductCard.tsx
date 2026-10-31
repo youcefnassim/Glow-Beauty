@@ -60,6 +60,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             Top Vente
           </span>
         )}
+        {product.isWholesaleAvailable && product.wholesalePrice && (
+          <span className="bg-amber-800 text-white text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md uppercase tracking-wider shadow-2xs">
+            Dispo en Gros
+          </span>
+        )}
       </div>
 
       {/* Compact Wishlist Button in top-right */}
@@ -152,6 +157,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </span>
               )}
             </div>
+            {product.isWholesaleAvailable && product.wholesalePrice && (
+              <p className="text-[10px] text-amber-800 font-semibold truncate leading-tight mt-0.5">
+                Gros : <span className="font-bold">{formatPriceDZD(product.wholesalePrice)}</span>
+              </p>
+            )}
             {product.stock <= 5 && product.stock > 0 && (
               <p className="text-[9px] text-amber-700 font-medium truncate mt-0.5">
                 Plus que {product.stock} en stock

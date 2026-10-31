@@ -19,6 +19,8 @@ interface CartContextType {
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
   addItem: (product: Product, variant?: ProductVariant, quantity?: number) => { success: boolean; message?: string };
+  addWholesalePack: (product: Product, variant?: ProductVariant, packQty?: number) => { success: boolean; message?: string };
+  getItemEffectivePrice: (item: CartItem) => { unitPrice: number; isWholesale: boolean };
   updateQuantity: (cartItemId: string, newQuantity: number) => void;
   removeItem: (cartItemId: string) => void;
   clearCart: () => void;
@@ -102,7 +104,23 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Calculations
-  const subtotal = items.reduce((sum, item) => sum + item.priceAtAddition * item.quantity, 0);
+  const getItemEffectivePrice = (item: CartItem): { unitPrice: number; isWholesale: boolean } => {
+    const basePrice = item.variant ? item.variant.price : item.product.price;
+    const isWholesale = Boolean(
+      item.product.isWholesaleAvailable && 
+      item.product.wholesalePrice && 
+      item.quantity >= (item.product.wholesaleMinQty || 6)
+    );
+    return {
+      unitPrice: isWholesale ? item.product.wholesalePrice! : basePrice,
+      isWholesale
+    };
+  };
+
+  const subtotal = items.reduce((sum, item) => {
+    const { unitPrice } = getItemEffectivePrice(item);
+    return sum + unitPrice * item.quantity;
+  }, 0);
 
   // Discount calculation
   let discount = 0;
@@ -136,21 +154,31 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const variantId = variant?.id;
     const cartItemId = variantId ? `${product.id}_${variantId}` : product.id;
     const availableStock = variant ? variant.stock : product.stock;
-    const price = variant ? variant.price : product.price;
+    const basePrice = variant ? variant.price : product.price;
 
     const existingIndex = items.findIndex(i => i.id === cartItemId);
     const currentQtyInCart = existingIndex >= 0 ? items[existingIndex].quantity : 0;
+    const newQty = currentQtyInCart + quantity;
 
-    if (currentQtyInCart + quantity > availableStock) {
+    if (newQty > availableStock) {
       return { 
         success: false, 
         message: `Quantité demandée indisponible. Stock restant : ${availableStock}` 
       };
     }
 
+    const isWholesale = Boolean(
+      product.isWholesaleAvailable && 
+      product.wholesalePrice && 
+      newQty >= (product.wholesaleMinQty || 6)
+    );
+    const effectiveUnitPrice = isWholesale ? product.wholesalePrice! : basePrice;
+
     if (existingIndex >= 0) {
       const updated = [...items];
-      updated[existingIndex].quantity += quantity;
+      updated[existingIndex].quantity = newQty;
+      updated[existingIndex].priceAtAddition = effectiveUnitPrice;
+      updated[existingIndex].isWholesalePriceApplied = isWholesale;
       setItems(updated);
     } else {
       const newItem: CartItem = {
@@ -159,14 +187,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         variantId,
         product,
         variant,
-        quantity,
-        priceAtAddition: price,
+        quantity: newQty,
+        priceAtAddition: effectiveUnitPrice,
+        isWholesalePriceApplied: isWholesale,
       };
       setItems([...items, newItem]);
     }
 
     setIsCartOpen(true);
     return { success: true };
+  };
+
+  const addWholesalePack = (product: Product, variant?: ProductVariant, packQty?: number): { success: boolean; message?: string } => {
+    const minQty = packQty || product.wholesaleMinQty || 6;
+    return addItem(product, variant, minQty);
   };
 
   const updateQuantity = (cartItemId: string, newQuantity: number) => {
@@ -180,7 +214,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (item.id === cartItemId) {
           const maxStock = item.variant ? item.variant.stock : item.product.stock;
           const cappedQty = Math.min(newQuantity, maxStock);
-          return { ...item, quantity: cappedQty };
+          const basePrice = item.variant ? item.variant.price : item.product.price;
+          const isWholesale = Boolean(
+            item.product.isWholesaleAvailable && 
+            item.product.wholesalePrice && 
+            cappedQty >= (item.product.wholesaleMinQty || 6)
+          );
+          const effectivePrice = isWholesale ? item.product.wholesalePrice! : basePrice;
+
+          return { 
+            ...item, 
+            quantity: cappedQty,
+            priceAtAddition: effectivePrice,
+            isWholesalePriceApplied: isWholesale,
+          };
         }
         return item;
       })
@@ -247,6 +294,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isCartOpen,
         setIsCartOpen,
         addItem,
+        addWholesalePack,
+        getItemEffectivePrice,
         updateQuantity,
         removeItem,
         clearCart,

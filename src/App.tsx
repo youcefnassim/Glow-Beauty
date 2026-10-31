@@ -15,6 +15,7 @@ import { CheckoutPage } from '@/pages/CheckoutPage';
 import { OrderConfirmationPage } from '@/pages/OrderConfirmationPage';
 import { TrackOrderPage } from '@/pages/TrackOrderPage';
 import { WishlistPage } from '@/pages/WishlistPage';
+import { WholesalePage } from '@/pages/WholesalePage';
 
 // Auth Pages
 import { LoginPage } from '@/pages/auth/LoginPage';
@@ -134,6 +135,22 @@ export function App() {
                   element={
                     <Layout>
                       <WishlistPage />
+                    </Layout>
+                  }
+                />
+                <Route
+                  path="/wholesale"
+                  element={
+                    <Layout>
+                      <WholesalePage />
+                    </Layout>
+                  }
+                />
+                <Route
+                  path="/vente-en-gros"
+                  element={
+                    <Layout>
+                      <WholesalePage />
                     </Layout>
                   }
                 />

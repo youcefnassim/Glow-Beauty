@@ -109,6 +109,11 @@ export interface Product {
   isPromo?: boolean;
   isFeatured?: boolean;
   isBestSeller?: boolean;
+  // Wholesale / Vente en gros
+  isWholesaleAvailable?: boolean;
+  wholesalePrice?: number; // DZD unit price in bulk
+  wholesaleMinQty?: number; // Minimum pieces required (e.g. 6 or 12)
+  wholesalePackDescription?: string; // e.g. "Carton de 12 unités", "Pack Salon Pro x6"
   createdAt: string;
 }
 
@@ -120,6 +125,7 @@ export interface CartItem {
   variant?: ProductVariant;
   quantity: number;
   priceAtAddition: number; // DZD
+  isWholesalePriceApplied?: boolean;
 }
 
 export interface Cart {
@@ -220,6 +226,8 @@ export interface StoreSettings {
   enableOnlinePayments: boolean;
   // Production Option 2 notifications and integrations
   whatsappNotificationPhone?: string;
+  wholesaleNotificationPhone?: string;
+  wholesaleMinOrderAmount?: number;
   telegramBotToken?: string;
   telegramChatId?: string;
   googleSheetWebhook?: string;

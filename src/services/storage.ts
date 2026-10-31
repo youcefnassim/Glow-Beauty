@@ -50,12 +50,23 @@ export const StorageService = {
     const list = getFromStorage<Product[]>(KEYS.PRODUCTS, INITIAL_PRODUCTS);
     let updated = false;
     list.forEach(p => {
+      // Sync images if old broken url
       p.images.forEach(img => {
         if (img.url.includes('1608248597359-5f257a41ec58')) {
           img.url = 'https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800&q=80';
           updated = true;
         }
       });
+
+      // Sync wholesale configuration if not present
+      const initialMatch = INITIAL_PRODUCTS.find(ip => ip.id === p.id);
+      if (initialMatch && initialMatch.isWholesaleAvailable && p.isWholesaleAvailable === undefined) {
+        p.isWholesaleAvailable = initialMatch.isWholesaleAvailable;
+        p.wholesalePrice = initialMatch.wholesalePrice;
+        p.wholesaleMinQty = initialMatch.wholesaleMinQty;
+        p.wholesalePackDescription = initialMatch.wholesalePackDescription;
+        updated = true;
+      }
     });
     if (updated) {
       saveToStorage(KEYS.PRODUCTS, list);

@@ -3,7 +3,7 @@ import { StorageService } from '@/services/storage';
 import { StoreSettings } from '@/types';
 import { 
   Settings, Save, CheckCircle2, ShieldAlert, Bell, 
-  KeyRound, Download, Upload, FileJson, AlertCircle, Lock 
+  KeyRound, Download, Upload, FileJson, AlertCircle, Lock, Package 
 } from 'lucide-react';
 
 export const AdminSettingsPage: React.FC = () => {
@@ -266,6 +266,50 @@ export const AdminSettingsPage: React.FC = () => {
             <p className="text-mutedText leading-relaxed">
               Pour activer le paiement par carte bancaire en ligne, vous devez souscrire un contrat e-commerce avec votre banque ou Algérie Poste (SATIM). Une fois les clés d'API marchande (Merchant ID & Secret) fournies, l'option sera disponible.
             </p>
+          </div>
+        </div>
+
+        {/* Wholesale & B2B Orders Settings */}
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
+          <div className="flex items-center gap-2 pb-2 border-b border-stone-100">
+            <Package className="w-5 h-5 text-amber-600" />
+            <h2 className="font-serif text-base font-bold text-deep">
+              Vente en Gros & Commandes Salons / Revendeurs (B2B)
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="font-semibold text-deep block mb-1">
+                Ligne WhatsApp Directe Grossiste
+              </label>
+              <input
+                type="text"
+                value={settings.wholesaleNotificationPhone || ''}
+                onChange={(e) => handleChange('wholesaleNotificationPhone', e.target.value)}
+                placeholder="Ex: 0555000000 ou 213555000000"
+                className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50"
+              />
+              <span className="text-[10px] text-mutedText mt-1 block">
+                Numéro utilisé pour la réception instantanée des demandes de devis et commandes de gros.
+              </span>
+            </div>
+
+            <div>
+              <label className="font-semibold text-deep block mb-1">
+                Seuil minimum recommandé de commande en gros (DZD)
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={settings.wholesaleMinOrderAmount || 15000}
+                onChange={(e) => handleChange('wholesaleMinOrderAmount', Number(e.target.value))}
+                className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-bold"
+              />
+              <span className="text-[10px] text-mutedText mt-1 block">
+                Montant indicatif suggéré pour les commandes en gros sur l'espace pro.
+              </span>
+            </div>
           </div>
         </div>
 

@@ -5,7 +5,7 @@ import { CATEGORIES } from '@/data/categories';
 import { ProductCard } from '@/components/product/ProductCard';
 import { 
   ArrowRight, Sparkles, Shield, Leaf, HeartHandshake, Star, 
-  ChevronDown, ChevronUp, Droplets, Sun, CheckCircle2 
+  ChevronDown, ChevronUp, Droplets, Sun, CheckCircle2, Package 
 } from 'lucide-react';
 
 export const HomePage: React.FC = () => {
@@ -318,6 +318,44 @@ export const HomePage: React.FC = () => {
                   <p className="text-[11px] text-mutedText">Conseillers en Algérie</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHOLESALE / PRO B2B BANNER */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-deep via-stone-900 to-rose-950 text-white p-8 sm:p-12 shadow-luxury border border-amber-400/20">
+          <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-400/10 via-transparent to-transparent pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div className="max-w-2xl space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-bold uppercase tracking-wider">
+                <Package className="w-3.5 h-3.5" />
+                <span>Salons de Beauté, Parapharmacies & Revendeurs</span>
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold">
+                Vous êtes professionnel ? Profitez de nos tarifs grossistes
+              </h2>
+              <p className="text-xs sm:text-sm text-rose-100/90 leading-relaxed font-light">
+                Commandez par lots de 6 ou 10 pièces avec des réductions immédiates jusqu'à <strong>-40%</strong>. Livraison sécurisée sur les 58 wilayas, emballage pro scellé et conseiller B2B dédié.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+              <Link
+                to="/wholesale"
+                className="bg-brand-rose hover:bg-rose-600 text-white font-semibold text-xs sm:text-sm px-6 py-3 rounded-full transition shadow-md flex items-center justify-center gap-2 text-center"
+              >
+                <span>Accéder à l'Espace Gros</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <a
+                href="/wholesale#demande-devis"
+                className="bg-white/10 hover:bg-white/20 text-ivory text-xs font-semibold px-6 py-2.5 rounded-full transition border border-white/20 flex items-center justify-center gap-2 text-center"
+              >
+                <span>Demander un devis rapide</span>
+              </a>
             </div>
           </div>
         </div>
