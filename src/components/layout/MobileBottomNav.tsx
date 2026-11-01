@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
 import { StorageService } from '@/services/storage';
-import { Home, Grid, Search, ShoppingBag } from 'lucide-react';
+import { Home, Grid, ShoppingBag, Package } from 'lucide-react';
 
 export const MobileBottomNav: React.FC = () => {
   const location = useLocation();
@@ -17,12 +17,9 @@ export const MobileBottomNav: React.FC = () => {
 
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent("Bonjour Glow Beauty DZ, j'aimerais avoir des renseignements sur vos produits 🌸")}`;
 
-  const handleOpenSearch = () => {
-    window.dispatchEvent(new CustomEvent('open-search-modal'));
-  };
-
   const isHome = location.pathname === '/';
   const isShop = location.pathname === '/shop' || location.pathname.startsWith('/categories');
+  const isWholesale = location.pathname === '/wholesale';
 
   return (
     <nav 
@@ -66,15 +63,21 @@ export const MobileBottomNav: React.FC = () => {
         <span className="text-[9px] font-bold text-emerald-700">WhatsApp</span>
       </a>
 
-      {/* 4. Recherche */}
-      <button 
-        onClick={handleOpenSearch}
-        type="button"
-        className="flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-stone-500 hover:text-deep transition cursor-pointer"
+      {/* 4. Vente en Gros */}
+      <Link 
+        to="/wholesale" 
+        className={`flex flex-col items-center gap-0.5 py-1 px-1.5 sm:px-2 rounded-xl transition ${
+          isWholesale ? 'text-amber-900 font-bold' : 'text-stone-500 hover:text-deep'
+        }`}
       >
-        <Search className="w-5 h-5 stroke-2" />
-        <span className="text-[10px] tracking-tight">Recherche</span>
-      </button>
+        <div className="relative">
+          <Package className={`w-5 h-5 ${isWholesale ? 'stroke-[2.5] text-amber-700' : 'stroke-2'}`} />
+          <span className="absolute -top-1 -right-2 px-1 py-0.2 bg-amber-300 text-amber-950 text-[7px] font-extrabold rounded-full leading-tight uppercase shadow-2xs">
+            Pro
+          </span>
+        </div>
+        <span className="text-[10px] tracking-tight whitespace-nowrap">Vente en gros</span>
+      </Link>
 
       {/* 5. Panier */}
       <button 
