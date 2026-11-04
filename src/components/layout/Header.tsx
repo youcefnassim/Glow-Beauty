@@ -1,24 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
-import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { SearchModal } from './SearchModal';
 import { 
-  Search, Heart, ShoppingBag, User, Menu, X, ChevronDown, Sparkles, LogOut, Shield, Globe 
+  Search, Heart, Menu, X, Sparkles, Globe 
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
   const { language, setLanguage, isRtl, t } = useLanguage();
-  const { itemCount, setIsCartOpen } = useCart();
   const { wishlistCount } = useWishlist();
-  const { user, isAdmin, logout } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -32,7 +27,6 @@ export const Header: React.FC = () => {
   // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
-    setIsUserDropdownOpen(false);
   }, [location.pathname]);
 
   // Listen for open-search-modal event from mobile bottom nav
@@ -128,143 +122,37 @@ export const Header: React.FC = () => {
               })}
             </nav>
 
-            {/* Action Icons */}
-            <div className="flex items-center space-x-1 sm:space-x-3">
-              {/* Language Switcher Toggle */}
+            {/* Action Icons: Only Language (FR/AR) and Search */}
+            <div className="flex items-center gap-1.5 sm:gap-2.5">
+              {/* Language Switcher Toggle (FR/AR) */}
               <button
+                type="button"
                 onClick={() => setLanguage(language === 'fr' ? 'ar' : 'fr')}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-rose-200/80 bg-white/90 hover:bg-white text-deep text-xs font-semibold shadow-2xs hover:border-rose-300 transition cursor-pointer"
-                title={language === 'fr' ? 'Passer en Arabe (العربية)' : 'Passer en Français'}
-                aria-label="Changer de langue / تغيير اللغة"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-rose-200/90 bg-white/95 hover:bg-white text-deep text-xs font-semibold shadow-2xs hover:border-rose-300 transition cursor-pointer"
+                title={language === 'fr' ? 'Passer en Arabe (AR)' : 'Passer en Français (FR)'}
+                aria-label="Changer de langue FR/AR"
               >
-                <Globe className="w-3.5 h-3.5 text-rose-700" />
-                <span className="font-bold text-[11px] tracking-wide text-rose-900">
-                  {language === 'fr' ? 'العربية' : 'FR'}
+                <Globe className="w-3.5 h-3.5 text-rose-700 shrink-0" />
+                <span className="font-bold text-xs tracking-wider flex items-center gap-1">
+                  <span className={language === 'fr' ? 'text-rose-900 font-extrabold underline decoration-rose-500 decoration-2 underline-offset-2' : 'text-stone-400 font-medium'}>
+                    FR
+                  </span>
+                  <span className="text-stone-300 font-normal">/</span>
+                  <span className={language === 'ar' ? 'text-rose-900 font-extrabold underline decoration-rose-500 decoration-2 underline-offset-2' : 'text-stone-400 font-medium'}>
+                    AR
+                  </span>
                 </span>
               </button>
 
               {/* Search Icon */}
               <button
+                type="button"
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 text-deep hover:text-rose-800 hover:bg-rose-50 rounded-full transition cursor-pointer"
                 title={t('nav.search')}
                 aria-label="Rechercher"
               >
                 <Search className="w-5 h-5" />
-              </button>
-
-              {/* Wishlist */}
-              <Link
-                to="/wishlist"
-                className="p-2 text-deep hover:text-rose-800 hover:bg-rose-50 rounded-full transition relative hidden sm:flex cursor-pointer"
-                title="Mes Favoris"
-                aria-label="Mes Favoris"
-              >
-                <Heart className="w-5 h-5" />
-                {wishlistCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-brand-rose text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                    {wishlistCount}
-                  </span>
-                )}
-              </Link>
-
-              {/* Account Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                  className="p-2 text-deep hover:text-rose-800 hover:bg-rose-50 rounded-full transition flex items-center gap-1 cursor-pointer"
-                  title="Mon Compte"
-                  aria-label="Menu du compte utilisateur"
-                >
-                  <User className="w-5 h-5" />
-                  <ChevronDown className="w-3 h-3 text-mutedText hidden md:inline" />
-                </button>
-
-                {isUserDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-luxury border border-rose-100 py-2 z-50 animate-fadeIn">
-                    {user ? (
-                      <div>
-                        <div className="px-4 py-2 border-b border-rose-100">
-                          <p className="text-xs text-mutedText">Connecté en tant que</p>
-                          <p className="text-sm font-semibold text-deep truncate">{user.fullName}</p>
-                          <p className="text-[11px] text-rose-700 capitalize font-medium">{user.role}</p>
-                        </div>
-
-                        {isAdmin && (
-                          <Link
-                            to="/admin"
-                            className="flex items-center gap-2 px-4 py-2.5 text-xs text-rose-800 hover:bg-rose-50 font-semibold"
-                          >
-                            <Shield className="w-4 h-4 text-rose-700" />
-                            Tableau de bord Admin
-                          </Link>
-                        )}
-
-                        <Link
-                          to="/account"
-                          className="flex items-center gap-2 px-4 py-2 text-xs text-deep hover:bg-ivory"
-                        >
-                          <User className="w-4 h-4 text-mutedText" />
-                          Mon profil
-                        </Link>
-                        <Link
-                          to="/account/orders"
-                          className="flex items-center gap-2 px-4 py-2 text-xs text-deep hover:bg-ivory"
-                        >
-                          <ShoppingBag className="w-4 h-4 text-mutedText" />
-                          Mes commandes
-                        </Link>
-                        <Link
-                          to="/wishlist"
-                          className="flex items-center gap-2 px-4 py-2 text-xs text-deep hover:bg-ivory sm:hidden"
-                        >
-                          <Heart className="w-4 h-4 text-mutedText" />
-                          Mes favoris ({wishlistCount})
-                        </Link>
-
-                        <div className="border-t border-rose-100 mt-1 pt-1">
-                          <button
-                            onClick={() => logout()}
-                            className="w-full flex items-center gap-2 px-4 py-2 text-xs text-red-600 hover:bg-red-50 text-left cursor-pointer"
-                          >
-                            <LogOut className="w-4 h-4" />
-                            Se déconnecter
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="p-2 space-y-1">
-                        <Link
-                          to="/login"
-                          className="block text-center bg-deep hover:bg-rose-900 text-ivory text-xs font-semibold py-2 rounded-xl transition"
-                        >
-                          Se connecter
-                        </Link>
-                        <Link
-                          to="/register"
-                          className="block text-center text-xs text-deep hover:bg-rose-50 py-2 rounded-xl font-medium"
-                        >
-                          Créer un compte
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Shopping Cart Trigger */}
-              <button
-                onClick={() => setIsCartOpen(true)}
-                className="p-2 text-deep hover:text-rose-800 hover:bg-rose-50 rounded-full transition relative cursor-pointer"
-                title="Panier d'achats"
-                aria-label="Panier d'achats"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                {itemCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-deep text-ivory text-[10px] font-bold rounded-full flex items-center justify-center">
-                    {itemCount}
-                  </span>
-                )}
               </button>
             </div>
           </div>
@@ -309,10 +197,10 @@ export const Header: React.FC = () => {
                     type="button"
                     onClick={() => setLanguage('fr')}
                     className={`px-3 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
-                      language === 'fr' ? 'bg-white text-deep shadow-xs' : 'text-stone-600 hover:text-deep'
+                      language === 'fr' ? 'bg-white text-rose-900 shadow-xs' : 'text-stone-600 hover:text-deep'
                     }`}
                   >
-                    Français
+                    FR
                   </button>
                   <button
                     type="button"
@@ -321,7 +209,7 @@ export const Header: React.FC = () => {
                       language === 'ar' ? 'bg-white text-rose-900 shadow-xs' : 'text-stone-600 hover:text-deep'
                     }`}
                   >
-                    العربية
+                    AR
                   </button>
                 </div>
               </div>

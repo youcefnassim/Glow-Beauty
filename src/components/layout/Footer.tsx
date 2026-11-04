@@ -180,6 +180,11 @@ export const Footer: React.FC = () => {
                   Conditions générales de vente
                 </Link>
               </li>
+              <li>
+                <Link to="/admin" className="hover:text-rose-300 transition text-stone-400 text-[11px] flex items-center gap-1 pt-1">
+                  <span>{language === 'ar' ? 'فضاء الإدارة' : 'Espace Administration'}</span>
+                </Link>
+              </li>
             </ul>
           </div>
 
