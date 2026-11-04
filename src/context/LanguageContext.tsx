@@ -1,67 +1,113 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type Language = 'fr' | 'ar' | 'en';
+export type Language = 'fr' | 'ar';
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   isRtl: boolean;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
+  getProductName: (product: { nameFr: string; nameAr?: string }) => string;
+  getCategoryName: (category: { nameFr: string; nameAr?: string }) => string;
+  getWilayaName: (wilaya: { nameFr: string; nameAr: string }) => string;
+  formatPrice: (amount: number) => string;
 }
 
 const translations: Record<Language, Record<string, string>> = {
   fr: {
+    // Navigation
     'nav.home': 'Accueil',
+    'nav.shop': 'Boutique',
     'nav.skincare': 'Soins du visage',
     'nav.makeup': 'Maquillage',
     'nav.haircare': 'Cheveux',
     'nav.perfumes': 'Parfums',
     'nav.sets': 'Coffrets',
+    'nav.wholesale': 'Vente en Gros',
     'nav.promotions': 'Promotions',
     'nav.newArrivals': 'Nouveautés',
     'nav.search': 'Rechercher un soin, parfum...',
-    'nav.account': 'Compte',
+    'nav.account': 'Mon Compte',
     'nav.wishlist': 'Favoris',
     'nav.cart': 'Panier',
-    
-    // Product
+    'nav.trackOrder': 'Suivre mon colis',
+    'nav.admin': 'Tableau de bord Admin',
+
+    // Value Props & Hero
+    'hero.tag': 'HAUTE COSMÉTIQUE & SOINS PURIFIÉS • ALGÉRIE',
+    'hero.title': 'Révélez votre beauté naturelle',
+    'hero.subtitle': 'Découvrez des rituels de soins formulés avec les actifs botaniques les plus nobles et une rigueur dermatologique absolue. Une expérience sensorielle sur-mesure.',
+    'hero.ctaCollection': 'Découvrir la collection',
+    'hero.ctaNew': 'Nos nouveautés',
+    'props.wilayas': '58 Wilayas desservies',
+    'props.cod': '100% Paiement à la livraison',
+    'props.satisfaction': 'Satisfaction cliente',
+
+    // Product Card & Detail
     'product.addToCart': 'Ajouter au panier',
-    'product.buyNow': 'Acheter maintenant',
+    'product.buyNow': 'Commander maintenant (Paiement à la livraison)',
     'product.outOfStock': 'Rupture de stock',
-    'product.inStock': 'En stock',
-    'product.ingredients': 'Ingrédients & Composition',
-    'product.usage': 'Conseils d’application',
+    'product.inStock': 'En stock disponible',
+    'product.ingredients': 'Ingrédients & Formulation (INCI)',
+    'product.usage': 'Conseils d’Utilisation & Rituel',
     'product.skinType': 'Type de peau conseillé',
     'product.reviews': 'Avis vérifiés',
     'product.writeReview': 'Donner mon avis',
     'product.new': 'Nouveau',
     'product.promo': 'Promo',
-    'product.bestSeller': 'Best-seller',
+    'product.bestSeller': 'Top Vente',
+    'product.wholesaleAvailable': 'Dispo en Gros',
+    'product.addedSuccess': 'Ajouté !',
+    'product.selectVariant': 'Sélectionnez votre teinte / format :',
+
+    // Wholesale B2B
+    'wholesale.title': 'Vente en Gros & Professionnels',
+    'wholesale.subtitle': 'Tarifs préférentiels dégressifs pour salons de beauté, instituts et revendeurs en Algérie.',
+    'wholesale.badge': 'Espace Pro & Gros',
+    'wholesale.orderWhatsApp': 'Commander par WhatsApp',
+    'wholesale.minPack': 'Lot de {qty} pièces',
+    'wholesale.unitPrice': 'Tarif unitaire gros :',
+    'wholesale.savings': 'Économisez',
 
     // Cart & Checkout
     'cart.title': 'Votre Panier',
     'cart.empty': 'Votre panier est actuellement vide.',
     'cart.continue': 'Découvrir nos soins',
-    'cart.subtotal': 'Sous-total',
-    'cart.discount': 'Remise code promo',
-    'cart.shipping': 'Frais de livraison',
-    'cart.freeShipping': 'Livraison offerte !',
-    'cart.freeShippingThreshold': 'Plus que {amount} pour bénéficier de la livraison offerte',
-    'cart.total': 'Total TTC',
-    'cart.checkout': 'Passer la commande',
-    'cart.couponPlaceholder': 'Code promo (ex: BIENVENUE10)',
-    'cart.apply': 'Appliquer',
+    'cart.subtotal': 'Sous-total articles',
+    'cart.shipping': 'Livraison estimée',
+    'cart.freeShipping': 'Gratuite',
+    'cart.freeShippingCongrats': 'Félicitations ! Livraison offerte partout en Algérie !',
+    'cart.freeShippingThreshold': 'Plus que {amount} pour la livraison offerte',
+    'cart.total': 'Total estimé',
+    'cart.checkout': 'Passer la commande (Paiement à la livraison)',
+    'cart.viewDetails': 'Voir les détails du panier',
+    'cart.secureNotice': 'Paiement sécurisé en espèces à la livraison partout en Algérie (58 wilayas)',
 
-    // Checkout
+    // Checkout Form
     'checkout.title': 'Finaliser ma commande',
-    'checkout.customerInfo': 'Coordonnées du client',
-    'checkout.deliveryInfo': 'Adresse de livraison en Algérie',
-    'checkout.paymentMethod': 'Mode de règlement',
-    'checkout.orderSummary': 'Récapitulatif de la commande',
-    'checkout.placeOrder': 'Confirmer la commande (Paiement à la livraison)',
+    'checkout.customerInfo': 'Coordonnées de livraison',
+    'checkout.fullName': 'Nom & Prénom *',
+    'checkout.phone': 'Numéro de téléphone *',
+    'checkout.phoneHint': 'Nous vous appellerons pour confirmer la livraison.',
+    'checkout.wilaya': 'Wilaya de destination *',
+    'checkout.commune': 'Commune / Ville *',
+    'checkout.address': 'Adresse exacte de livraison *',
+    'checkout.deliveryType': 'Mode de livraison *',
     'checkout.homeDelivery': 'Livraison à domicile',
-    'checkout.stopDesk': 'Livraison en bureau / Stop-desk (Yalidine)',
-    'checkout.codDesc': 'Réglez en espèces à la réception de votre colis en toute sérénité.',
+    'checkout.stopDesk': 'Point relais / Stop-desk Yalidine',
+    'checkout.paymentMethod': 'Mode de paiement',
+    'checkout.codLabel': 'Paiement en espèces à la livraison (COD)',
+    'checkout.orderSummary': 'Récapitulatif de votre commande',
+    'checkout.placeOrder': 'Valider ma commande en 1 clic',
+    'checkout.orderSuccess': 'Commande confirmée avec succès !',
+
+    // Footer
+    'footer.about': 'Jin Makeup DZ — Maison de cosmétiques & beauté de prestige en Algérie. Livraison express 58 wilayas avec paiement sécurisé à la livraison.',
+    'footer.quickLinks': 'Liens Rapides',
+    'footer.customerService': 'Service Client & Aide',
+    'footer.contact': 'Contact & Showroom',
+    'footer.address': 'Alger Centre, Algérie',
+    'footer.rights': 'Tous droits réservés.',
 
     // Common
     'common.currency': 'DA',
@@ -69,59 +115,103 @@ const translations: Record<Language, Record<string, string>> = {
     'common.filter': 'Filtrer',
     'common.sort': 'Trier par',
     'common.loading': 'Chargement...',
+    'common.back': 'Retour',
   },
+
   ar: {
+    // Navigation
     'nav.home': 'الرئيسية',
+    'nav.shop': 'المتجر',
     'nav.skincare': 'العناية بالبشرة',
     'nav.makeup': 'المكياج',
     'nav.haircare': 'العناية بالشعر',
     'nav.perfumes': 'العطور',
     'nav.sets': 'أطقم الهدايا',
-    'nav.promotions': 'العروض والتخفيضات',
-    'nav.newArrivals': 'وصل حديثاً',
-    'nav.search': 'ابحثي عن منتج، عطر، عناية...',
+    'nav.wholesale': 'البيع بالجملة',
+    'nav.promotions': 'التخفيضات',
+    'nav.newArrivals': 'جديدنا',
+    'nav.search': 'ابحثي عن مستحضر، عطر، مكياج...',
     'nav.account': 'حسابي',
     'nav.wishlist': 'المفضلة',
     'nav.cart': 'السلة',
+    'nav.trackOrder': 'تتبع طلبيتي',
+    'nav.admin': 'لوحة الإدارة',
 
-    // Product
+    // Value Props & Hero
+    'hero.tag': 'مستحضرات تجميل راقية وعناية نقية • الجزائر',
+    'hero.title': 'أبرزي جمالك الطبيعي',
+    'hero.subtitle': 'اكتشفي طقوس عناية استثنائية مصممة بأجود المكونات الطبيعية النباتية ومعايير طبية جلدية عالية. تجربة عناية تفوق التوقعات.',
+    'hero.ctaCollection': 'اكتشفي المجموعة',
+    'hero.ctaNew': 'جديد منتجاتنا',
+    'props.wilayas': 'التوصيل لكافة الـ 58 ولاية',
+    'props.cod': 'دفع 100% عند الاستلام',
+    'props.satisfaction': 'رضاء زبائننا هدفنا الأول',
+
+    // Product Card & Detail
     'product.addToCart': 'أضف إلى السلة',
-    'product.buyNow': 'اشتري الآن',
+    'product.buyNow': 'اطلبي الآن (الدفع عند الاستلام)',
     'product.outOfStock': 'نفذت الكمية',
-    'product.inStock': 'متوفر بالمخزون',
-    'product.ingredients': 'المكونات والتركيبة',
-    'product.usage': 'طريقة الاستعمال',
+    'product.inStock': 'متوفر في المخزون',
+    'product.ingredients': 'المكونات والتركيبة (INCI)',
+    'product.usage': 'طريقة الاستعمال وطقوس العناية',
     'product.skinType': 'نوع البشرة المناسب',
     'product.reviews': 'تقييمات موثوقة',
     'product.writeReview': 'اكتبي تقييماً',
     'product.new': 'جديد',
     'product.promo': 'تخفيض',
     'product.bestSeller': 'الأكثر طلباً',
+    'product.wholesaleAvailable': 'متوفر بالجملة',
+    'product.addedSuccess': 'تمت الإضافة !',
+    'product.selectVariant': 'اختاري الحجم أو الدرجة :',
+
+    // Wholesale B2B
+    'wholesale.title': 'البيع بالجملة والمهنيين',
+    'wholesale.subtitle': 'أسعار تفضيلية خاصة بصالونات الحلاقة والتجميل، والموزعين في كامل ولايات الجزائر.',
+    'wholesale.badge': 'فضاء المحترفين والجملة',
+    'wholesale.orderWhatsApp': 'الطلب المباشر عبر واتساب',
+    'wholesale.minPack': 'حزمة من {qty} قطع',
+    'wholesale.unitPrice': 'سعر الوحدة بالجملة :',
+    'wholesale.savings': 'وفري',
 
     // Cart & Checkout
-    'cart.title': 'سلة المشتريات',
-    'cart.empty': 'سلة التسوق فارغة حالياً.',
+    'cart.title': 'سلة مشترياتك',
+    'cart.empty': 'سلة مشترياتك فارغة حالياً.',
     'cart.continue': 'استكشفي منتجاتنا',
-    'cart.subtotal': 'المجموع الفرعي',
-    'cart.discount': 'قيمة التخفيض',
-    'cart.shipping': 'تكلفة التوصيل',
-    'cart.freeShipping': 'توصيل مجاني !',
+    'cart.subtotal': 'مجموع المنتجات',
+    'cart.shipping': 'التوصيل التقديري',
+    'cart.freeShipping': 'مجاني',
+    'cart.freeShippingCongrats': 'تهانينا ! التوصيل مجاني لكافة ولايات الجزائر !',
     'cart.freeShippingThreshold': 'تبقى {amount} للاستفادة من التوصيل المجاني',
     'cart.total': 'المجموع الكلي',
-    'cart.checkout': 'إتمام الطلب',
-    'cart.couponPlaceholder': 'رمز القسيمة (مثال: BIENVENUE10)',
-    'cart.apply': 'تطبيق',
+    'cart.checkout': 'إتمام الطلب (الدفع عند الاستلام)',
+    'cart.viewDetails': 'عرض تفاصيل السلة',
+    'cart.secureNotice': 'دفع آمن نقداً عند الاستلام في كافة الـ 58 ولاية جزائرية',
 
-    // Checkout
-    'checkout.title': 'تأكيد الطلب',
-    'checkout.customerInfo': 'معلومات الزبونة',
-    'checkout.deliveryInfo': 'عنوان التوصيل في الجزائر',
-    'checkout.paymentMethod': 'طريقة الدفع',
-    'checkout.orderSummary': 'ملخص الطلبية',
-    'checkout.placeOrder': 'تأكيد الطلب (الدفع عند الاستلام)',
-    'checkout.homeDelivery': 'توصيل إلى باب المنزل',
+    // Checkout Form
+    'checkout.title': 'تأكيد طلبك',
+    'checkout.customerInfo': 'معلومات المستلم والتوصيل',
+    'checkout.fullName': 'الاسم واللقب *',
+    'checkout.phone': 'رقم الهاتف *',
+    'checkout.phoneHint': 'سنتصل بك لتأكيد التوصيل قبل الإرسال.',
+    'checkout.wilaya': 'الولاية *',
+    'checkout.commune': 'البلدية / المدينة *',
+    'checkout.address': 'العنوان بالتفصيل *',
+    'checkout.deliveryType': 'طريقة الاستلام *',
+    'checkout.homeDelivery': 'توصيل لباب المنزل',
     'checkout.stopDesk': 'استلام من مكتب التوصيل (Stop-Desk)',
-    'checkout.codDesc': 'ادفعي نقداً بأمان تام عند استلام طردك من عون التوصيل.',
+    'checkout.paymentMethod': 'طريقة الدفع',
+    'checkout.codLabel': 'الدفع نقداً عند استلام الطرد',
+    'checkout.orderSummary': 'ملخص طلبيتك',
+    'checkout.placeOrder': 'تأكيد الطلب بضغطة واحدة',
+    'checkout.orderSuccess': 'تم تسجيل طلبيتك بنجاح !',
+
+    // Footer
+    'footer.about': 'جين ميكب ديزاد — دار مستحضرات التجميل والمكياج الراقية في الجزائر. توصيل سريع لـ 58 ولاية مع دفع آمن عند الاستلام.',
+    'footer.quickLinks': 'روابط سريعة',
+    'footer.customerService': 'خدمة الزبائن والمساعدة',
+    'footer.contact': 'التواصل والمعرض',
+    'footer.address': 'الجزائر العاصمة، الجزائر',
+    'footer.rights': 'جميع الحقوق محفوظة.',
 
     // Common
     'common.currency': 'دج',
@@ -129,66 +219,7 @@ const translations: Record<Language, Record<string, string>> = {
     'common.filter': 'تصفية',
     'common.sort': 'ترتيب حسب',
     'common.loading': 'جاري التحميل...',
-  },
-  en: {
-    'nav.home': 'Home',
-    'nav.skincare': 'Skincare',
-    'nav.makeup': 'Makeup',
-    'nav.haircare': 'Haircare',
-    'nav.perfumes': 'Perfumes',
-    'nav.sets': 'Gift Sets',
-    'nav.promotions': 'Promotions',
-    'nav.newArrivals': 'New Arrivals',
-    'nav.search': 'Search skincare, perfume...',
-    'nav.account': 'Account',
-    'nav.wishlist': 'Wishlist',
-    'nav.cart': 'Cart',
-
-    // Product
-    'product.addToCart': 'Add to Cart',
-    'product.buyNow': 'Buy Now',
-    'product.outOfStock': 'Out of Stock',
-    'product.inStock': 'In Stock',
-    'product.ingredients': 'Ingredients & Formula',
-    'product.usage': 'How to Apply',
-    'product.skinType': 'Skin Type',
-    'product.reviews': 'Verified Reviews',
-    'product.writeReview': 'Write a Review',
-    'product.new': 'New',
-    'product.promo': 'Sale',
-    'product.bestSeller': 'Best Seller',
-
-    // Cart & Checkout
-    'cart.title': 'Shopping Bag',
-    'cart.empty': 'Your shopping bag is empty.',
-    'cart.continue': 'Discover our collection',
-    'cart.subtotal': 'Subtotal',
-    'cart.discount': 'Discount',
-    'cart.shipping': 'Shipping Fee',
-    'cart.freeShipping': 'Free Shipping!',
-    'cart.freeShippingThreshold': 'Add {amount} more to qualify for Free Shipping',
-    'cart.total': 'Total',
-    'cart.checkout': 'Proceed to Checkout',
-    'cart.couponPlaceholder': 'Promo code (e.g. BIENVENUE10)',
-    'cart.apply': 'Apply',
-
-    // Checkout
-    'checkout.title': 'Complete Your Order',
-    'checkout.customerInfo': 'Customer Information',
-    'checkout.deliveryInfo': 'Delivery Address in Algeria',
-    'checkout.paymentMethod': 'Payment Method',
-    'checkout.orderSummary': 'Order Summary',
-    'checkout.placeOrder': 'Confirm Order (Cash on Delivery)',
-    'checkout.homeDelivery': 'Home Delivery',
-    'checkout.stopDesk': 'Pick up at Bureau / Stop-Desk',
-    'checkout.codDesc': 'Pay securely with cash upon delivery of your package.',
-
-    // Common
-    'common.currency': 'DZD',
-    'common.viewAll': 'View all',
-    'common.filter': 'Filter',
-    'common.sort': 'Sort by',
-    'common.loading': 'Loading...',
+    'common.back': 'رجوع',
   },
 };
 
@@ -196,7 +227,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    return (localStorage.getItem('glow_language') as Language) || 'fr';
+    const saved = localStorage.getItem('glow_language');
+    return saved === 'ar' ? 'ar' : 'fr';
   });
 
   const isRtl = language === 'ar';
@@ -211,12 +243,53 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
   }, [language, isRtl]);
 
-  const t = (key: string): string => {
-    return translations[language][key] || translations.fr[key] || key;
+  const t = (key: string, params?: Record<string, string | number>): string => {
+    let str = translations[language]?.[key] || translations.fr[key] || key;
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        str = str.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
+      });
+    }
+    return str;
+  };
+
+  const getProductName = (product: { nameFr: string; nameAr?: string }): string => {
+    if (isRtl && product.nameAr && product.nameAr.trim().length > 0) {
+      return product.nameAr;
+    }
+    return product.nameFr;
+  };
+
+  const getCategoryName = (category: { nameFr: string; nameAr?: string }): string => {
+    if (isRtl && category.nameAr && category.nameAr.trim().length > 0) {
+      return category.nameAr;
+    }
+    return category.nameFr;
+  };
+
+  const getWilayaName = (wilaya: { nameFr: string; nameAr: string }): string => {
+    if (isRtl && wilaya.nameAr) {
+      return wilaya.nameAr;
+    }
+    return wilaya.nameFr;
+  };
+
+  const formatPrice = (amount: number): string => {
+    const formatted = amount.toLocaleString(isRtl ? 'ar-DZ' : 'fr-DZ');
+    return isRtl ? `${formatted} دج` : `${formatted} DA`;
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, isRtl, t }}>
+    <LanguageContext.Provider value={{ 
+      language, 
+      setLanguage, 
+      isRtl, 
+      t, 
+      getProductName, 
+      getCategoryName, 
+      getWilayaName, 
+      formatPrice 
+    }}>
       {children}
     </LanguageContext.Provider>
   );

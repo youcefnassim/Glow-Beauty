@@ -4,6 +4,7 @@ import { Product } from '@/types';
 import { formatPriceDZD } from '@/data/wilayas';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Heart, ShoppingBag, Star, Check } from 'lucide-react';
 
 interface ProductCardProps {
@@ -13,6 +14,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addItem } = useCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { isRtl, getProductName, t, formatPrice } = useLanguage();
   const [justAdded, setJustAdded] = useState(false);
 
   const isFavorited = isInWishlist(product.id);
@@ -52,17 +54,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )}
         {product.isNewArrival && (
           <span className="bg-deep text-ivory text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md uppercase tracking-wider shadow-2xs">
-            Nouveau
+            {t('product.new')}
           </span>
         )}
         {product.isBestSeller && !product.isNewArrival && (
           <span className="bg-brand-rose text-white text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md uppercase tracking-wider shadow-2xs">
-            Top Vente
+            {t('product.bestSeller')}
           </span>
         )}
         {product.isWholesaleAvailable && product.wholesalePrice && (
           <span className="bg-amber-800 text-white text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md uppercase tracking-wider shadow-2xs">
-            Dispo en Gros
+            {t('product.wholesaleAvailable')}
           </span>
         )}
       </div>
@@ -132,7 +134,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           <Link to={`/products/${product.slug}`}>
             <h3 className="font-serif text-xs sm:text-sm font-semibold text-deep line-clamp-2 leading-tight hover:text-rose-700 transition min-h-[1.9rem] sm:min-h-[2.1rem]">
-              {product.nameFr}
+              {getProductName(product)}
             </h3>
           </Link>
 
@@ -149,22 +151,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div className="min-w-0">
             <div className="flex items-baseline gap-1 sm:gap-1.5 flex-wrap">
               <span className="font-serif text-xs sm:text-sm md:text-base font-bold text-deep">
-                {formatPriceDZD(product.price)}
+                {formatPrice(product.price)}
               </span>
               {hasDiscount && (
                 <span className="text-[10px] sm:text-xs text-mutedText line-through">
-                  {formatPriceDZD(product.compareAtPrice!)}
+                  {formatPrice(product.compareAtPrice!)}
                 </span>
               )}
             </div>
             {product.isWholesaleAvailable && product.wholesalePrice && (
               <p className="text-[10px] text-amber-800 font-semibold truncate leading-tight mt-0.5">
-                Gros : <span className="font-bold">{formatPriceDZD(product.wholesalePrice)}</span>
+                {isRtl ? 'الجملة : ' : 'Gros : '}<span className="font-bold">{formatPrice(product.wholesalePrice)}</span>
               </p>
             )}
             {product.stock <= 5 && product.stock > 0 && (
               <p className="text-[9px] text-amber-700 font-medium truncate mt-0.5">
-                Plus que {product.stock} en stock
+                {isRtl ? `تبقى ${product.stock} فقط في المخزون` : `Plus que ${product.stock} en stock`}
               </p>
             )}
           </div>

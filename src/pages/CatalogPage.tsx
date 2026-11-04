@@ -3,11 +3,13 @@ import { useSearchParams, useParams, Link } from 'react-router-dom';
 import { StorageService } from '@/services/storage';
 import { CATEGORIES, BRANDS } from '@/data/categories';
 import { ProductCard } from '@/components/product/ProductCard';
+import { useLanguage } from '@/context/LanguageContext';
 import { 
   Filter, X, Search, RotateCcw, ChevronDown, Check, SlidersHorizontal 
 } from 'lucide-react';
 
 export const CatalogPage: React.FC = () => {
+  const { language, t, getCategoryName, formatPrice } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const { slug } = useParams<{ slug?: string }>();
 
@@ -127,13 +129,13 @@ export const CatalogPage: React.FC = () => {
       {/* Breadcrumbs & Header */}
       <div className="mb-8">
         <nav className="flex items-center gap-2 text-xs text-mutedText mb-3">
-          <Link to="/" className="hover:text-deep transition">Accueil</Link>
+          <Link to="/" className="hover:text-deep transition">{t('nav.home')}</Link>
           <span>/</span>
-          <Link to="/shop" className="hover:text-deep transition">Boutique</Link>
+          <Link to="/shop" className="hover:text-deep transition">{t('nav.shop')}</Link>
           {activeCategoryInfo && (
             <>
               <span>/</span>
-              <span className="text-deep font-semibold">{activeCategoryInfo.nameFr}</span>
+              <span className="text-deep font-semibold">{getCategoryName(activeCategoryInfo)}</span>
             </>
           )}
         </nav>
@@ -141,10 +143,16 @@ export const CatalogPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h1 className="font-serif text-3xl sm:text-4xl font-bold text-deep">
-              {activeCategoryInfo ? activeCategoryInfo.nameFr : filterType === 'promo' ? 'Offres & Promotions' : filterType === 'new' ? 'Nouveautés du Moment' : 'Tous nos soins'}
+              {activeCategoryInfo 
+                ? getCategoryName(activeCategoryInfo) 
+                : filterType === 'promo' 
+                  ? (language === 'ar' ? 'العروض والتخفيضات' : 'Offres & Promotions') 
+                  : filterType === 'new' 
+                    ? (language === 'ar' ? 'جديد وصولنا' : 'Nouveautés du Moment') 
+                    : (language === 'ar' ? 'جميع مستحضراتنا' : 'Tous nos soins')}
             </h1>
             <p className="text-xs sm:text-sm text-mutedText mt-1 max-w-xl">
-              {activeCategoryInfo?.description || 'Formulations précieuses, textures sensorielles et résultats visibles pour votre routine beauté quotidienne.'}
+              {activeCategoryInfo?.description || (language === 'ar' ? 'تركيبات ثمينة، قوام ساحر ونتائج مرئية فورية لروتين جمالك اليومي.' : 'Formulations précieuses, textures sensorielles et résultats visibles pour votre routine beauté quotidienne.')}
             </p>
           </div>
 
@@ -155,22 +163,22 @@ export const CatalogPage: React.FC = () => {
               className="lg:hidden flex items-center gap-2 bg-white border border-rose-200 text-deep text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs"
             >
               <SlidersHorizontal className="w-4 h-4 text-rose-600" />
-              <span>Filtres {hasActiveFilters && '(Actifs)'}</span>
+              <span>{language === 'ar' ? 'تصفية المنتجات' : 'Filtres'} {hasActiveFilters && (language === 'ar' ? '(مفعلة)' : '(Actifs)')}</span>
             </button>
 
             {/* Sort Selector */}
             <div className="flex items-center gap-2 bg-white border border-rose-200 rounded-xl px-3 py-2 text-xs font-medium text-deep shadow-xs">
-              <span className="text-mutedText hidden sm:inline">Trier par:</span>
+              <span className="text-mutedText hidden sm:inline">{language === 'ar' ? 'ترتيب حسب:' : 'Trier par:'}</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="bg-transparent focus:outline-none font-semibold cursor-pointer"
                 aria-label="Trier les produits"
               >
-                <option value="popularity">Popularité & Avis</option>
-                <option value="newest">Nouveautés en premier</option>
-                <option value="price_asc">Prix croissant</option>
-                <option value="price_desc">Prix décroissant</option>
+                <option value="popularity">{language === 'ar' ? 'الأكثر طلباً وتقييماً' : 'Popularité & Avis'}</option>
+                <option value="newest">{language === 'ar' ? 'الأحدث أولاً' : 'Nouveautés en premier'}</option>
+                <option value="price_asc">{language === 'ar' ? 'السعر: من الأقل للأعلى' : 'Prix croissant'}</option>
+                <option value="price_desc">{language === 'ar' ? 'السعر: من الأعلى للأقل' : 'Prix décroissant'}</option>
               </select>
             </div>
           </div>
@@ -264,16 +272,16 @@ export const CatalogPage: React.FC = () => {
           {/* Categories Filter */}
           <div>
             <h3 className="text-xs font-semibold text-deep block mb-2 uppercase tracking-wider">
-              Catégories
+              {language === 'ar' ? 'الفئات والأقسام' : 'Catégories'}
             </h3>
             <div className="space-y-1">
               <button
                 onClick={() => setSelectedCategory('all')}
-                className={`w-full text-left text-xs px-2.5 py-1.5 rounded-lg transition flex items-center justify-between cursor-pointer ${
+                className={`w-full text-left rtl:text-right text-xs px-2.5 py-1.5 rounded-lg transition flex items-center justify-between cursor-pointer ${
                   selectedCategory === 'all' ? 'bg-rose-100 text-rose-900 font-bold' : 'text-stone-600 hover:bg-ivory'
                 }`}
               >
-                <span>Toutes les catégories</span>
+                <span>{language === 'ar' ? 'جميع الفئات' : 'Toutes les catégories'}</span>
                 <span className="text-[11px] text-mutedText">({allProducts.length})</span>
               </button>
               {CATEGORIES.map(cat => {
@@ -282,11 +290,11 @@ export const CatalogPage: React.FC = () => {
                   <button
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.slug)}
-                    className={`w-full text-left text-xs px-2.5 py-1.5 rounded-lg transition flex items-center justify-between cursor-pointer ${
+                    className={`w-full text-left rtl:text-right text-xs px-2.5 py-1.5 rounded-lg transition flex items-center justify-between cursor-pointer ${
                       selectedCategory === cat.slug ? 'bg-rose-100 text-rose-900 font-bold' : 'text-stone-600 hover:bg-ivory'
                     }`}
                   >
-                    <span>{cat.nameFr}</span>
+                    <span>{getCategoryName(cat)}</span>
                     <span className="text-[11px] text-mutedText">({count})</span>
                   </button>
                 );
@@ -447,15 +455,17 @@ export const CatalogPage: React.FC = () => {
 
                 {/* Mobile Categories */}
                 <div>
-                  <h4 className="text-xs font-bold text-deep uppercase mb-2">Catégorie</h4>
+                  <h4 className="text-xs font-bold text-deep uppercase mb-2">
+                    {language === 'ar' ? 'القسم / الفئة' : 'Catégorie'}
+                  </h4>
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="w-full text-xs p-2.5 rounded-xl border border-rose-200 bg-ivory text-deep"
                   >
-                    <option value="all">Toutes les catégories</option>
+                    <option value="all">{language === 'ar' ? 'جميع الفئات' : 'Toutes les catégories'}</option>
                     {CATEGORIES.map(c => (
-                      <option key={c.id} value={c.slug}>{c.nameFr}</option>
+                      <option key={c.id} value={c.slug}>{getCategoryName(c)}</option>
                     ))}
                   </select>
                 </div>

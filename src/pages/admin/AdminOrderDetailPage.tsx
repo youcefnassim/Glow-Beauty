@@ -24,7 +24,7 @@ export const AdminOrderDetailPage: React.FC = () => {
     let cleanPhone = o.customerPhone.replace(/\D/g, '');
     if (cleanPhone.startsWith('0')) cleanPhone = '213' + cleanPhone.substring(1);
     else if (!cleanPhone.startsWith('213')) cleanPhone = '213' + cleanPhone;
-    const text = `Bonjour ${o.customerName},\n\nNous vous contactons de la part de *Glow Beauty DZ* concernant votre commande *${o.orderNumber}* (${formatPriceDZD(o.total)}).\n\nSouhaitez-vous confirmer l'envoi vers ${o.shippingAddress.wilayaName} (${o.shippingAddress.commune}) ?\n\nMerci pour votre confiance ! 🌸`;
+    const text = `Bonjour ${o.customerName},\n\nNous vous contactons de la part de *Jin Makeup DZ* concernant votre commande *${o.orderNumber}* (${formatPriceDZD(o.total)}).\n\nSouhaitez-vous confirmer l'envoi vers ${o.shippingAddress.wilayaName} (${o.shippingAddress.commune}) ?\n\nMerci pour votre confiance ! 🌸`;
     return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(text)}`;
   };
 
@@ -180,7 +180,7 @@ export const AdminOrderDetailPage: React.FC = () => {
               <option value="Yalidine Express">Yalidine Express</option>
               <option value="ZR Express">ZR Express</option>
               <option value="Kazitour Express">Kazitour Express</option>
-              <option value="Coursier Privé">Coursier Privé Glow Beauty</option>
+              <option value="Coursier Privé">Coursier Privé Jin Makeup</option>
             </select>
           </div>
 
@@ -322,10 +322,10 @@ export const AdminOrderDetailPage: React.FC = () => {
         {/* Header */}
         <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight uppercase">Glow Beauty DZ</h1>
-            <p className="text-xs text-gray-600">Cosmétiques & Soins de Beauté Haut de Gamme</p>
+            <h1 className="text-2xl font-bold tracking-tight uppercase">Jin Makeup DZ</h1>
+            <p className="text-xs text-gray-600">Cosmétiques & Beauté Haut de Gamme</p>
             <p className="text-xs text-gray-600 mt-1">14 Rue Didouche Mourad, Alger Centre</p>
-            <p className="text-xs text-gray-600">Tél: 0550 12 34 56 | contact@glowbeauty.dz</p>
+            <p className="text-xs text-gray-600">Tél: 0550 12 34 56 | contact@jinmakeup.dz</p>
           </div>
           <div className="text-right">
             <div className="inline-block border-2 border-black px-3 py-1 font-mono font-bold text-lg mb-1">
@@ -388,7 +388,7 @@ export const AdminOrderDetailPage: React.FC = () => {
               </p>
             )}
             <p>Paiement : Espèces à la livraison (Cash on Delivery)</p>
-            <p className="italic mt-1">Merci pour votre confiance avec Glow Beauty !</p>
+            <p className="italic mt-1">Merci pour votre confiance avec Jin Makeup !</p>
           </div>
           <div className="text-right space-y-1 text-xs">
             <p>Sous-total : <span className="font-mono font-semibold">{formatPriceDZD(order.subtotal)}</span></p>
@@ -406,7 +406,7 @@ export const AdminOrderDetailPage: React.FC = () => {
           <div>
             <p className="font-semibold">Signature & Cachet Vendeur :</p>
             <div className="h-16 mt-1 border border-gray-300 rounded bg-gray-50 flex items-center justify-center text-gray-400 text-[10px]">
-              Glow Beauty DZ
+              Jin Makeup DZ
             </div>
           </div>
           <div>

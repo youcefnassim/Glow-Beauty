@@ -50,7 +50,7 @@ describe('Autonomous Notification Service (Option 2 - No Supabase)', () => {
   it('formats clean WhatsApp / Telegram order message with all Algerian order fields', () => {
     const text = NotificationService.formatOrderMessage(mockOrder);
 
-    expect(text).toContain('NOUVELLE COMMANDE GLOW BEAUTY DZ');
+    expect(text).toContain('NOUVELLE COMMANDE JIN MAKEUP DZ');
     expect(text).toContain('GLW-2026-9999');
     expect(text).toContain('Yasmine Benali');
     expect(text).toContain('0550123456');

@@ -11,7 +11,7 @@ export const AboutPage: React.FC = () => {
         <span className="text-xs uppercase tracking-widest text-rose-700 font-bold">Maison de Haute Cosmétique</span>
         <h1 className="font-serif text-4xl sm:text-5xl font-bold text-deep">L’Élégance de la Beauté Naturelle</h1>
         <p className="text-sm sm:text-base text-mutedText leading-relaxed font-light">
-          Fondée avec la volonté de magnifier l'éclat de chaque femme, Glow Beauty conjugue les plus nobles actifs botaniques méditerranéens avec les découvertes dermatologiques les plus poussées.
+          Fondée avec la volonté de magnifier l'éclat de chaque femme, Jin Makeup conjugue les plus nobles actifs botaniques méditerranéens avec les découvertes dermatologiques les plus poussées.
         </p>
       </div>
 
@@ -20,7 +20,7 @@ export const AboutPage: React.FC = () => {
         <div className="rounded-3xl overflow-hidden aspect-[4/3] shadow-luxury border border-rose-100">
           <img
             src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1000&q=80"
-            alt="Laboratoire cosmétique Glow Beauty"
+            alt="Laboratoire cosmétique Jin Makeup"
             className="w-full h-full object-cover"
           />
         </div>

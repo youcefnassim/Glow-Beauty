@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { StorageService } from '@/services/storage';
 import { useCart } from '@/context/CartContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Product } from '@/types';
 import { formatPriceDZD, ALGERIA_WILAYAS } from '@/data/wilayas';
 import { 
@@ -11,6 +12,7 @@ import {
 
 export const WholesalePage: React.FC = () => {
   const { addWholesalePack } = useCart();
+  const { language, t, getProductName, getCategoryName, formatPrice } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
 
@@ -63,7 +65,7 @@ export const WholesalePage: React.FC = () => {
       'Revendeur Web / Grossiste';
 
     const msgLines = [
-      `*DEMANDE DE DEVIS GROSSISTE - GLOW BEAUTY PRO*`,
+      `*DEMANDE DE DEVIS GROSSISTE - JIN MAKEUP PRO*`,
       `━━━━━━━━━━━━━━━━━━━━━━━━`,
       `🏢 *Établissement* : ${businessName} (${typeLabel})`,
       `👤 *Responsable* : ${contactName}`,
@@ -219,14 +221,14 @@ export const WholesalePage: React.FC = () => {
                     <div className="relative aspect-square rounded-lg sm:rounded-xl overflow-hidden bg-ivory">
                       <img 
                         src={product.images[0]?.url} 
-                        alt={product.nameFr} 
+                        alt={getProductName(product)} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                       />
                       <span className="absolute top-1.5 left-1.5 bg-amber-500 text-stone-950 text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md shadow-2xs">
-                        Lot : {minQty} pcs
+                        {language === 'ar' ? `حزمة : ${minQty} قطع` : `Lot : ${minQty} pcs`}
                       </span>
-                      <span className="absolute top-1.5 right-1.5 bg-deep text-ivory text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-2xs">
+                      <span className="absolute top-1.5 right-1.5 bg-deep text-ivory text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md shadow-2xs">
                         -{savingsPercent}%
                       </span>
                     </div>
@@ -239,31 +241,31 @@ export const WholesalePage: React.FC = () => {
                         to={`/products/${product.slug}`} 
                         className="font-serif text-xs sm:text-sm font-semibold text-deep hover:text-rose-800 transition line-clamp-2 leading-tight min-h-[2rem] block"
                       >
-                        {product.nameFr}
+                        {getProductName(product)}
                       </Link>
                       <p className="text-[10px] text-stone-500 line-clamp-1 mt-0.5 font-light">
-                        {product.wholesalePackDescription || `Lot économique de ${minQty} unités.`}
+                        {product.wholesalePackDescription || (language === 'ar' ? `حزمة اقتصادية من ${minQty} قطع.` : `Lot économique de ${minQty} unités.`)}
                       </p>
                     </div>
 
                     {/* Compact Pricing grid */}
                     <div className="bg-rose-50/60 rounded-lg p-1.5 sm:p-2 border border-rose-100/70 space-y-0.5 sm:space-y-1 text-[10px] sm:text-xs">
                       <div className="flex justify-between items-baseline">
-                        <span className="text-mutedText">Tarif gros :</span>
-                        <strong className="text-deep font-bold font-serif">{formatPriceDZD(wholesaleUnitPrice)}</strong>
+                        <span className="text-mutedText">{language === 'ar' ? 'سعر الجملة :' : 'Tarif gros :'}</span>
+                        <strong className="text-deep font-bold font-serif">{formatPrice(wholesaleUnitPrice)}</strong>
                       </div>
                       <div className="flex justify-between items-baseline text-[9px] sm:text-[10px] text-mutedText">
-                        <span>Prix public :</span>
-                        <span className="line-through">{formatPriceDZD(retailUnitPrice)}</span>
+                        <span>{language === 'ar' ? 'السعر العادي :' : 'Prix public :'}</span>
+                        <span className="line-through">{formatPrice(retailUnitPrice)}</span>
                       </div>
                       <div className="pt-1 border-t border-rose-200/50 flex justify-between items-baseline">
-                        <span className="font-semibold text-deep text-[10px] sm:text-[11px]">Total ({minQty} pcs) :</span>
+                        <span className="font-semibold text-deep text-[10px] sm:text-[11px]">{language === 'ar' ? `المجموع (${minQty} قطع) :` : `Total (${minQty} pcs) :`}</span>
                         <span className="font-bold text-rose-900 text-xs sm:text-sm font-serif">
-                          {formatPriceDZD(packTotal)}
+                          {formatPrice(packTotal)}
                         </span>
                       </div>
                       <div className="text-[9px] text-emerald-700 font-semibold truncate">
-                        ✓ Éco : {formatPriceDZD(savings)}
+                        ✓ {language === 'ar' ? 'توفير :' : 'Éco :'} {formatPrice(savings)}
                       </div>
                     </div>
                   </div>
@@ -280,12 +282,12 @@ export const WholesalePage: React.FC = () => {
                       {isAdded ? (
                         <>
                           <Check className="w-3.5 h-3.5" />
-                          <span>Ajouté !</span>
+                          <span>{t('product.addedSuccess')}</span>
                         </>
                       ) : (
                         <>
                           <Package className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-                          <span className="truncate">Ajouter le Lot ({minQty} pcs)</span>
+                          <span className="truncate">{language === 'ar' ? `إضافة الحزمة (${minQty} قطع)` : `Ajouter le Lot (${minQty} pcs)`}</span>
                         </>
                       )}
                     </button>

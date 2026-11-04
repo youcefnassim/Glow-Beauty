@@ -10,7 +10,7 @@ export const WhatsAppFloatingButton: React.FC = () => {
   if (cleanPhone.startsWith('0')) cleanPhone = '213' + cleanPhone.substring(1);
   else if (!cleanPhone.startsWith('213')) cleanPhone = '213' + cleanPhone;
 
-  const message = encodeURIComponent("Bonjour Glow Beauty DZ, j'aimerais avoir un conseil pour ma routine beauté 🌸");
+  const message = encodeURIComponent("Bonjour Jin Makeup DZ, j'aimerais avoir un conseil pour ma routine beauté 🌸");
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${message}`;
 
   return (
@@ -35,7 +35,7 @@ export const WhatsAppFloatingButton: React.FC = () => {
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Contacter le service client Glow Beauty sur WhatsApp"
+        aria-label="Contacter le service client Jin Makeup sur WhatsApp"
         className="relative w-12 sm:w-14 h-12 sm:h-14 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-luxury hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
       >
         {/* Pulse effect */}

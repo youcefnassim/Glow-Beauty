@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { StorageService } from '@/services/storage';
 import { Home, Grid, ShoppingBag, Package } from 'lucide-react';
 
 export const MobileBottomNav: React.FC = () => {
   const location = useLocation();
   const { itemCount, setIsCartOpen } = useCart();
+  const { language, t } = useLanguage();
   const settings = StorageService.getSettings();
 
   // WhatsApp clean phone
@@ -15,7 +17,7 @@ export const MobileBottomNav: React.FC = () => {
   if (cleanPhone.startsWith('0')) cleanPhone = '213' + cleanPhone.substring(1);
   else if (!cleanPhone.startsWith('213')) cleanPhone = '213' + cleanPhone;
 
-  const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent("Bonjour Glow Beauty DZ, j'aimerais avoir des renseignements sur vos produits 🌸")}`;
+  const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent("Bonjour Jin Makeup DZ, j'aimerais avoir des renseignements sur vos produits 🌸")}`;
 
   const isHome = location.pathname === '/';
   const isShop = location.pathname === '/shop' || location.pathname.startsWith('/categories');
@@ -34,7 +36,7 @@ export const MobileBottomNav: React.FC = () => {
         }`}
       >
         <Home className={`w-5 h-5 ${isHome ? 'stroke-[2.5]' : 'stroke-2'}`} />
-        <span className="text-[10px] tracking-tight">Accueil</span>
+        <span className="text-[10px] tracking-tight">{t('nav.home')}</span>
       </Link>
 
       {/* 2. Boutique / Catégories */}
@@ -45,7 +47,7 @@ export const MobileBottomNav: React.FC = () => {
         }`}
       >
         <Grid className={`w-5 h-5 ${isShop ? 'stroke-[2.5]' : 'stroke-2'}`} />
-        <span className="text-[10px] tracking-tight">Boutique</span>
+        <span className="text-[10px] tracking-tight">{t('nav.shop')}</span>
       </Link>
 
       {/* 3. WhatsApp Direct (Iconic in DZ E-Commerce) */}
@@ -73,10 +75,12 @@ export const MobileBottomNav: React.FC = () => {
         <div className="relative">
           <Package className={`w-5 h-5 ${isWholesale ? 'stroke-[2.5] text-amber-700' : 'stroke-2'}`} />
           <span className="absolute -top-1 -right-2 px-1 py-0.2 bg-amber-300 text-amber-950 text-[7px] font-extrabold rounded-full leading-tight uppercase shadow-2xs">
-            Pro
+            {language === 'ar' ? 'جملة' : 'Pro'}
           </span>
         </div>
-        <span className="text-[10px] tracking-tight whitespace-nowrap">Vente en gros</span>
+        <span className="text-[10px] tracking-tight whitespace-nowrap">
+          {language === 'ar' ? 'البيع بالجملة' : 'Vente en gros'}
+        </span>
       </Link>
 
       {/* 5. Panier */}
@@ -93,7 +97,7 @@ export const MobileBottomNav: React.FC = () => {
             </span>
           )}
         </div>
-        <span className="text-[10px] tracking-tight">Panier</span>
+        <span className="text-[10px] tracking-tight">{t('nav.cart')}</span>
       </button>
     </nav>
   );

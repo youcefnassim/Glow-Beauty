@@ -1,19 +1,19 @@
 import { Coupon, StoreSettings, Review, Order, UserProfile, Address } from '@/types';
 
 export const INITIAL_SETTINGS: StoreSettings = {
-  storeName: 'Glow Beauty',
-  tagline: 'L’Art de la Beauté Naturelle & Haute Cosmétique',
+  storeName: 'Jin Makeup',
+  tagline: 'L’Art du Maquillage & de la Haute Beauté',
   announcementText: 'Livraison offerte dans toute l’Algérie dès 8 000 DA d’achats ! 🌸',
   announcementActive: true,
   freeDeliveryThreshold: 8000,
   defaultHomeDeliveryFee: 650,
   defaultStopDeskFee: 400,
-  contactEmail: 'contact@glowbeauty.dz',
+  contactEmail: 'contact@jinmakeup.dz',
   contactPhone: '+213 (0) 550 12 34 56',
   contactAddress: '14 Rue Didouche Mourad, Alger Centre, 16000 Alger, Algérie',
-  socialInstagram: 'https://instagram.com/glowbeauty.dz',
-  socialFacebook: 'https://facebook.com/glowbeauty.algerie',
-  socialTiktok: 'https://tiktok.com/@glowbeauty.algerie',
+  socialInstagram: 'https://instagram.com/jinmakeup.dz',
+  socialFacebook: 'https://facebook.com/jinmakeup.algerie',
+  socialTiktok: 'https://tiktok.com/@jinmakeup.algerie',
   enableOnlinePayments: false, // Disabled until business configures real Satim / CIB gateway
   whatsappNotificationPhone: '0550123456',
   telegramBotToken: '',

@@ -10,7 +10,7 @@ export const FaqPage: React.FC = () => {
       items: [
         {
           q: 'Dans quelles wilayas livrez-vous ?',
-          a: 'Glow Beauty dessert les 58 wilayas d’Algérie sans exception, via nos partenaires logistiques Yalidine Express et ZR Express.'
+          a: 'Jin Makeup dessert les 58 wilayas d’Algérie sans exception, via nos partenaires logistiques Yalidine Express et ZR Express.'
         },
         {
           q: 'Quels sont les tarifs de livraison ?',

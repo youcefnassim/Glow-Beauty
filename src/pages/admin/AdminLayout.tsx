@@ -72,7 +72,7 @@ export const AdminLayout: React.FC = () => {
           <div>
             <h1 className="font-serif text-2xl font-bold text-deep">Accès Administrateur</h1>
             <p className="text-xs text-mutedText mt-1">
-              Zone confidentielle réservée à la gestion de Glow Beauty.
+              Zone confidentielle réservée à la gestion de Jin Makeup.
             </p>
           </div>
 
@@ -166,13 +166,13 @@ export const AdminLayout: React.FC = () => {
           {/* Sidebar Header with Brand & Close Button */}
           <div className="p-4 border-b border-stone-800 flex items-center justify-between">
             <div className="flex items-center gap-3 overflow-hidden">
-              <Link to="/" className="bg-white p-1 rounded-xl block shrink-0 shadow-xs">
-                <img src="/logo.png" alt="Glow Beauty" className="h-8 w-auto object-contain" />
+              <Link to="/" className="bg-white p-0.5 rounded-xl block shrink-0 shadow-xs overflow-hidden">
+                <img src="/logo.jpg" alt="Jin Makeup" className="h-8 w-8 rounded-lg object-cover" />
               </Link>
               {!isSidebarCollapsed && (
                 <div className="truncate">
                   <Link to="/" className="font-serif text-sm font-bold tracking-tight text-ivory block leading-tight truncate">
-                    Glow Beauty
+                    Jin Makeup
                   </Link>
                   <p className="text-[9px] tracking-widest text-rose-300 uppercase font-semibold">
                     Administration
@@ -316,7 +316,7 @@ export const AdminLayout: React.FC = () => {
             </button>
 
             <span className="text-xs text-mutedText hidden sm:inline">
-              Administration Glow Beauty
+              Administration Jin Makeup
             </span>
           </div>
 

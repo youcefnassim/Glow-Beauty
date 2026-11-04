@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { formatPriceDZD } from '@/data/wilayas';
 import { X, Trash2, ShoppingBag, ArrowRight, Truck, Plus, Minus } from 'lucide-react';
 
@@ -17,6 +18,7 @@ export const CartDrawer: React.FC = () => {
     amountNeededForFreeShipping,
     getItemEffectivePrice,
   } = useCart();
+  const { language, t, getProductName, formatPrice } = useLanguage();
   const navigate = useNavigate();
 
   if (!isCartOpen) return null;
@@ -40,7 +42,7 @@ export const CartDrawer: React.FC = () => {
           <div className="p-4 sm:p-5 border-b border-rose-100 flex items-center justify-between bg-ivory/60 shrink-0">
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-rose-500" />
-              <h2 className="font-serif text-lg sm:text-xl font-bold text-deep">Votre Panier</h2>
+              <h2 className="font-serif text-lg sm:text-xl font-bold text-deep">{t('cart.title')}</h2>
               <span className="text-xs bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full">
                 {items.reduce((s, i) => s + i.quantity, 0)}
               </span>
@@ -60,10 +62,14 @@ export const CartDrawer: React.FC = () => {
               <span className="flex items-center gap-1.5">
                 <Truck className="w-4 h-4 text-rose-600" />
                 {amountNeededForFreeShipping === 0 ? (
-                  <span className="text-emerald-700 font-bold">Félicitations ! Livraison offerte partout en Algérie !</span>
+                  <span className="text-emerald-700 font-bold">{t('cart.freeShippingCongrats')}</span>
                 ) : (
                   <span>
-                    Plus que <strong className="text-rose-700">{formatPriceDZD(amountNeededForFreeShipping)}</strong> pour la livraison offerte
+                    {language === 'ar' ? (
+                      <>أضيفي بقيمة <strong className="text-rose-700">{formatPrice(amountNeededForFreeShipping)}</strong> للاستفادة من <strong>التوصيل المجاني</strong></>
+                    ) : (
+                      <>Plus que <strong className="text-rose-700">{formatPrice(amountNeededForFreeShipping)}</strong> pour la livraison offerte</>
+                    )}
                   </span>
                 )}
               </span>
@@ -84,9 +90,9 @@ export const CartDrawer: React.FC = () => {
                 <div className="w-16 h-16 rounded-full bg-rose-50 flex items-center justify-center text-rose-400">
                   <ShoppingBag className="w-8 h-8" />
                 </div>
-                <h3 className="font-serif text-lg text-deep font-semibold">Votre panier est vide</h3>
+                <h3 className="font-serif text-lg text-deep font-semibold">{t('cart.empty')}</h3>
                 <p className="text-xs text-mutedText max-w-xs">
-                  Offrez-vous un rituel de soin d’exception. Découvrez notre sélection de cosmétiques haut de gamme.
+                  {language === 'ar' ? 'امنحي نفسك طقوس عناية استثنائية واكتشفي تشكيلة مستحضراتنا الراقية.' : 'Offrez-vous un rituel de soin d’exception. Découvrez notre sélection de cosmétiques haut de gamme.'}
                 </p>
                 <button
                   onClick={() => {
@@ -95,7 +101,7 @@ export const CartDrawer: React.FC = () => {
                   }}
                   className="bg-deep hover:bg-rose-900 text-ivory text-xs font-semibold px-6 py-2.5 rounded-full transition shadow-sm cursor-pointer"
                 >
-                  Découvrir nos soins
+                  {t('cart.continue')}
                 </button>
               </div>
             ) : (
@@ -106,14 +112,14 @@ export const CartDrawer: React.FC = () => {
                 >
                   <img
                     src={item.product.images[0]?.url}
-                    alt={item.product.nameFr}
+                    alt={getProductName(item.product)}
                     className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover bg-white border border-rose-100 shrink-0"
                   />
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>
                       <div className="flex items-start justify-between gap-2">
                         <h4 className="text-xs font-semibold text-deep truncate">
-                          {item.product.nameFr}
+                          {getProductName(item.product)}
                         </h4>
                         <button
                           onClick={() => removeItem(item.id)}
@@ -133,12 +139,12 @@ export const CartDrawer: React.FC = () => {
                       {item.isWholesalePriceApplied ? (
                         <div className="mt-1">
                           <span className="inline-block text-[10px] font-bold text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-200">
-                            🏷️ Tarif Grossiste ({formatPriceDZD(getItemEffectivePrice(item).unitPrice)}/u)
+                            🏷️ {language === 'ar' ? 'سعر الجملة' : 'Tarif Grossiste'} ({formatPrice(getItemEffectivePrice(item).unitPrice)}/u)
                           </span>
                         </div>
                       ) : (
                         <p className="text-xs font-bold text-deep mt-1">
-                          {formatPriceDZD(item.priceAtAddition)}
+                          {formatPrice(item.priceAtAddition)}
                         </p>
                       )}
                     </div>
@@ -167,11 +173,11 @@ export const CartDrawer: React.FC = () => {
 
                       <div className="text-right">
                         <span className="text-xs font-bold text-rose-800 block">
-                          {formatPriceDZD(getItemEffectivePrice(item).unitPrice * item.quantity)}
+                          {formatPrice(getItemEffectivePrice(item).unitPrice * item.quantity)}
                         </span>
                         {item.isWholesalePriceApplied && (
                           <span className="text-[10px] text-mutedText line-through">
-                            {formatPriceDZD(item.priceAtAddition * item.quantity)}
+                            {formatPrice(item.priceAtAddition * item.quantity)}
                           </span>
                         )}
                       </div>
@@ -187,22 +193,22 @@ export const CartDrawer: React.FC = () => {
             <div className="p-5 border-t border-rose-100 bg-ivory/60 space-y-3">
               <div className="space-y-1.5 text-xs">
                 <div className="flex justify-between text-mutedText">
-                  <span>Sous-total articles</span>
-                  <span className="font-semibold text-deep">{formatPriceDZD(subtotal)}</span>
+                  <span>{t('cart.subtotal')}</span>
+                  <span className="font-semibold text-deep">{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-mutedText">
-                  <span>Livraison estimée</span>
+                  <span>{t('cart.shipping')}</span>
                   <span className="font-semibold text-deep">
                     {subtotal >= freeDeliveryThreshold ? (
-                      <span className="text-emerald-600 font-bold">Gratuite</span>
+                      <span className="text-emerald-600 font-bold">{t('cart.freeShipping')}</span>
                     ) : (
-                      'Calculée au checkout'
+                      language === 'ar' ? 'تُحسب عند إتمام الطلب' : 'Calculée au checkout'
                     )}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm font-bold text-deep pt-1.5 border-t border-rose-200">
-                  <span>Total estimé</span>
-                  <span className="text-rose-900 font-serif text-base">{formatPriceDZD(total)}</span>
+                  <span>{t('cart.total')}</span>
+                  <span className="text-rose-900 font-serif text-base">{formatPrice(total)}</span>
                 </div>
               </div>
 
@@ -214,8 +220,8 @@ export const CartDrawer: React.FC = () => {
                   }}
                   className="w-full bg-deep hover:bg-rose-950 text-ivory font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition cursor-pointer"
                 >
-                  <span>Passer la commande (Paiement à la livraison)</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span>{t('cart.checkout')}</span>
+                  <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                 </button>
                 <button
                   onClick={() => {
@@ -224,12 +230,12 @@ export const CartDrawer: React.FC = () => {
                   }}
                   className="w-full bg-white hover:bg-rose-50 text-deep border border-rose-200 font-medium py-2 rounded-xl text-xs transition cursor-pointer"
                 >
-                  Voir les détails du panier
+                  {t('cart.viewDetails')}
                 </button>
               </div>
 
               <p className="text-[11px] text-center text-mutedText">
-                Paiement sécurisé en espèces à la livraison partout en Algérie (58 wilayas)
+                {t('cart.secureNotice')}
               </p>
             </div>
           )}

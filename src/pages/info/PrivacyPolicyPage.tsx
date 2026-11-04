@@ -12,7 +12,7 @@ export const PrivacyPolicyPage: React.FC = () => {
         <section className="space-y-2">
           <h2 className="font-serif text-base font-bold text-deep">1. Collecte des données personnelles</h2>
           <p>
-            Dans le cadre de l’utilisation de notre boutique en ligne Glow Beauty, nous collectons uniquement les informations nécessaires au traitement et à l’acheminement de vos commandes en Algérie : votre nom, prénom, numéro de téléphone mobile, adresse postale de livraison, et adresse e-mail.
+            Dans le cadre de l’utilisation de notre boutique en ligne Jin Makeup, nous collectons uniquement les informations nécessaires au traitement et à l’acheminement de vos commandes en Algérie : votre nom, prénom, numéro de téléphone mobile, adresse postale de livraison, et adresse e-mail.
           </p>
         </section>
 

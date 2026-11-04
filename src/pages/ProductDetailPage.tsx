@@ -5,6 +5,7 @@ import { Product, ProductVariant, Review } from '@/types';
 import { formatPriceDZD } from '@/data/wilayas';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { ProductCard } from '@/components/product/ProductCard';
 import { 
   Heart, ShoppingBag, Star, Truck, ShieldCheck, RefreshCw, 
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react';
 
 export const ProductDetailPage: React.FC = () => {
+  const { language, t, getProductName, getCategoryName, formatPrice } = useLanguage();
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { addItem, addWholesalePack } = useCart();
@@ -115,15 +117,15 @@ export const ProductDetailPage: React.FC = () => {
       
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-xs text-mutedText">
-        <Link to="/" className="hover:text-deep transition">Accueil</Link>
+        <Link to="/" className="hover:text-deep transition">{t('nav.home')}</Link>
         <span>/</span>
-        <Link to="/shop" className="hover:text-deep transition">Boutique</Link>
+        <Link to="/shop" className="hover:text-deep transition">{t('nav.shop')}</Link>
         <span>/</span>
         <Link to={`/categories/${product.categorySlug}`} className="hover:text-deep transition capitalize">
           {product.categorySlug.replace(/-/g, ' ')}
         </Link>
         <span>/</span>
-        <span className="text-deep font-semibold truncate max-w-xs">{product.nameFr}</span>
+        <span className="text-deep font-semibold truncate max-w-xs">{getProductName(product)}</span>
       </nav>
 
       {/* Main Product Showcase */}
@@ -134,13 +136,13 @@ export const ProductDetailPage: React.FC = () => {
           <div className="relative aspect-square rounded-3xl overflow-hidden bg-white border border-rose-100 shadow-luxury">
             <img
               src={product.images[selectedImageIndex]?.url || product.images[0]?.url}
-              alt={product.images[selectedImageIndex]?.altText || product.nameFr}
+              alt={product.images[selectedImageIndex]?.altText || getProductName(product)}
               className="w-full h-full object-cover object-center"
             />
             
             {hasDiscount && (
               <span className="absolute top-4 left-4 bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
-                -{discountPercent}% Promo
+                -{discountPercent}% {t('product.promo')}
               </span>
             )}
           </div>
@@ -170,7 +172,7 @@ export const ProductDetailPage: React.FC = () => {
               {product.brand}
             </span>
             <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-deep mt-1 leading-snug">
-              {product.nameFr}
+              {getProductName(product)}
             </h1>
 
             {/* Ratings & Reviews summary */}
@@ -184,7 +186,7 @@ export const ProductDetailPage: React.FC = () => {
                 ))}
               </div>
               <span className="text-xs font-bold text-deep">{product.rating.toFixed(1)} / 5</span>
-              <span className="text-xs text-mutedText">({product.reviewsCount} avis clientes)</span>
+              <span className="text-xs text-mutedText">({product.reviewsCount} {language === 'ar' ? 'تقييم زبونة' : 'avis clientes'})</span>
             </div>
           </div>
 
@@ -193,30 +195,30 @@ export const ProductDetailPage: React.FC = () => {
             <div className="flex items-baseline gap-3 flex-wrap">
               <span className="font-serif text-3xl font-bold text-deep">
                 {product.isWholesaleAvailable && product.wholesalePrice && quantity >= (product.wholesaleMinQty || 6)
-                  ? formatPriceDZD(product.wholesalePrice)
-                  : formatPriceDZD(currentPrice)}
+                  ? formatPrice(product.wholesalePrice)
+                  : formatPrice(currentPrice)}
               </span>
               {product.isWholesaleAvailable && product.wholesalePrice && quantity >= (product.wholesaleMinQty || 6) ? (
                 <span className="text-sm text-stone-400 line-through">
-                  {formatPriceDZD(currentPrice)} (Tarif détail)
+                  {formatPrice(currentPrice)} ({language === 'ar' ? 'سعر التجزئة' : 'Tarif détail'})
                 </span>
               ) : hasDiscount && (
                 <span className="text-sm text-mutedText line-through">
-                  {formatPriceDZD(comparePrice!)}
+                  {formatPrice(comparePrice!)}
                 </span>
               )}
               <span className="text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                {currentStock > 0 ? 'En stock disponible' : 'Rupture de stock'}
+                {currentStock > 0 ? t('product.inStock') : t('product.outOfStock')}
               </span>
             </div>
 
             {product.isWholesaleAvailable && product.wholesalePrice && (
               <div className="pt-2 border-t border-rose-100 flex items-center justify-between text-xs">
                 <span className="text-mutedText">
-                  Tarif de gros : <strong className="text-deep font-bold">{formatPriceDZD(product.wholesalePrice)}</strong> / pièce (min. {product.wholesaleMinQty || 6} pcs)
+                  {language === 'ar' ? 'سعر الجملة :' : 'Tarif de gros :'} <strong className="text-deep font-bold">{formatPrice(product.wholesalePrice)}</strong> {language === 'ar' ? '/ للقطعة' : '/ pièce'} (min. {product.wholesaleMinQty || 6} pcs)
                 </span>
                 <span className="font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md">
-                  Vente en Gros
+                  {t('product.wholesaleAvailable')}
                 </span>
               </div>
             )}
@@ -239,7 +241,7 @@ export const ProductDetailPage: React.FC = () => {
           {product.variants && product.variants.length > 1 && (
             <div className="space-y-2 pt-2 border-t border-rose-100">
               <label className="text-xs font-bold text-deep uppercase tracking-wider block">
-                Sélectionnez votre teinte / format :
+                {t('product.selectVariant')}
               </label>
               <div className="flex flex-wrap gap-2">
                 {product.variants.map((v) => {
@@ -300,7 +302,7 @@ export const ProductDetailPage: React.FC = () => {
                 className="flex-1 bg-deep hover:bg-rose-950 text-ivory font-semibold py-3.5 px-6 rounded-xl shadow-luxury hover:shadow-xl transition flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer disabled:opacity-40"
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>{currentStock <= 0 ? 'Indisponible' : 'Ajouter au panier'}</span>
+                <span>{currentStock <= 0 ? t('product.outOfStock') : t('product.addToCart')}</span>
               </button>
 
               {/* Wishlist toggle */}
@@ -323,7 +325,7 @@ export const ProductDetailPage: React.FC = () => {
               disabled={currentStock <= 0}
               className="w-full bg-brand-rose hover:bg-rose-600 text-white font-semibold py-3 px-6 rounded-xl transition shadow-md text-xs sm:text-sm cursor-pointer disabled:opacity-40"
             >
-              Commander maintenant (Paiement à la livraison)
+              {t('product.buyNow')}
             </button>
 
             {/* Wholesale / Pro Lot Box */}
@@ -336,27 +338,27 @@ export const ProductDetailPage: React.FC = () => {
                     </div>
                     <div>
                       <span className="text-xs font-bold uppercase tracking-wider text-deep block">
-                        Offre Revendeurs & Salons (Gros)
+                        {language === 'ar' ? 'عرض صالونات التجميل والموزعين (الجملة)' : 'Offre Revendeurs & Salons (Gros)'}
                       </span>
                       <p className="text-[11px] text-mutedText">
-                        Tarif dégressif préférentiel à partir de {product.wholesaleMinQty || 6} pièces
+                        {language === 'ar' ? `سعر تفضيلي مخفض ابتداءً من ${product.wholesaleMinQty || 6} قطع` : `Tarif dégressif préférentiel à partir de ${product.wholesaleMinQty || 6} pièces`}
                       </p>
                     </div>
                   </div>
                   <span className="text-[11px] font-bold bg-amber-200 text-amber-950 px-2.5 py-0.5 rounded-full">
-                    Économisez {Math.round(((currentPrice - product.wholesalePrice) / currentPrice) * 100)}%
+                    {language === 'ar' ? 'وفري' : 'Économisez'} {Math.round(((currentPrice - product.wholesalePrice) / currentPrice) * 100)}%
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs py-2 px-3 bg-white/90 rounded-xl border border-amber-100">
                   <div>
-                    <span className="text-[11px] text-mutedText block">Prix Grossiste unitaire</span>
-                    <span className="font-bold text-sm text-deep">{formatPriceDZD(product.wholesalePrice)}</span>
+                    <span className="text-[11px] text-mutedText block">{language === 'ar' ? 'سعر الوحدة بالجملة' : 'Prix Grossiste unitaire'}</span>
+                    <span className="font-bold text-sm text-deep">{formatPrice(product.wholesalePrice)}</span>
                   </div>
                   <div>
-                    <span className="text-[11px] text-mutedText block">Format Lot Pro</span>
+                    <span className="text-[11px] text-mutedText block">{language === 'ar' ? 'صيغة الحزمة الاحترافية' : 'Format Lot Pro'}</span>
                     <span className="font-bold text-sm text-deep">
-                      {product.wholesaleMinQty || 6} pcs {product.wholesalePackDescription ? `(${product.wholesalePackDescription})` : ''}
+                      {product.wholesaleMinQty || 6} {language === 'ar' ? 'قطع' : 'pcs'} {product.wholesalePackDescription ? `(${product.wholesalePackDescription})` : ''}
                     </span>
                   </div>
                 </div>
@@ -367,9 +369,9 @@ export const ProductDetailPage: React.FC = () => {
                       const qty = product.wholesaleMinQty || 6;
                       const res = addWholesalePack(product, selectedVariant, qty);
                       if (res.success) {
-                        setAddMessage(`✓ Lot Pro (${qty} pièces) ajouté avec succès au tarif de gros !`);
+                        setAddMessage(language === 'ar' ? `✓ تمت إضافة باقة الجملة (${qty} قطع) بنجاح بسعر التخفيض!` : `✓ Lot Pro (${qty} pièces) ajouté avec succès au tarif de gros !`);
                       } else {
-                        setAddMessage(res.message || 'Stock insuffisant pour ce lot.');
+                        setAddMessage(res.message || (language === 'ar' ? 'الكمية غير كافية لهذه الحزمة.' : 'Stock insuffisant pour ce lot.'));
                       }
                     }}
                     disabled={currentStock < (product.wholesaleMinQty || 6)}
@@ -378,8 +380,8 @@ export const ProductDetailPage: React.FC = () => {
                     <Package className="w-3.5 h-3.5 text-amber-400" />
                     <span>
                       {currentStock < (product.wholesaleMinQty || 6)
-                        ? 'Lot momentanément en rupture'
-                        : `Acheter le Lot Pro (${product.wholesaleMinQty || 6} pcs - ${formatPriceDZD(product.wholesalePrice * (product.wholesaleMinQty || 6))})`
+                        ? (language === 'ar' ? 'الحزمة غير متوفرة حالياً' : 'Lot momentanément en rupture')
+                        : (language === 'ar' ? `شراء باقة الجملة (${product.wholesaleMinQty || 6} قطع - ${formatPrice(product.wholesalePrice * (product.wholesaleMinQty || 6))})` : `Acheter le Lot Pro (${product.wholesaleMinQty || 6} pcs - ${formatPrice(product.wholesalePrice * (product.wholesaleMinQty || 6))})`)
                       }
                     </span>
                   </button>
@@ -388,8 +390,8 @@ export const ProductDetailPage: React.FC = () => {
                     to="/wholesale"
                     className="px-3 py-2 rounded-xl border border-stone-200 hover:border-deep text-[11px] font-medium text-stone-700 hover:text-deep transition flex items-center justify-center gap-1 text-center"
                   >
-                    <span>Espace Gros</span>
-                    <ArrowRight className="w-3 h-3" />
+                    <span>{t('nav.wholesale')}</span>
+                    <ArrowRight className="w-3 h-3 rtl:rotate-180" />
                   </Link>
                 </div>
               </div>
@@ -407,15 +409,15 @@ export const ProductDetailPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-rose-100">
             <div className="flex items-center gap-2 text-xs text-deep">
               <Truck className="w-4 h-4 text-rose-600 shrink-0" />
-              <span>Livraison 58 Wilayas sous 24-48h</span>
+              <span>{language === 'ar' ? 'توصيل للـ 58 ولاية خلال 24-48 ساعة' : 'Livraison 58 Wilayas sous 24-48h'}</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-deep">
               <ShieldCheck className="w-4 h-4 text-rose-600 shrink-0" />
-              <span>Paiement sécurisé à la réception</span>
+              <span>{language === 'ar' ? 'دفع آمن نقداً عند الاستلام' : 'Paiement sécurisé à la réception'}</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-deep">
               <RefreshCw className="w-4 h-4 text-rose-600 shrink-0" />
-              <span>Garantie authenticité & retour 48h</span>
+              <span>{language === 'ar' ? 'ضمان الأصالة والاسترجاع 48 ساعة' : 'Garantie authenticité & retour 48h'}</span>
             </div>
           </div>
         </div>
@@ -430,7 +432,7 @@ export const ProductDetailPage: React.FC = () => {
               activeTab === 'desc' ? 'border-deep text-deep font-bold' : 'border-transparent text-mutedText hover:text-deep'
             }`}
           >
-            Description Complète
+            {language === 'ar' ? 'الوصف الكامل' : 'Description Complète'}
           </button>
           <button
             onClick={() => setActiveTab('ingredients')}
@@ -438,7 +440,7 @@ export const ProductDetailPage: React.FC = () => {
               activeTab === 'ingredients' ? 'border-deep text-deep font-bold' : 'border-transparent text-mutedText hover:text-deep'
             }`}
           >
-            Ingrédients & Actifs (INCI)
+            {t('product.ingredients')}
           </button>
           <button
             onClick={() => setActiveTab('usage')}
@@ -446,7 +448,7 @@ export const ProductDetailPage: React.FC = () => {
               activeTab === 'usage' ? 'border-deep text-deep font-bold' : 'border-transparent text-mutedText hover:text-deep'
             }`}
           >
-            Conseils d’Utilisation
+            {t('product.usage')}
           </button>
           <button
             onClick={() => setActiveTab('reviews')}
@@ -454,7 +456,7 @@ export const ProductDetailPage: React.FC = () => {
               activeTab === 'reviews' ? 'border-deep text-deep font-bold' : 'border-transparent text-mutedText hover:text-deep'
             }`}
           >
-            Avis Clientes ({reviews.length})
+            {t('product.reviews')} ({reviews.length})
           </button>
         </div>
 

@@ -14,7 +14,7 @@ export const NotificationService = {
       )
       .join('\n');
 
-    return `🌸 *NOUVELLE COMMANDE GLOW BEAUTY DZ* 🌸
+    return `🌸 *NOUVELLE COMMANDE JIN MAKEUP DZ* 🌸
 ━━━━━━━━━━━━━━━━━━━━━━
 📦 *Référence :* \`${order.orderNumber}\`
 📅 *Date :* ${new Date(order.createdAt).toLocaleDateString('fr-FR', {

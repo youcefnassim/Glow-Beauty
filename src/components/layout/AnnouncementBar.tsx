@@ -26,16 +26,15 @@ export const AnnouncementBar: React.FC = () => {
               value={language}
               onChange={(e) => setLanguage(e.target.value as Language)}
               className="bg-transparent border-none text-deep text-xs font-semibold focus:outline-none cursor-pointer pr-1"
-              aria-label="Sélectionner la langue"
+              aria-label="Sélectionner la langue / تغيير اللغة"
             >
               <option value="fr">Français (DZ)</option>
-              <option value="ar">العربية</option>
-              <option value="en">English</option>
+              <option value="ar">العربية (الجزائر)</option>
             </select>
           </div>
           <span>•</span>
-          <a href="/track-order" className="hover:text-rose-800 transition">
-            Suivre mon colis
+          <a href="/track-order" className="hover:text-rose-800 transition font-medium">
+            {language === 'ar' ? 'تتبع طلبيتي' : 'Suivre mon colis'}
           </a>
         </div>
       </div>

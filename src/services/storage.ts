@@ -427,7 +427,7 @@ export const StorageService = {
     const data = {
       version: '1.0',
       exportedAt: new Date().toISOString(),
-      store: 'Glow Beauty',
+      store: 'Jin Makeup',
       products: this.getProducts(),
       categories: this.getCategories(),
       settings: this.getSettings(),

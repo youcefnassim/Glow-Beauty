@@ -12,7 +12,7 @@ export const TermsPage: React.FC = () => {
         <section className="space-y-2">
           <h2 className="font-serif text-base font-bold text-deep">1. Champ d'application</h2>
           <p>
-            Les présentes Conditions Générales de Vente s’appliquent à toutes les commandes passées sur le site officiel de Glow Beauty par les clients résidant sur le territoire algérien.
+            Les présentes Conditions Générales de Vente s’appliquent à toutes les commandes passées sur le site officiel de Jin Makeup par les clients résidant sur le territoire algérien.
           </p>
         </section>
 

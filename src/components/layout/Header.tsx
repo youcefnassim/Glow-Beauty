@@ -3,9 +3,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { SearchModal } from './SearchModal';
 import { 
-  Search, Heart, ShoppingBag, User, Menu, X, ChevronDown, Sparkles, LogOut, Shield 
+  Search, Heart, ShoppingBag, User, Menu, X, ChevronDown, Sparkles, LogOut, Shield, Globe 
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
@@ -14,6 +15,7 @@ export const Header: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
+  const { language, setLanguage, isRtl, t } = useLanguage();
   const { itemCount, setIsCartOpen } = useCart();
   const { wishlistCount } = useWishlist();
   const { user, isAdmin, logout } = useAuth();
@@ -41,15 +43,13 @@ export const Header: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { label: 'Accueil', path: '/' },
-    { label: 'Soins du visage', path: '/categories/soins-du-visage' },
-    { label: 'Maquillage', path: '/categories/maquillage' },
-    { label: 'Cheveux', path: '/categories/cheveux' },
-    { label: 'Parfums', path: '/categories/parfums' },
-    { label: 'Coffrets', path: '/categories/coffrets' },
-    { label: 'Promotions', path: '/shop?filter=promo', isPromo: true },
-    { label: 'Vente en Gros', path: '/wholesale', isPro: true },
-    { label: 'Nouveautés', path: '/shop?filter=new' },
+    { label: t('nav.home'), path: '/' },
+    { label: t('nav.skincare'), path: '/categories/soins-du-visage' },
+    { label: t('nav.makeup'), path: '/categories/maquillage' },
+    { label: t('nav.perfumes'), path: '/categories/parfums' },
+    { label: t('nav.promotions'), path: '/shop?filter=promo', isPromo: true },
+    { label: t('nav.wholesale'), path: '/wholesale', isPro: true },
+    { label: t('nav.newArrivals'), path: '/shop?filter=new' },
   ];
 
   return (
@@ -76,12 +76,20 @@ export const Header: React.FC = () => {
 
             {/* Brand Logo */}
             <div className="flex items-center py-2">
-              <Link to="/" className="flex items-center group">
+              <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group">
                 <img
-                  src="/logo.png"
-                  alt="Glow Beauty DZ - Cosmétiques & Soins Naturels"
-                  className="h-14 sm:h-18 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                  src="/logo.jpg"
+                  alt="Jin Makeup - Cosmétiques & Beauté"
+                  className="h-12 sm:h-16 w-12 sm:w-16 rounded-full object-cover border border-rose-200/80 shadow-xs transition-transform duration-300 group-hover:scale-105 shrink-0"
                 />
+                <div className="flex flex-col">
+                  <span className="font-serif text-lg sm:text-2xl font-bold tracking-tight text-deep leading-tight group-hover:text-rose-900 transition">
+                    {language === 'ar' ? 'جين ميكب' : 'JIN MAKEUP'}
+                  </span>
+                  <span className="text-[9px] sm:text-[11px] uppercase tracking-widest text-rose-700 font-medium">
+                    {language === 'ar' ? 'مستحضرات التجميل والعناية' : 'Cosmétiques & Beauté'}
+                  </span>
+                </div>
               </Link>
             </div>
 
@@ -122,11 +130,24 @@ export const Header: React.FC = () => {
 
             {/* Action Icons */}
             <div className="flex items-center space-x-1 sm:space-x-3">
+              {/* Language Switcher Toggle */}
+              <button
+                onClick={() => setLanguage(language === 'fr' ? 'ar' : 'fr')}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-rose-200/80 bg-white/90 hover:bg-white text-deep text-xs font-semibold shadow-2xs hover:border-rose-300 transition cursor-pointer"
+                title={language === 'fr' ? 'Passer en Arabe (العربية)' : 'Passer en Français'}
+                aria-label="Changer de langue / تغيير اللغة"
+              >
+                <Globe className="w-3.5 h-3.5 text-rose-700" />
+                <span className="font-bold text-[11px] tracking-wide text-rose-900">
+                  {language === 'fr' ? 'العربية' : 'FR'}
+                </span>
+              </button>
+
               {/* Search Icon */}
               <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 text-deep hover:text-rose-800 hover:bg-rose-50 rounded-full transition cursor-pointer"
-                title="Rechercher"
+                title={t('nav.search')}
                 aria-label="Rechercher"
               >
                 <Search className="w-5 h-5" />
@@ -278,19 +299,46 @@ export const Header: React.FC = () => {
             </div>
 
             <div className="border-t border-rose-100 pt-3 flex flex-col gap-2">
+              {/* Language Switcher in Mobile Drawer */}
+              <div className="flex items-center justify-between text-xs px-3 py-1 bg-ivory rounded-xl border border-rose-100">
+                <span className="text-stone-600 font-medium">
+                  {language === 'ar' ? 'اللغة :' : 'Langue :'}
+                </span>
+                <div className="flex items-center rounded-lg bg-stone-200/60 p-0.5 gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setLanguage('fr')}
+                    className={`px-3 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
+                      language === 'fr' ? 'bg-white text-deep shadow-xs' : 'text-stone-600 hover:text-deep'
+                    }`}
+                  >
+                    Français
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLanguage('ar')}
+                    className={`px-3 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
+                      language === 'ar' ? 'bg-white text-rose-900 shadow-xs' : 'text-stone-600 hover:text-deep'
+                    }`}
+                  >
+                    العربية
+                  </button>
+                </div>
+              </div>
+
               <Link
                 to="/track-order"
                 className="text-xs text-stone-600 hover:text-deep flex items-center gap-1.5 px-3 py-1"
               >
                 <Sparkles className="w-3.5 h-3.5 text-rose-500" />
-                Suivre mon colis en Algérie
+                <span>{t('nav.trackOrder')}</span>
               </Link>
               <Link
                 to="/wishlist"
                 className="text-xs text-stone-600 hover:text-deep flex items-center gap-1.5 px-3 py-1"
               >
                 <Heart className="w-3.5 h-3.5 text-rose-500" />
-                Mes favoris ({wishlistCount})
+                <span>{t('nav.wishlist')} ({wishlistCount})</span>
               </Link>
             </div>
           </div>

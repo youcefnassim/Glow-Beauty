@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StorageService } from '@/services/storage';
+import { useLanguage } from '@/context/LanguageContext';
 import { 
-  Phone, Mail, MapPin, Send, ShieldCheck, CheckCircle2, AlertCircle 
+  Phone, Mail, MapPin, Send, ShieldCheck, CheckCircle2, AlertCircle, Globe 
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
+  const { language, setLanguage, isRtl, t } = useLanguage();
   const [email, setEmail] = useState('');
   const [consent, setConsent] = useState(true);
   const [status, setStatus] = useState<{ success?: boolean; message?: string } | null>(null);
@@ -37,12 +39,20 @@ export const Footer: React.FC = () => {
           
           {/* Brand & Editorial Story */}
           <div className="lg:col-span-2 space-y-4">
-            <Link to="/" className="inline-block bg-white p-2.5 rounded-2xl shadow-sm hover:opacity-95 transition">
+            <Link to="/" className="inline-flex items-center gap-3 bg-white/95 p-2 px-3 rounded-2xl shadow-sm hover:opacity-95 transition">
               <img
-                src="/logo.png"
-                alt="Glow Beauty DZ - Cosmétiques d'Exception"
-                className="h-12 w-auto object-contain"
+                src="/logo.jpg"
+                alt="Jin Makeup - Cosmétiques & Beauté"
+                className="h-12 w-12 rounded-full object-cover shrink-0"
               />
+              <div className="flex flex-col text-left">
+                <span className="font-serif text-base font-bold tracking-tight text-deep leading-none">
+                  {language === 'ar' ? 'جين ميكب' : 'JIN MAKEUP'}
+                </span>
+                <span className="text-[9px] uppercase tracking-wider text-rose-700 font-semibold">
+                  {language === 'ar' ? 'مستحضرات التجميل والعناية' : 'Cosmétiques & Beauté'}
+                </span>
+              </div>
             </Link>
             <p className="text-xs text-stone-300 leading-relaxed max-w-sm">
               Maison de cosmétique d’exception célébrant la splendeur et la vitalité naturelle de chaque femme en Algérie. Formules dermatologiquement rigoureuses, ingrédients précieux et rituels sensoriels inoubliables.
@@ -207,7 +217,7 @@ export const Footer: React.FC = () => {
                   onChange={(e) => setConsent(e.target.checked)}
                   className="mt-0.5 rounded border-stone-700 bg-stone-900 text-rose-600 focus:ring-0"
                 />
-                <span>J’accepte de recevoir les nouveautés et offres exclusives de Glow Beauty.</span>
+                <span>{language === 'ar' ? 'أوافق على تلقي العروض الحصرية والجديد من جين ميكب.' : 'J’accepte de recevoir les nouveautés et offres exclusives de Jin Makeup.'}</span>
               </label>
 
               {status && (
@@ -230,14 +240,41 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar: Payments & Copyright */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-stone-400">
-          <p>© {new Date().getFullYear()} Glow Beauty Algérie. Tous droits réservés.</p>
+          <p>© {new Date().getFullYear()} {language === 'ar' ? 'جين ميكب الجزائر' : 'Jin Makeup Algérie'}. {t('footer.rights')}</p>
+
+          {/* Language Selector in Footer */}
+          <div className="flex items-center gap-2">
+            <Globe className="w-3.5 h-3.5 text-rose-400" />
+            <div className="inline-flex rounded-lg bg-stone-800 p-0.5 border border-stone-700 text-[11px]">
+              <button
+                type="button"
+                onClick={() => setLanguage('fr')}
+                className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${
+                  language === 'fr' ? 'bg-deep text-white shadow-xs' : 'text-stone-400 hover:text-white'
+                }`}
+              >
+                Français
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('ar')}
+                className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${
+                  language === 'ar' ? 'bg-rose-950 text-rose-200 shadow-xs' : 'text-stone-400 hover:text-white'
+                }`}
+              >
+                العربية
+              </button>
+            </div>
+          </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-[11px] text-stone-400">Modes de règlement acceptés :</span>
+            <span className="text-[11px] text-stone-400">
+              {isRtl ? 'طرق الدفع المعتمدة :' : 'Modes de règlement acceptés :'}
+            </span>
             <div className="flex items-center gap-1.5">
               <span className="bg-stone-800 text-stone-200 text-[10px] font-bold px-2 py-0.5 rounded border border-stone-700 flex items-center gap-1">
                 <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                Paiement à la livraison (Cash)
+                {isRtl ? 'الدفع عند الاستلام نقداً' : 'Paiement à la livraison (Cash)'}
               </span>
               <span className="bg-stone-800 text-stone-300 text-[10px] font-semibold px-2 py-0.5 rounded border border-stone-700">
                 BaridiMob / CCP
