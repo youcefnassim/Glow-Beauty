@@ -4,40 +4,5 @@ import { useLanguage, Language } from '@/context/LanguageContext';
 import { Globe, Sparkles } from 'lucide-react';
 
 export const AnnouncementBar: React.FC = () => {
-  const settings = StorageService.getSettings();
-  const { language, setLanguage } = useLanguage();
-
-  if (!settings.announcementActive || !settings.announcementText) {
-    return null;
-  }
-
-  return (
-    <aside aria-label="Bannière d'annonces promotionnelles" className="bg-blush/90 text-deep py-1 px-3 text-[11px] font-medium border-b border-rose-200/40">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex-1 text-center sm:text-left flex items-center justify-center sm:justify-start gap-1.5">
-          <Sparkles className="w-3 h-3 text-rose-700 animate-pulse hidden sm:inline" />
-          <span>{settings.announcementText}</span>
-        </div>
-
-        <div className="hidden sm:flex items-center gap-4 text-[11px] text-deep/80">
-          <div className="flex items-center gap-1.5">
-            <Globe className="w-3 h-3 text-rose-700" />
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value as Language)}
-              className="bg-transparent border-none text-deep text-xs font-semibold focus:outline-none cursor-pointer pr-1"
-              aria-label="Sélectionner la langue / تغيير اللغة"
-            >
-              <option value="fr">Français (DZ)</option>
-              <option value="ar">العربية (الجزائر)</option>
-            </select>
-          </div>
-          <span>•</span>
-          <a href="/track-order" className="hover:text-rose-800 transition font-medium">
-            {language === 'ar' ? 'تتبع طلبيتي' : 'Suivre mon colis'}
-          </a>
-        </div>
-      </div>
-    </aside>
-  );
+  return null;
 };

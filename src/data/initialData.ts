@@ -4,7 +4,7 @@ export const INITIAL_SETTINGS: StoreSettings = {
   storeName: 'Jin Makeup',
   tagline: 'L’Art du Maquillage & de la Haute Beauté',
   announcementText: 'Livraison offerte dans toute l’Algérie dès 8 000 DA d’achats ! 🌸',
-  announcementActive: true,
+  announcementActive: false,
   freeDeliveryThreshold: 8000,
   defaultHomeDeliveryFee: 650,
   defaultStopDeskFee: 400,
