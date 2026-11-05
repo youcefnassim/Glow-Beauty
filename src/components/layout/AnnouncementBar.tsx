@@ -12,10 +12,10 @@ export const AnnouncementBar: React.FC = () => {
   }
 
   return (
-    <aside aria-label="Bannière d'annonces promotionnelles" className="bg-blush text-deep py-2 px-4 text-xs font-medium border-b border-rose-200/60">
+    <aside aria-label="Bannière d'annonces promotionnelles" className="bg-blush/90 text-deep py-1 px-3 text-[11px] font-medium border-b border-rose-200/40">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex-1 text-center sm:text-left flex items-center justify-center sm:justify-start gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-rose-700 animate-pulse hidden sm:inline" />
+          <Sparkles className="w-3 h-3 text-rose-700 animate-pulse hidden sm:inline" />
           <span>{settings.announcementText}</span>
         </div>
 
