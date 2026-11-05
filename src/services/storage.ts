@@ -106,9 +106,9 @@ export const StorageService = {
         }
       });
 
-      // Sync wholesale configuration if not present
+      // Sync wholesale configuration if not present or incomplete
       const initialMatch = INITIAL_PRODUCTS.find(ip => ip.id === p.id);
-      if (initialMatch && initialMatch.isWholesaleAvailable && p.isWholesaleAvailable === undefined) {
+      if (initialMatch && initialMatch.isWholesaleAvailable && (!p.isWholesaleAvailable || !p.wholesalePrice)) {
         p.isWholesaleAvailable = initialMatch.isWholesaleAvailable;
         p.wholesalePrice = initialMatch.wholesalePrice;
         p.wholesaleMinQty = initialMatch.wholesaleMinQty;

@@ -6,8 +6,9 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Product } from '@/types';
 import { formatPriceDZD, ALGERIA_WILAYAS } from '@/data/wilayas';
 import { 
-  Package, Truck, ShieldCheck, PhoneCall, Sparkles, Check, 
-  ArrowRight, FileText, Building2, Store, ShoppingBag, CheckCircle2, MessageCircle 
+  Package, ShieldCheck, PhoneCall, Sparkles, Check, 
+  ArrowRight, FileText, Building2, Store, ShoppingBag, CheckCircle2,
+  MessageCircle
 } from 'lucide-react';
 
 export const WholesalePage: React.FC = () => {
@@ -84,75 +85,34 @@ export const WholesalePage: React.FC = () => {
 
   return (
     <div className="space-y-5 sm:space-y-8 pb-10 pt-2 sm:pt-4">
-      {/* 4 Pillars of B2B Service - 2 by 2 on mobile */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-        <div className="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-100/80 shadow-xs space-y-1.5">
-          <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center font-bold">
-            <Package className="w-4 h-4" />
-          </div>
-          <h3 className="font-serif font-bold text-deep text-xs sm:text-sm">Lots dès 6 Pièces</h3>
-          <p className="text-[10px] sm:text-xs text-mutedText leading-relaxed">
-            Tarifs grossistes automatiques dès 6 ou 10 unités par référence.
-          </p>
-        </div>
-
-        <div className="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-100/80 shadow-xs space-y-1.5">
-          <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
-            <Truck className="w-4 h-4" />
-          </div>
-          <h3 className="font-serif font-bold text-deep text-xs sm:text-sm">Expédition 58 Wilayas</h3>
-          <p className="text-[10px] sm:text-xs text-mutedText leading-relaxed">
-            Cartons scellés sous 24h à 48h directement dans votre local.
-          </p>
-        </div>
-
-        <div className="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-100/80 shadow-xs space-y-1.5">
-          <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
-            <ShieldCheck className="w-4 h-4" />
-          </div>
-          <h3 className="font-serif font-bold text-deep text-xs sm:text-sm">100% Authentiques</h3>
-          <p className="text-[10px] sm:text-xs text-mutedText leading-relaxed">
-            Dates optimales, conformité et traçabilité fabricant garantie.
-          </p>
-        </div>
-
-        <div className="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-100/80 shadow-xs space-y-1.5">
-          <div className="w-8 h-8 rounded-lg bg-stone-100 text-deep flex items-center justify-center font-bold">
-            <MessageCircle className="w-4 h-4 text-emerald-600" />
-          </div>
-          <h3 className="font-serif font-bold text-deep text-xs sm:text-sm">WhatsApp B2B Dédié</h3>
-          <p className="text-[10px] sm:text-xs text-mutedText leading-relaxed">
-            Conseiller attitré pour préparer vos devis et réassorts rapides.
-          </p>
-        </div>
-      </section>
-
       {/* Wholesale Product Catalog */}
       <section id="catalogue-gros" className="space-y-4 sm:space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-          <div>
-            <span className="text-[10px] sm:text-xs font-bold text-rose-700 uppercase tracking-widest">Offres en Vigueur</span>
-            <h2 className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-deep">
-              Catalogue des Lots Grossistes
-            </h2>
-            <p className="text-[11px] sm:text-xs text-mutedText mt-0.5">
-              Commandez directement vos packs en ligne. Les remises grossiste s'appliquent automatiquement au panier.
-            </p>
-          </div>
+        <div className="text-center max-w-2xl mx-auto space-y-2">
+          <span className="text-[10px] sm:text-xs font-bold text-rose-700 uppercase tracking-widest block">
+            {language === 'ar' ? 'العروض الحالية' : 'Offres en Vigueur'}
+          </span>
+          <h1 className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-deep">
+            {language === 'ar' ? 'كتالوج باقات الجملة' : 'Catalogue des Lots Grossistes'}
+          </h1>
+          <p className="text-[11px] sm:text-xs text-mutedText max-w-xl mx-auto leading-relaxed">
+            {language === 'ar' 
+              ? 'اطلبوا حزمكم ومنتجاتكم بالجملة مباشرة عبر الإنترنت. تطبق تخفيضات الجملة تلقائياً في السلة.' 
+              : "Commandez directement vos packs en ligne. Les remises grossiste s'appliquent automatiquement au panier."}
+          </p>
 
-          {/* Category filter pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+          {/* Category filter pills - centered */}
+          <div className="flex items-center justify-center gap-1.5 overflow-x-auto pb-1 pt-1.5">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1 rounded-full text-[11px] font-medium transition cursor-pointer capitalize shrink-0 ${
+                className={`px-3.5 py-1.5 rounded-full text-[11px] font-medium transition cursor-pointer capitalize shrink-0 ${
                   selectedCategory === cat
                     ? 'bg-deep text-ivory shadow-xs'
                     : 'bg-white text-stone-600 border border-rose-100 hover:border-rose-300'
                 }`}
               >
-                {cat === 'all' ? 'Tous les soins' : cat}
+                {cat === 'all' ? (language === 'ar' ? 'جميع المنتجات' : 'Tous les soins') : cat}
               </button>
             ))}
           </div>
