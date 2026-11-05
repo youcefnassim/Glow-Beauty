@@ -83,7 +83,7 @@ export const HeroBannerSlider: React.FC<HeroBannerSliderProps> = ({ className = 
       <div className="absolute -inset-3 sm:-inset-4 rounded-3xl bg-gradient-to-tr from-rose-300/40 via-amber-200/30 to-blush opacity-60 blur-xl transform -rotate-2 pointer-events-none" />
 
       {/* Main Slider Card */}
-      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border-2 sm:border-4 border-white aspect-[4/3] sm:aspect-[4/5] bg-stone-900">
+      <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border-2 sm:border-4 border-white aspect-[4/5] max-h-[580px] bg-stone-900">
         
         {/* Slides Images with Transition */}
         {banners.map((banner, idx) => {
@@ -95,13 +95,22 @@ export const HeroBannerSlider: React.FC<HeroBannerSliderProps> = ({ className = 
                 isCurrent ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
               }`}
             >
+              {/* Soft ambient blur backdrop */}
+              <img
+                src={banner.imageUrl}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-35 scale-110 pointer-events-none"
+              />
+
+              {/* Main Crisp Product Photo: perfectly responsive without excessive zoom */}
               <img
                 src={banner.imageUrl}
                 alt={banner.title}
-                className="w-full h-full object-cover object-center transform transition-transform duration-6000 ease-out scale-105"
+                className="relative w-full h-full object-cover object-center"
                 loading={idx === 0 ? 'eager' : 'lazy'}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/10 pointer-events-none" />
             </div>
           );
         })}
