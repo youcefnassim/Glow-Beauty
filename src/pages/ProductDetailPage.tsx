@@ -381,7 +381,7 @@ export const ProductDetailPage: React.FC = () => {
                     <span>
                       {currentStock < (product.wholesaleMinQty || 6)
                         ? (language === 'ar' ? 'الحزمة غير متوفرة حالياً' : 'Lot momentanément en rupture')
-                        : (language === 'ar' ? `شراء باقة الجملة (${product.wholesaleMinQty || 6} قطع - ${formatPrice(product.wholesalePrice * (product.wholesaleMinQty || 6))})` : `Acheter le Lot Pro (${product.wholesaleMinQty || 6} pcs - ${formatPrice(product.wholesalePrice * (product.wholesaleMinQty || 6))})`)
+                        : (language === 'ar' ? `شراء باقة الجملة (${formatPrice(product.wholesalePrice * (product.wholesaleMinQty || 6))})` : `Acheter le Lot Pro (${formatPrice(product.wholesalePrice * (product.wholesaleMinQty || 6))})`)
                       }
                     </span>
                   </button>

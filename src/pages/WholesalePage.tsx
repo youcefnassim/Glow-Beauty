@@ -249,7 +249,7 @@ export const WholesalePage: React.FC = () => {
                       ) : (
                         <>
                           <Package className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-                          <span className="truncate">{language === 'ar' ? `إضافة الحزمة (${minQty} قطع)` : `Ajouter le Lot (${minQty} pcs)`}</span>
+                          <span className="truncate">{language === 'ar' ? 'إضافة الحزمة' : 'Ajouter le lot'}</span>
                         </>
                       )}
                     </button>
