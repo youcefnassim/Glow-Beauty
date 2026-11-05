@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { StorageService } from '@/services/storage';
 import { useLanguage } from '@/context/LanguageContext';
 import { 
-  Phone, Mail, MapPin, Send, ShieldCheck, CheckCircle2, AlertCircle, Globe 
+  Phone, Mail, MapPin, Send, CheckCircle2, AlertCircle 
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
-  const { language, setLanguage, isRtl, t } = useLanguage();
+  const { language } = useLanguage();
   const [email, setEmail] = useState('');
   const [consent, setConsent] = useState(true);
   const [status, setStatus] = useState<{ success?: boolean; message?: string } | null>(null);
@@ -240,51 +240,6 @@ export const Footer: React.FC = () => {
                 </div>
               )}
             </form>
-          </div>
-        </div>
-
-        {/* Bottom Bar: Payments & Copyright */}
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-stone-400">
-          <p>© {new Date().getFullYear()} {language === 'ar' ? 'جين ميكب الجزائر' : 'Jin Makeup Algérie'}. {t('footer.rights')}</p>
-
-          {/* Language Selector in Footer */}
-          <div className="flex items-center gap-2">
-            <Globe className="w-3.5 h-3.5 text-rose-400" />
-            <div className="inline-flex rounded-lg bg-stone-800 p-0.5 border border-stone-700 text-[11px]">
-              <button
-                type="button"
-                onClick={() => setLanguage('fr')}
-                className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${
-                  language === 'fr' ? 'bg-deep text-white shadow-xs' : 'text-stone-400 hover:text-white'
-                }`}
-              >
-                Français
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage('ar')}
-                className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${
-                  language === 'ar' ? 'bg-rose-950 text-rose-200 shadow-xs' : 'text-stone-400 hover:text-white'
-                }`}
-              >
-                العربية
-              </button>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] text-stone-400">
-              {isRtl ? 'طرق الدفع المعتمدة :' : 'Modes de règlement acceptés :'}
-            </span>
-            <div className="flex items-center gap-1.5">
-              <span className="bg-stone-800 text-stone-200 text-[10px] font-bold px-2 py-0.5 rounded border border-stone-700 flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                {isRtl ? 'الدفع عند الاستلام نقداً' : 'Paiement à la livraison (Cash)'}
-              </span>
-              <span className="bg-stone-800 text-stone-300 text-[10px] font-semibold px-2 py-0.5 rounded border border-stone-700">
-                BaridiMob / CCP
-              </span>
-            </div>
           </div>
         </div>
       </div>
