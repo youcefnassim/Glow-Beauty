@@ -83,45 +83,7 @@ export const WholesalePage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-10 pb-10 pt-1 sm:pt-2">
-      {/* Hero Header */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-deep via-stone-900 to-rose-950 text-ivory rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-luxury">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none" />
-        
-        <div className="relative max-w-3xl space-y-2.5 sm:space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-amber-400/20 border border-amber-300/30 text-amber-300 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
-            <Package className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-            <span>Espace Vente en Gros & Professionnels</span>
-          </div>
-
-          <h1 className="font-serif text-xl sm:text-3xl lg:text-4xl font-bold leading-tight">
-            Approvisionnez votre Salon, Parapharmacie ou Boutique de Beauté
-          </h1>
-
-          <p className="text-[11px] sm:text-sm text-rose-100/90 leading-relaxed font-light max-w-2xl">
-            Bénéficiez de remises directes jusqu'à <strong>-40%</strong> sur nos soins haut de gamme. Conditionnements en lots scellés et livraison sécurisée sur les <strong>58 wilayas d’Algérie</strong> avec paiement à la réception.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-1 sm:pt-2">
-            <a
-              href="#catalogue-gros"
-              className="bg-brand-rose hover:bg-rose-600 text-white font-semibold text-xs px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition shadow-md flex items-center gap-1.5"
-            >
-              <span>Découvrir les Lots Grossiste</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </a>
-
-            <a
-              href="#demande-devis"
-              className="bg-white/10 hover:bg-white/20 text-ivory font-semibold text-xs px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition border border-white/20 flex items-center gap-1.5 backdrop-blur-xs"
-            >
-              <FileText className="w-3.5 h-3.5 text-amber-300" />
-              <span>Demander un devis sur mesure</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
+    <div className="space-y-5 sm:space-y-8 pb-10 pt-2 sm:pt-4">
       {/* 4 Pillars of B2B Service - 2 by 2 on mobile */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         <div className="bg-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-rose-100/80 shadow-xs space-y-1.5">
