@@ -12,7 +12,7 @@ const KEYS = {
   CATEGORIES: 'glow_beauty_categories_v1',
   SETTINGS: 'glow_beauty_settings_v1',
   COUPONS: 'glow_beauty_coupons_v1',
-  ORDERS: 'glow_beauty_orders_v1',
+  ORDERS: 'glow_beauty_orders_v2',
   REVIEWS: 'glow_beauty_reviews_v1',
   USERS: 'glow_beauty_users_v1',
   CURRENT_USER: 'glow_beauty_current_user_v1',
@@ -168,7 +168,18 @@ export const StorageService = {
 
   // Orders
   getOrders(): Order[] {
+    if (typeof window !== 'undefined' && localStorage.getItem('glow_beauty_orders_v1')) {
+      localStorage.removeItem('glow_beauty_orders_v1');
+      localStorage.setItem(KEYS.ORDERS, JSON.stringify([]));
+    }
     return getFromStorage<Order[]>(KEYS.ORDERS, INITIAL_ORDERS);
+  },
+
+  clearAllOrders(): void {
+    saveToStorage(KEYS.ORDERS, []);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('glow_beauty_orders_v1');
+    }
   },
 
   getOrderById(id: string): Order | undefined {
@@ -470,6 +481,7 @@ export const StorageService = {
     localStorage.removeItem(KEYS.SETTINGS);
     localStorage.removeItem(KEYS.COUPONS);
     localStorage.removeItem(KEYS.ORDERS);
+    localStorage.removeItem('glow_beauty_orders_v1');
     localStorage.removeItem(KEYS.REVIEWS);
     localStorage.removeItem(KEYS.USERS);
     localStorage.removeItem(KEYS.CURRENT_USER);

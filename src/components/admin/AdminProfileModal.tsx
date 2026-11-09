@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { StorageService } from '@/services/storage';
+import { useLanguage } from '@/context/LanguageContext';
 import { 
-  UserCheck, X, Mail, Phone, Lock, ShieldCheck, 
+  UserCheck, X, Mail, Phone, ShieldCheck, 
   CheckCircle2, AlertCircle, Save 
 } from 'lucide-react';
 
@@ -13,6 +14,7 @@ interface AdminProfileModalProps {
 
 export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, onClose }) => {
   const { user, updateProfile } = useAuth();
+  const { t } = useLanguage();
 
   const [fullName, setFullName] = useState(user?.fullName || 'Ramzi (Gérant)');
   const [email, setEmail] = useState(user?.email || 'admin@glowbeauty.dz');
@@ -38,19 +40,19 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
       // 1. Validate and update password if provided
       if (isChangingPassword && newPassword) {
         if (!StorageService.verifyAdminPassword(currentPassword)) {
-          setFeedback({ success: false, msg: 'Le mot de passe actuel est incorrect.' });
+          setFeedback({ success: false, msg: t('admin.login.errorWrong') });
           setIsSaving(false);
           return;
         }
 
         if (newPassword.length < 6) {
-          setFeedback({ success: false, msg: 'Le nouveau mot de passe doit comporter au moins 6 caractères.' });
+          setFeedback({ success: false, msg: t('admin.settings.newPassword') + ' (min 6)' });
           setIsSaving(false);
           return;
         }
 
         if (newPassword !== confirmPassword) {
-          setFeedback({ success: false, msg: 'Les deux nouveaux mots de passe ne correspondent pas.' });
+          setFeedback({ success: false, msg: t('admin.settings.confirmPassword') });
           setIsSaving(false);
           return;
         }
@@ -65,7 +67,7 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
         phone: phone.trim() || '0550123456',
       });
 
-      setFeedback({ success: true, msg: 'Informations administrateur enregistrées avec succès !' });
+      setFeedback({ success: true, msg: t('admin.profile.success') });
 
       // Reset password fields
       setCurrentPassword('');
@@ -78,7 +80,7 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
         onClose();
       }, 1200);
     } catch {
-      setFeedback({ success: false, msg: 'Erreur lors de la mise à jour des informations.' });
+      setFeedback({ success: false, msg: 'Error' });
       setIsSaving(false);
     }
   };
@@ -97,13 +99,13 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
             </div>
             <div>
               <h3 className="font-serif text-base font-bold text-white flex items-center gap-2">
-                <span>Profil Administrateur</span>
+                <span>{t('admin.profile.modalTitle')}</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-mono font-medium">
-                  Principal
+                  {t('admin.nav.role')}
                 </span>
               </h3>
               <p className="text-xs text-stone-400">
-                Modifier les informations d'identification et de contact de l'administrateur
+                {t('admin.profile.modalSubtitle')}
               </p>
             </div>
           </div>
@@ -111,6 +113,7 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
           <button
             onClick={onClose}
             className="p-1.5 rounded-xl hover:bg-stone-800 text-stone-400 hover:text-white transition cursor-pointer"
+            title={t('admin.profile.close')}
           >
             <X className="w-5 h-5" />
           </button>
@@ -136,7 +139,7 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
           {/* Full Name / Title */}
           <div>
             <label className="font-semibold text-deep block mb-1">
-              Nom complet & Titre affiché *
+              {t('admin.profile.fullName')}
             </label>
             <input
               type="text"
@@ -146,9 +149,6 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
               placeholder="Ex: Ramzi (Gérant)"
               className="w-full p-3 rounded-xl border border-stone-200 bg-stone-50 text-xs font-semibold focus:bg-white focus:border-rose-400 focus:outline-none transition"
             />
-            <span className="text-[10px] text-mutedText mt-1 block">
-              Ce nom apparaît dans le menu latéral, l'historique des commandes et les confirmations.
-            </span>
           </div>
 
           {/* Email & Phone */}
@@ -156,7 +156,7 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
             <div>
               <label className="font-semibold text-deep block mb-1 flex items-center gap-1.5">
                 <Mail className="w-3.5 h-3.5 text-stone-500" />
-                <span>Email de l'administrateur *</span>
+                <span>{t('admin.profile.email')}</span>
               </label>
               <input
                 type="email"
@@ -171,7 +171,7 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
             <div>
               <label className="font-semibold text-deep block mb-1 flex items-center gap-1.5">
                 <Phone className="w-3.5 h-3.5 text-stone-500" />
-                <span>Téléphone / WhatsApp</span>
+                <span>{t('admin.profile.phone')}</span>
               </label>
               <input
                 type="tel"
@@ -188,14 +188,14 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-stone-600" />
-                <span className="font-semibold text-deep">Mot de passe de l'espace admin</span>
+                <span className="font-semibold text-deep">{t('admin.settings.securityTitle')}</span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsChangingPassword(!isChangingPassword)}
                 className="text-xs text-rose-700 hover:text-rose-900 font-semibold cursor-pointer underline"
               >
-                {isChangingPassword ? 'Annuler modification' : 'Modifier le mot de passe'}
+                {isChangingPassword ? t('admin.categories.cancel') : t('admin.profile.securityToggle')}
               </button>
             </div>
 
@@ -203,7 +203,7 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
               <div className="mt-3 p-4 bg-stone-50 rounded-2xl border border-stone-200 space-y-3 animate-fadeIn">
                 <div>
                   <label className="font-semibold text-stone-700 block mb-1">
-                    Mot de passe actuel *
+                    {t('admin.settings.currentPassword')}
                   </label>
                   <input
                     type="password"
@@ -217,7 +217,7 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="font-semibold text-stone-700 block mb-1">
-                      Nouveau mot de passe *
+                      {t('admin.settings.newPassword')}
                     </label>
                     <input
                       type="password"
@@ -231,7 +231,7 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
 
                   <div>
                     <label className="font-semibold text-stone-700 block mb-1">
-                      Confirmer *
+                      {t('admin.settings.confirmPassword')}
                     </label>
                     <input
                       type="password"
@@ -255,7 +255,7 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
               disabled={isSaving}
               className="px-4 py-2.5 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-50 font-semibold cursor-pointer transition"
             >
-              Annuler
+              {t('admin.profile.close')}
             </button>
             <button
               type="submit"
@@ -263,7 +263,7 @@ export const AdminProfileModal: React.FC<AdminProfileModalProps> = ({ isOpen, on
               className="px-5 py-2.5 rounded-xl bg-deep hover:bg-rose-950 text-white font-semibold flex items-center gap-2 cursor-pointer shadow-xs transition"
             >
               <Save className="w-3.5 h-3.5" />
-              <span>{isSaving ? 'Enregistrement...' : 'Enregistrer les modifications'}</span>
+              <span>{isSaving ? t('admin.profile.saving') : t('admin.profile.saveBtn')}</span>
             </button>
           </div>
         </form>

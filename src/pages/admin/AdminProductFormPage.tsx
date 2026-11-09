@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { StorageService } from '@/services/storage';
 import { CATEGORIES, BRANDS } from '@/data/categories';
-import { Product, ProductImage, ProductVariant } from '@/types';
-import { ArrowLeft, Save, Plus, Trash2, Image, CheckCircle2, Package } from 'lucide-react';
+import { Product, ProductImage } from '@/types';
+import { useLanguage } from '@/context/LanguageContext';
+import { ArrowLeft, Save, Package } from 'lucide-react';
 
 export const AdminProductFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t, getCategoryName, language } = useLanguage();
   const isEditing = Boolean(id);
 
   // Form State
@@ -139,14 +141,14 @@ export const AdminProductFormPage: React.FC = () => {
       {/* Top Header */}
       <div>
         <Link to="/admin/products" className="inline-flex items-center gap-1.5 text-xs text-mutedText hover:text-deep mb-2 transition">
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Retour à la liste des produits</span>
+          <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
+          <span>{t('admin.productForm.back')}</span>
         </Link>
         <h1 className="font-serif text-3xl font-bold text-deep">
-          {isEditing ? 'Modifier la fiche produit' : 'Créer un nouveau produit de beauté'}
+          {isEditing ? t('admin.productForm.editTitle') : t('admin.productForm.createTitle')}
         </h1>
         <p className="text-xs text-mutedText mt-0.5">
-          Renseignez avec précision les informations dermatologiques, le prix en DZD et le stock.
+          {t('admin.productForm.subtitle')}
         </p>
       </div>
 
@@ -155,13 +157,13 @@ export const AdminProductFormPage: React.FC = () => {
         {/* Basic Details */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
           <h2 className="font-serif text-base font-bold text-deep pb-2 border-b border-stone-100">
-            1. Informations Principales
+            {t('admin.productForm.general')}
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-deep block mb-1">
-                Nom du produit (Français) *
+                {t('admin.productForm.nameFr')}
               </label>
               <input
                 type="text"
@@ -175,14 +177,14 @@ export const AdminProductFormPage: React.FC = () => {
 
             <div>
               <label className="text-xs font-semibold text-deep block mb-1">
-                Nom du produit (Arabe)
+                {t('admin.productForm.nameAr')}
               </label>
               <input
                 type="text"
                 dir="rtl"
                 value={nameAr}
                 onChange={(e) => setNameAr(e.target.value)}
-                placeholder="Ex: سيروم النضارة نياسيناميد 10%"
+                placeholder="مثال: سيروم النضارة نياسيناميد 10%"
                 className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50"
               />
             </div>
@@ -190,7 +192,7 @@ export const AdminProductFormPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-deep block mb-1">Marque *</label>
+              <label className="text-xs font-semibold text-deep block mb-1">{t('admin.productForm.brand')}</label>
               <select
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
@@ -203,14 +205,14 @@ export const AdminProductFormPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-deep block mb-1">Catégorie *</label>
+              <label className="text-xs font-semibold text-deep block mb-1">{t('admin.productForm.category')}</label>
               <select
                 value={categorySlug}
                 onChange={(e) => setCategorySlug(e.target.value)}
                 className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50"
               >
                 {CATEGORIES.map(c => (
-                  <option key={c.id} value={c.slug}>{c.nameFr}</option>
+                  <option key={c.id} value={c.slug}>{getCategoryName(c)}</option>
                 ))}
               </select>
             </div>
@@ -218,7 +220,7 @@ export const AdminProductFormPage: React.FC = () => {
 
           <div>
             <label className="text-xs font-semibold text-deep block mb-1">
-              URL de l’image principale (Haute résolution) *
+              {t('admin.productForm.imageUrl')} *
             </label>
             <div className="flex gap-2">
               <input
@@ -233,7 +235,7 @@ export const AdminProductFormPage: React.FC = () => {
             {imageUrl && (
               <div className="mt-3 flex items-center gap-3 p-2 bg-stone-50 rounded-xl border border-stone-200 max-w-sm">
                 <img src={imageUrl} alt="Aperçu" className="w-12 h-12 rounded-lg object-cover bg-white" />
-                <span className="text-xs text-mutedText">Aperçu direct de l'image</span>
+                <span className="text-xs text-mutedText">✓ OK</span>
               </div>
             )}
           </div>
@@ -242,13 +244,13 @@ export const AdminProductFormPage: React.FC = () => {
         {/* Pricing & Stock */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
           <h2 className="font-serif text-base font-bold text-deep pb-2 border-b border-stone-100">
-            2. Prix & Inventaire (Marché Algérien)
+            {t('admin.productForm.pricingStock')}
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="text-xs font-semibold text-deep block mb-1">
-                Prix de vente (DZD / DA) *
+                {t('admin.productForm.price')}
               </label>
               <input
                 type="number"
@@ -262,7 +264,7 @@ export const AdminProductFormPage: React.FC = () => {
 
             <div>
               <label className="text-xs font-semibold text-deep block mb-1">
-                Prix d'origine (Optionnel promo DA)
+                {t('admin.productForm.comparePrice')}
               </label>
               <input
                 type="number"
@@ -276,7 +278,7 @@ export const AdminProductFormPage: React.FC = () => {
 
             <div>
               <label className="text-xs font-semibold text-deep block mb-1">
-                Quantité en Stock *
+                {t('admin.productForm.stock')}
               </label>
               <input
                 type="number"
@@ -298,7 +300,7 @@ export const AdminProductFormPage: React.FC = () => {
                 <Package className="w-4 h-4" />
               </div>
               <h2 className="font-serif text-base font-bold text-deep">
-                3. Option Vente en Gros (B2B / Salons & Revendeurs)
+                {t('admin.productForm.wholesaleSection')}
               </h2>
             </div>
             <label className="flex items-center gap-2 text-xs font-semibold text-deep cursor-pointer">
@@ -313,7 +315,7 @@ export const AdminProductFormPage: React.FC = () => {
                 }}
                 className="w-4 h-4 rounded border-stone-300 text-rose-600 focus:ring-rose-500"
               />
-              <span>Proposer à la vente en gros</span>
+              <span>{t('admin.productForm.wholesaleEnable')}</span>
             </label>
           </div>
 
@@ -322,7 +324,7 @@ export const AdminProductFormPage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-deep block mb-1">
-                    Prix unitaire en gros (DZD) *
+                    {t('admin.productForm.wholesalePrice')}
                   </label>
                   <input
                     type="number"
@@ -332,16 +334,11 @@ export const AdminProductFormPage: React.FC = () => {
                     placeholder="Ex: 2200"
                     className="w-full text-xs p-3 rounded-xl border border-amber-200 bg-amber-50/40 font-bold text-deep"
                   />
-                  {wholesalePrice && price > wholesalePrice && (
-                    <p className="text-[11px] text-emerald-700 font-semibold mt-1">
-                      ✓ Remise grossiste : -{Math.round(((price - wholesalePrice) / price) * 100)}%
-                    </p>
-                  )}
                 </div>
 
                 <div>
                   <label className="text-xs font-semibold text-deep block mb-1">
-                    Quantité minimum par lot / carton *
+                    {t('admin.productForm.wholesaleMinQty')}
                   </label>
                   <input
                     type="number"
@@ -351,38 +348,21 @@ export const AdminProductFormPage: React.FC = () => {
                     placeholder="6"
                     className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50 font-bold"
                   />
-                  <p className="text-[11px] text-mutedText mt-1">
-                    Ex: 6 ou 10 unités pour déclencher ce tarif
-                  </p>
                 </div>
 
                 <div>
                   <label className="text-xs font-semibold text-deep block mb-1">
-                    Description du conditionnement
+                    {t('admin.productForm.wholesaleDesc')}
                   </label>
                   <input
                     type="text"
                     value={wholesalePackDescription}
                     onChange={(e) => setWholesalePackDescription(e.target.value)}
-                    placeholder="Ex: Carton scellé de 6 flacons"
+                    placeholder={t('admin.productForm.wholesaleDescPlaceholder')}
                     className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50"
                   />
-                  <p className="text-[11px] text-mutedText mt-1">
-                    Mention affichée sur la fiche pro
-                  </p>
                 </div>
               </div>
-
-              {wholesalePrice && (
-                <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-center justify-between">
-                  <span>
-                    Valeur totale du lot ({wholesaleMinQty} pcs) : <strong>{(wholesalePrice * wholesaleMinQty).toLocaleString('fr-DZ')} DZD</strong>
-                  </span>
-                  <span className="font-semibold text-emerald-800">
-                    Économie cliente pro : {((price - wholesalePrice) * wholesaleMinQty).toLocaleString('fr-DZ')} DZD
-                  </span>
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -390,91 +370,89 @@ export const AdminProductFormPage: React.FC = () => {
         {/* Descriptions & Formulations */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
           <h2 className="font-serif text-base font-bold text-deep pb-2 border-b border-stone-100">
-            4. Fiche Technique & Formulations
+            {language === 'ar' ? 'الوصف والمكونات' : 'Fiche Technique & Formulations'}
           </h2>
 
           <div>
             <label className="text-xs font-semibold text-deep block mb-1">
-              Description Courte (Aperçu catalogue) *
+              {t('admin.productForm.shortDesc')} *
             </label>
             <input
               type="text"
               required
               value={shortDescription}
               onChange={(e) => setShortDescription(e.target.value)}
-              placeholder="Ex: Soin hydratant concentré aux céramides et acide hyaluronique."
+              placeholder={t('admin.productForm.shortDescPlaceholder')}
               className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50"
             />
           </div>
 
           <div>
             <label className="text-xs font-semibold text-deep block mb-1">
-              Description Complète du Rituel *
+              {t('admin.productForm.fullDesc')} *
             </label>
             <textarea
               required
               rows={4}
               value={fullDescription}
               onChange={(e) => setFullDescription(e.target.value)}
-              placeholder="Détaillez les bienfaits, la texture sensorielle et l'efficacité..."
               className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50"
             />
           </div>
 
           <div>
             <label className="text-xs font-semibold text-deep block mb-1">
-              Liste Officielle des Ingrédients (INCI)
+              {t('admin.productForm.ingredients')}
             </label>
             <textarea
               rows={2}
               value={ingredients}
               onChange={(e) => setIngredients(e.target.value)}
-              placeholder="Aqua (Water), Niacinamide, Glycerin, Rosa Damascena Flower Water..."
+              placeholder="Aqua (Water), Niacinamide, Glycerin..."
               className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50 font-mono"
             />
           </div>
 
           <div>
             <label className="text-xs font-semibold text-deep block mb-1">
-              Conseils d’Utilisation
+              {t('admin.productForm.usage')}
             </label>
             <input
               type="text"
               value={usageInstructions}
               onChange={(e) => setUsageInstructions(e.target.value)}
-              placeholder="Ex: Appliquer 3 à 4 gouttes matin et soir sur le visage propre."
               className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-deep block mb-1">Type de peau conseillé</label>
+              <label className="text-xs font-semibold text-deep block mb-1">{t('admin.productForm.skinType')}</label>
               <select
                 value={skinType}
                 onChange={(e) => setSkinType(e.target.value as Product['skinType'])}
                 className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50"
               >
-                <option value="all">Tous types de peaux</option>
-                <option value="dry">Peau Sèche</option>
-                <option value="oily">Peau Grasse</option>
-                <option value="combination">Peau Mixte</option>
-                <option value="sensitive">Peau Sensible</option>
+                <option value="all">{language === 'ar' ? 'جميع أنواع البشرة' : 'Tous types de peaux'}</option>
+                <option value="dry">{language === 'ar' ? 'بشرة جافة' : 'Peau Sèche'}</option>
+                <option value="oily">{language === 'ar' ? 'بشرة دهنية' : 'Peau Grasse'}</option>
+                <option value="combination">{language === 'ar' ? 'بشرة مختلطة' : 'Peau Mixte'}</option>
+                <option value="sensitive">{language === 'ar' ? 'بشرة حساسة' : 'Peau Sensible'}</option>
               </select>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-deep block mb-1">Préoccupation ciblée</label>
+              <label className="text-xs font-semibold text-deep block mb-1">{t('admin.productForm.skinConcern')}</label>
               <select
                 value={skinConcern}
                 onChange={(e) => setSkinConcern(e.target.value as Product['skinConcern'])}
                 className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50"
               >
-                <option value="hydration">Hydratation profonde</option>
-                <option value="radiance">Éclat du teint</option>
-                <option value="blemishes">Imperfections & Pores</option>
-                <option value="anti-aging">Anti-âge & Fermeté</option>
-                <option value="sun-protection">Protection Solaire SPF</option>
+                <option value="hydration">{language === 'ar' ? 'ترطيب عميق' : 'Hydratation profonde'}</option>
+                <option value="radiance">{language === 'ar' ? 'نضارة وإشراق' : 'Éclat du teint'}</option>
+                <option value="blemishes">{language === 'ar' ? 'شوائب ومسامات' : 'Imperfections & Pores'}</option>
+                <option value="anti-aging">{language === 'ar' ? 'مكافحة التجاعيد' : 'Anti-âge & Fermeté'}</option>
+                <option value="sun-protection">{language === 'ar' ? 'حماية من الشمس' : 'Protection Solaire SPF'}</option>
               </select>
             </div>
           </div>
@@ -483,7 +461,7 @@ export const AdminProductFormPage: React.FC = () => {
         {/* Marketing Badges */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-3">
           <h2 className="font-serif text-base font-bold text-deep pb-2 border-b border-stone-100">
-            4. Badges & Mise en Avant
+            {t('admin.productForm.badgesSection')}
           </h2>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -494,7 +472,7 @@ export const AdminProductFormPage: React.FC = () => {
                 onChange={(e) => setIsNewArrival(e.target.checked)}
                 className="rounded border-stone-300 text-rose-600"
               />
-              <span>Badge « Nouveau »</span>
+              <span>{t('admin.products.badgeNew')}</span>
             </label>
 
             <label className="flex items-center gap-2 text-xs font-medium text-deep cursor-pointer">
@@ -504,7 +482,7 @@ export const AdminProductFormPage: React.FC = () => {
                 onChange={(e) => setIsPromo(e.target.checked)}
                 className="rounded border-stone-300 text-rose-600"
               />
-              <span>Badge « Promo »</span>
+              <span>{t('admin.products.badgePromo')}</span>
             </label>
 
             <label className="flex items-center gap-2 text-xs font-medium text-deep cursor-pointer">
@@ -514,7 +492,7 @@ export const AdminProductFormPage: React.FC = () => {
                 onChange={(e) => setIsBestSeller(e.target.checked)}
                 className="rounded border-stone-300 text-rose-600"
               />
-              <span>Badge « Best-Seller »</span>
+              <span>{t('admin.products.badgeBestSeller')}</span>
             </label>
 
             <label className="flex items-center gap-2 text-xs font-medium text-deep cursor-pointer">
@@ -524,7 +502,7 @@ export const AdminProductFormPage: React.FC = () => {
                 onChange={(e) => setIsFeatured(e.target.checked)}
                 className="rounded border-stone-300 text-rose-600"
               />
-              <span>En vedette (Homepage)</span>
+              <span>{t('admin.products.badgeFeatured')}</span>
             </label>
           </div>
         </div>
@@ -535,14 +513,14 @@ export const AdminProductFormPage: React.FC = () => {
             to="/admin/products"
             className="px-6 py-3 rounded-xl border border-stone-300 text-xs font-semibold text-stone-700 hover:bg-stone-50"
           >
-            Annuler
+            {t('admin.categories.cancel')}
           </Link>
           <button
             type="submit"
             className="bg-deep hover:bg-rose-950 text-ivory text-xs font-semibold px-8 py-3 rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
           >
             <Save className="w-4 h-4" />
-            <span>{isEditing ? 'Enregistrer les modifications' : 'Publier le produit'}</span>
+            <span>{t('admin.productForm.save')}</span>
           </button>
         </div>
 

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { StorageService } from '@/services/storage';
 import { Category } from '@/types';
-import { FolderTree, Plus, Save, Edit2 } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import { Plus, Save, Edit2 } from 'lucide-react';
 
 export const AdminCategoriesPage: React.FC = () => {
+  const { t, getCategoryName } = useLanguage();
   const [categories, setCategories] = useState<Category[]>(() => StorageService.getCategories());
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
@@ -63,9 +65,9 @@ export const AdminCategoriesPage: React.FC = () => {
     <div className="space-y-6 max-w-5xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold text-deep">Gestion des Catégories</h1>
+          <h1 className="font-serif text-3xl font-bold text-deep">{t('admin.categories.pageTitle')}</h1>
           <p className="text-xs text-mutedText mt-1">
-            Organisez les univers de soins, titres et descriptions de navigation.
+            {t('admin.categories.pageSubtitle')}
           </p>
         </div>
         <button
@@ -73,7 +75,7 @@ export const AdminCategoriesPage: React.FC = () => {
           className="bg-deep hover:bg-rose-950 text-ivory text-xs font-semibold px-5 py-2.5 rounded-xl transition shadow-sm flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          <span>Nouvelle Catégorie</span>
+          <span>{t('admin.categories.create')}</span>
         </button>
       </div>
 
@@ -82,17 +84,17 @@ export const AdminCategoriesPage: React.FC = () => {
         <div className="bg-white p-6 rounded-3xl border border-rose-200 shadow-luxury space-y-4 animate-fadeIn">
           <div className="flex items-center justify-between pb-3 border-b border-rose-100">
             <h3 className="font-serif text-base font-bold text-deep">
-              {editingCategory.slug ? 'Modifier la catégorie' : 'Créer une nouvelle catégorie'}
+              {editingCategory.slug ? t('admin.categories.edit') : t('admin.categories.create')}
             </h3>
-            <button onClick={() => setEditingCategory(null)} className="text-xs text-mutedText hover:text-deep">
-              Fermer
+            <button onClick={() => setEditingCategory(null)} className="text-xs text-mutedText hover:text-deep cursor-pointer">
+              {t('admin.categories.cancel')}
             </button>
           </div>
 
           <form onSubmit={handleSave} className="space-y-4 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="font-semibold text-deep block mb-1">Nom Français *</label>
+                <label className="font-semibold text-deep block mb-1">{t('admin.categories.nameFr')}</label>
                 <input
                   type="text"
                   required
@@ -102,7 +104,7 @@ export const AdminCategoriesPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="font-semibold text-deep block mb-1">Nom Arabe</label>
+                <label className="font-semibold text-deep block mb-1">{t('admin.categories.nameAr')}</label>
                 <input
                   type="text"
                   dir="rtl"
@@ -115,7 +117,7 @@ export const AdminCategoriesPage: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="font-semibold text-deep block mb-1">Slug URL (ex: soins-visage)</label>
+                <label className="font-semibold text-deep block mb-1">{t('admin.categories.slug')}</label>
                 <input
                   type="text"
                   value={slug}
@@ -124,7 +126,7 @@ export const AdminCategoriesPage: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="font-semibold text-deep block mb-1">URL Image d'en-tête</label>
+                <label className="font-semibold text-deep block mb-1">{t('admin.categories.imageUrl')}</label>
                 <input
                   type="url"
                   value={imageUrl}
@@ -135,7 +137,7 @@ export const AdminCategoriesPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="font-semibold text-deep block mb-1">Description courte</label>
+              <label className="font-semibold text-deep block mb-1">{t('admin.categories.description')}</label>
               <textarea
                 rows={2}
                 value={description}
@@ -148,16 +150,16 @@ export const AdminCategoriesPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setEditingCategory(null)}
-                className="px-4 py-2 rounded-xl border border-stone-300 font-semibold"
+                className="px-4 py-2 rounded-xl border border-stone-300 font-semibold cursor-pointer"
               >
-                Annuler
+                {t('admin.categories.cancel')}
               </button>
               <button
                 type="submit"
                 className="bg-deep text-ivory font-semibold px-6 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
-                <span>Enregistrer</span>
+                <span>{t('admin.categories.save')}</span>
               </button>
             </div>
           </form>
@@ -166,39 +168,42 @@ export const AdminCategoriesPage: React.FC = () => {
 
       {/* Categories Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map(cat => (
-          <div key={cat.id} className="bg-white rounded-3xl overflow-hidden border border-stone-200/80 shadow-xs flex flex-col justify-between">
-            <div className="aspect-[16/9] relative overflow-hidden bg-stone-100">
-              <img src={cat.imageUrl} alt={cat.nameFr} className="w-full h-full object-cover" />
-              <span className="absolute top-3 left-3 bg-deep/80 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-xs">
-                {cat.slug}
-              </span>
-            </div>
-
-            <div className="p-5 space-y-2 flex-1 flex flex-col justify-between">
-              <div>
-                <div className="flex items-baseline justify-between">
-                  <h3 className="font-serif text-base font-bold text-deep">{cat.nameFr}</h3>
-                  <span className="text-xs text-rose-800 font-semibold font-serif" dir="rtl">{cat.nameAr}</span>
-                </div>
-                <p className="text-xs text-mutedText mt-1 line-clamp-2">{cat.description}</p>
-              </div>
-
-              <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
-                <span className="text-[11px] text-mutedText">
-                  {StorageService.getProducts().filter(p => p.categorySlug === cat.slug).length} produits associés
+        {categories.map(cat => {
+          const count = StorageService.getProducts().filter(p => p.categorySlug === cat.slug).length;
+          return (
+            <div key={cat.id} className="bg-white rounded-3xl overflow-hidden border border-stone-200/80 shadow-xs flex flex-col justify-between">
+              <div className="aspect-[16/9] relative overflow-hidden bg-stone-100">
+                <img src={cat.imageUrl} alt={getCategoryName(cat)} className="w-full h-full object-cover" />
+                <span className="absolute top-3 start-3 bg-deep/80 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-xs">
+                  {cat.slug}
                 </span>
-                <button
-                  onClick={() => handleEdit(cat)}
-                  className="inline-flex items-center gap-1 text-deep hover:text-rose-700 font-semibold cursor-pointer"
-                >
-                  <Edit2 className="w-3.5 h-3.5" />
-                  <span>Modifier</span>
-                </button>
+              </div>
+
+              <div className="p-5 space-y-2 flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <h3 className="font-serif text-base font-bold text-deep">{cat.nameFr}</h3>
+                    <span className="text-xs text-rose-800 font-semibold font-serif" dir="rtl">{cat.nameAr}</span>
+                  </div>
+                  <p className="text-xs text-mutedText mt-1 line-clamp-2">{cat.description}</p>
+                </div>
+
+                <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
+                  <span className="text-[11px] text-mutedText">
+                    {t('admin.categories.count', { count })}
+                  </span>
+                  <button
+                    onClick={() => handleEdit(cat)}
+                    className="inline-flex items-center gap-1 text-deep hover:text-rose-700 font-semibold cursor-pointer"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                    <span>{t('admin.products.edit')}</span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
     </div>

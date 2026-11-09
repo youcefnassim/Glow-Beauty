@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { StorageService } from '@/services/storage';
 import { StoreSettings } from '@/types';
 import { 
-  Settings, Save, CheckCircle2, ShieldAlert, Bell, 
+  Save, CheckCircle2, ShieldAlert, Bell, 
   KeyRound, Download, Upload, FileJson, AlertCircle, Lock, Package,
-  UserCheck, Edit3 
+  UserCheck 
 } from 'lucide-react';
 
 export const AdminSettingsPage: React.FC = () => {
   const { user, updateProfile } = useAuth();
+  const { t, language } = useLanguage();
   const [settings, setSettings] = useState<StoreSettings>(() => StorageService.getSettings());
   const [savedSuccess, setSavedSuccess] = useState(false);
 
@@ -34,7 +36,7 @@ export const AdminSettingsPage: React.FC = () => {
       email: adminEmail.trim() || 'admin@glowbeauty.dz',
       phone: adminPhone.trim() || '0550123456',
     });
-    setAdminProfileFeedback('Informations administrateur enregistrées avec succès !');
+    setAdminProfileFeedback(t('admin.profile.success'));
     setTimeout(() => setAdminProfileFeedback(null), 3500);
   };
 
@@ -63,22 +65,22 @@ export const AdminSettingsPage: React.FC = () => {
     setPasswordFeedback(null);
 
     if (!StorageService.verifyAdminPassword(currentPassword)) {
-      setPasswordFeedback({ success: false, msg: 'Le mot de passe actuel est incorrect.' });
+      setPasswordFeedback({ success: false, msg: t('admin.login.errorWrong') });
       return;
     }
 
     if (newPassword.length < 6) {
-      setPasswordFeedback({ success: false, msg: 'Le nouveau mot de passe doit comporter au moins 6 caractères.' });
+      setPasswordFeedback({ success: false, msg: t('admin.settings.newPassword') + ' (min 6)' });
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordFeedback({ success: false, msg: 'Les deux nouveaux mots de passe ne correspondent pas.' });
+      setPasswordFeedback({ success: false, msg: t('admin.settings.confirmPassword') });
       return;
     }
 
     StorageService.setAdminPassword(newPassword);
-    setPasswordFeedback({ success: true, msg: 'Votre mot de passe administrateur a été modifié avec succès !' });
+    setPasswordFeedback({ success: true, msg: t('admin.settings.saveSuccess') });
     setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
@@ -97,10 +99,10 @@ export const AdminSettingsPage: React.FC = () => {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      setBackupFeedback({ success: true, msg: 'Sauvegarde téléchargée avec succès sur votre ordinateur.' });
+      setBackupFeedback({ success: true, msg: language === 'ar' ? 'تم تنزيل النسخة الاحتياطية بنجاح على جهازك.' : 'Sauvegarde téléchargée avec succès sur votre ordinateur.' });
     } catch (e: unknown) {
       const err = e instanceof Error ? e.message : 'Erreur inconnue';
-      setBackupFeedback({ success: false, msg: `Erreur d'export: ${err}` });
+      setBackupFeedback({ success: false, msg: `Error: ${err}` });
     }
   };
 
@@ -126,16 +128,16 @@ export const AdminSettingsPage: React.FC = () => {
   return (
     <div className="space-y-8 max-w-4xl">
       <div>
-        <h1 className="font-serif text-3xl font-bold text-deep">Paramètres Généraux de la Boutique</h1>
+        <h1 className="font-serif text-3xl font-bold text-deep">{t('admin.settings.pageTitle')}</h1>
         <p className="text-xs text-mutedText mt-1">
-          Configuration des règles de livraison, coordonnées d'Alger et modes de paiement.
+          {t('admin.settings.pageSubtitle')}
         </p>
       </div>
 
       {savedSuccess && (
         <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>Paramètres de la boutique enregistrés avec succès !</span>
+          <span>{t('admin.settings.saveSuccess')}</span>
         </div>
       )}
 
@@ -148,13 +150,13 @@ export const AdminSettingsPage: React.FC = () => {
             </div>
             <div>
               <h2 className="font-serif text-base font-bold text-deep flex items-center gap-2">
-                <span>Profil & Identité de l'Administrateur</span>
+                <span>{t('admin.profile.modalTitle')}</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 font-bold border border-rose-200/60 uppercase tracking-wider">
-                  Gérant
+                  {t('admin.nav.role')}
                 </span>
               </h2>
               <p className="text-[11px] text-mutedText">
-                Modifiez le nom, l'email et le numéro de contact du gérant principal (affichés dans le menu et sur les bordereaux).
+                {t('admin.profile.modalSubtitle')}
               </p>
             </div>
           </div>
@@ -170,7 +172,7 @@ export const AdminSettingsPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label className="font-semibold text-deep block mb-1">
-              Nom complet & Titre affiché *
+              {t('admin.profile.fullName')}
             </label>
             <input
               type="text"
@@ -180,14 +182,11 @@ export const AdminSettingsPage: React.FC = () => {
               placeholder="Ex: Ramzi (Gérant)"
               className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-bold text-deep"
             />
-            <span className="text-[10px] text-mutedText mt-1 block">
-              Nom officiel du gérant du compte.
-            </span>
           </div>
 
           <div>
             <label className="font-semibold text-deep block mb-1">
-              Email de l'administrateur *
+              {t('admin.profile.email')}
             </label>
             <input
               type="email"
@@ -197,14 +196,11 @@ export const AdminSettingsPage: React.FC = () => {
               placeholder="admin@glowbeauty.dz"
               className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50"
             />
-            <span className="text-[10px] text-mutedText mt-1 block">
-              Adresse e-mail administrative.
-            </span>
           </div>
 
           <div>
             <label className="font-semibold text-deep block mb-1">
-              Téléphone / WhatsApp
+              {t('admin.profile.phone')}
             </label>
             <input
               type="tel"
@@ -213,9 +209,6 @@ export const AdminSettingsPage: React.FC = () => {
               placeholder="0550123456"
               className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-semibold"
             />
-            <span className="text-[10px] text-mutedText mt-1 block">
-              Ligne directe du gérant.
-            </span>
           </div>
         </div>
 
@@ -226,7 +219,7 @@ export const AdminSettingsPage: React.FC = () => {
             className="bg-deep hover:bg-rose-950 text-white font-semibold px-4 py-2.5 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs transition text-xs"
           >
             <Save className="w-3.5 h-3.5" />
-            <span>Mettre à jour mes informations</span>
+            <span>{t('admin.profile.saveBtn')}</span>
           </button>
         </div>
       </div>
@@ -236,13 +229,13 @@ export const AdminSettingsPage: React.FC = () => {
         {/* Shipping & Delivery Rules */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
           <h2 className="font-serif text-base font-bold text-deep pb-2 border-b border-stone-100">
-            Règles de Livraison (Algérie)
+            {t('admin.settings.deliveryTitle')}
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="font-semibold text-deep block mb-1">
-                Seuil de livraison gratuite (DZD) *
+                {t('admin.settings.freeThreshold')} *
               </label>
               <input
                 type="number"
@@ -252,14 +245,11 @@ export const AdminSettingsPage: React.FC = () => {
                 onChange={(e) => handleChange('freeDeliveryThreshold', Number(e.target.value))}
                 className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-bold"
               />
-              <span className="text-[10px] text-mutedText mt-1 block">
-                Offerte sur les 58 wilayas au-delà de ce montant.
-              </span>
             </div>
 
             <div>
               <label className="font-semibold text-deep block mb-1">
-                Frais standard Domicile (DA)
+                {t('admin.settings.homeDeliveryFee')}
               </label>
               <input
                 type="number"
@@ -273,7 +263,7 @@ export const AdminSettingsPage: React.FC = () => {
 
             <div>
               <label className="font-semibold text-deep block mb-1">
-                Frais standard Stop-Desk (DA)
+                {t('admin.settings.stopDeskFee')}
               </label>
               <input
                 type="number"
@@ -290,12 +280,12 @@ export const AdminSettingsPage: React.FC = () => {
         {/* Contact Info */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
           <h2 className="font-serif text-base font-bold text-deep pb-2 border-b border-stone-100">
-            Coordonnées Officielles & Service Client
+            {t('admin.settings.general')}
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="font-semibold text-deep block mb-1">Nom de l'Enseigne</label>
+              <label className="font-semibold text-deep block mb-1">{t('admin.settings.storeName')}</label>
               <input
                 type="text"
                 required
@@ -306,7 +296,7 @@ export const AdminSettingsPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="font-semibold text-deep block mb-1">Téléphone Service Client</label>
+              <label className="font-semibold text-deep block mb-1">{t('admin.settings.contactPhone')}</label>
               <input
                 type="text"
                 required
@@ -319,7 +309,7 @@ export const AdminSettingsPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="font-semibold text-deep block mb-1">E-mail de Contact</label>
+              <label className="font-semibold text-deep block mb-1">{t('admin.settings.contactEmail')}</label>
               <input
                 type="email"
                 required
@@ -330,7 +320,7 @@ export const AdminSettingsPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="font-semibold text-deep block mb-1">Adresse Siège / Showroom</label>
+              <label className="font-semibold text-deep block mb-1">{t('admin.settings.contactAddress')}</label>
               <input
                 type="text"
                 required
@@ -343,7 +333,7 @@ export const AdminSettingsPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
             <div>
-              <label className="font-semibold text-deep block mb-1">Instagram URL</label>
+              <label className="font-semibold text-deep block mb-1">{t('admin.settings.socialInstagram')}</label>
               <input
                 type="url"
                 value={settings.socialInstagram}
@@ -352,7 +342,7 @@ export const AdminSettingsPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="font-semibold text-deep block mb-1">Facebook URL</label>
+              <label className="font-semibold text-deep block mb-1">{t('admin.settings.socialFacebook')}</label>
               <input
                 type="url"
                 value={settings.socialFacebook}
@@ -361,7 +351,7 @@ export const AdminSettingsPage: React.FC = () => {
               />
             </div>
             <div>
-              <label className="font-semibold text-deep block mb-1">TikTok URL</label>
+              <label className="font-semibold text-deep block mb-1">{t('admin.settings.socialTiktok')}</label>
               <input
                 type="url"
                 value={settings.socialTiktok}
@@ -375,16 +365,18 @@ export const AdminSettingsPage: React.FC = () => {
         {/* Payment Gateways Information */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
           <h2 className="font-serif text-base font-bold text-deep pb-2 border-b border-stone-100">
-            Intégrations Bancaires & Monétiques (Algérie)
+            {language === 'ar' ? 'بوابات الدفع الإلكتروني (الجزائر)' : 'Intégrations Bancaires & Monétiques (Algérie)'}
           </h2>
 
           <div className="p-4 bg-stone-50 rounded-2xl border border-stone-200 space-y-2">
             <div className="flex items-center gap-2 text-stone-800 font-bold">
               <ShieldAlert className="w-4 h-4 text-amber-600" />
-              <span>Agrément SATIM / Edahabia & CIB</span>
+              <span>{language === 'ar' ? 'اعتماد بريد الجزائر والبطاقة الذهبية / CIB (SATIM)' : 'Agrément SATIM / Edahabia & CIB'}</span>
             </div>
             <p className="text-mutedText leading-relaxed">
-              Pour activer le paiement par carte bancaire en ligne, vous devez souscrire un contrat e-commerce avec votre banque ou Algérie Poste (SATIM). Une fois les clés d'API marchande (Merchant ID & Secret) fournies, l'option sera disponible.
+              {language === 'ar'
+                ? 'لتفعيل الدفع بالبطاقة الذهبية أو البنكية عبر الإنترنت، يجب إبرام عقد التجارة الإلكترونية مع بريد الجزائر أو البنك. عند ربط مفاتيح الربط (API)، سيتاح الخيار فوراً للمشترين.'
+                : 'Pour activer le paiement par carte bancaire en ligne, vous devez souscrire un contrat e-commerce avec votre banque ou Algérie Poste (SATIM). Une fois les clés d\'API marchande fournies, l\'option sera disponible.'}
             </p>
           </div>
         </div>
@@ -394,14 +386,14 @@ export const AdminSettingsPage: React.FC = () => {
           <div className="flex items-center gap-2 pb-2 border-b border-stone-100">
             <Package className="w-5 h-5 text-amber-600" />
             <h2 className="font-serif text-base font-bold text-deep">
-              Vente en Gros & Commandes Salons / Revendeurs (B2B)
+              {language === 'ar' ? 'إعدادات البيع بالجملة والمحترفين (B2B)' : 'Vente en Gros & Commandes Salons / Revendeurs (B2B)'}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="font-semibold text-deep block mb-1">
-                Ligne WhatsApp Directe Grossiste
+                {language === 'ar' ? 'رقم واتساب المباشر لطلبات الجملة' : 'Ligne WhatsApp Directe Grossiste'}
               </label>
               <input
                 type="text"
@@ -410,14 +402,11 @@ export const AdminSettingsPage: React.FC = () => {
                 placeholder="Ex: 0555000000 ou 213555000000"
                 className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50"
               />
-              <span className="text-[10px] text-mutedText mt-1 block">
-                Numéro utilisé pour la réception instantanée des demandes de devis et commandes de gros.
-              </span>
             </div>
 
             <div>
               <label className="font-semibold text-deep block mb-1">
-                Seuil minimum recommandé de commande en gros (DZD)
+                {language === 'ar' ? 'الحد الأدنى المقترح لطلبية الجملة (دج)' : 'Seuil minimum recommandé de commande en gros (DZD)'}
               </label>
               <input
                 type="number"
@@ -426,95 +415,74 @@ export const AdminSettingsPage: React.FC = () => {
                 onChange={(e) => handleChange('wholesaleMinOrderAmount', Number(e.target.value))}
                 className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-bold"
               />
-              <span className="text-[10px] text-mutedText mt-1 block">
-                Montant indicatif suggéré pour les commandes en gros sur l'espace pro.
-              </span>
             </div>
           </div>
         </div>
 
-        {/* Real-time Order Alerts & Integrations (Option 2: No Supabase needed) */}
+        {/* Real-time Order Alerts & Integrations */}
         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-5">
           <div className="flex items-center gap-2 pb-2 border-b border-stone-100">
             <Bell className="w-5 h-5 text-rose-600" />
             <div>
               <h2 className="font-serif text-base font-bold text-deep">
-                Notifications en Temps Réel & Synchronisation (Architecture Autonome)
+                {language === 'ar' ? 'تنبيهات الطلبيات والمزامنة الفورية' : 'Notifications en Temps Réel & Synchronisation'}
               </h2>
-              <p className="text-[11px] text-mutedText">
-                Recevez chaque nouvelle commande directement sur WhatsApp, Telegram ou dans votre Google Sheets sans coût de serveur externe.
-              </p>
             </div>
           </div>
 
           <div className="space-y-4">
-            {/* WhatsApp Phone */}
             <div>
               <label className="font-semibold text-deep block mb-1">
-                Numéro WhatsApp Récepteur des Commandes
+                {language === 'ar' ? 'رقم واتساب لاستقبال إشعارات الطلبيات' : 'Numéro WhatsApp Récepteur des Commandes'}
               </label>
               <input
                 type="text"
                 value={settings.whatsappNotificationPhone || ''}
                 onChange={(e) => handleChange('whatsappNotificationPhone', e.target.value)}
-                placeholder="Ex: 0550123456 ou 0661998877"
+                placeholder="Ex: 0550123456"
                 className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-bold"
               />
-              <span className="text-[10px] text-mutedText mt-1 block">
-                Numéro algérien sur lequel les clientes envoient la confirmation WhatsApp en 1 clic.
-              </span>
             </div>
 
-            {/* Telegram Bot */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-stone-100">
               <div>
                 <label className="font-semibold text-deep block mb-1">
-                  Telegram Bot Token (Optionnel)
+                  Telegram Bot Token
                 </label>
                 <input
                   type="password"
                   value={settings.telegramBotToken || ''}
                   onChange={(e) => handleChange('telegramBotToken', e.target.value)}
-                  placeholder="Ex: 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ"
+                  placeholder="Ex: 123456789:ABCdef..."
                   className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-mono text-[11px]"
                 />
-                <span className="text-[10px] text-mutedText mt-1 block">
-                  Créé via @BotFather sur Telegram pour notifier votre canal de vente en direct.
-                </span>
               </div>
 
               <div>
                 <label className="font-semibold text-deep block mb-1">
-                  Telegram Chat ID / Canal ID (Optionnel)
+                  Telegram Chat ID
                 </label>
                 <input
                   type="text"
                   value={settings.telegramChatId || ''}
                   onChange={(e) => handleChange('telegramChatId', e.target.value)}
-                  placeholder="Ex: -1001234567890 ou @votre_canal"
+                  placeholder="Ex: -1001234567890"
                   className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-mono text-[11px]"
                 />
-                <span className="text-[10px] text-mutedText mt-1 block">
-                  Identifiant du groupe Telegram où envoyer instantanément les fiches de commande.
-                </span>
               </div>
             </div>
 
-            {/* Google Sheets Webhook */}
             <div className="pt-2 border-t border-stone-100">
               <label className="font-semibold text-deep block mb-1">
-                URL Webhook Google Sheets (Optionnel)
+                Google Sheets Webhook URL
               </label>
               <input
                 type="url"
                 value={settings.googleSheetWebhook || ''}
                 onChange={(e) => handleChange('googleSheetWebhook', e.target.value)}
-                placeholder="https://script.google.com/macros/s/AKfycbx.../exec"
+                placeholder="https://script.google.com/macros/s/..."
                 className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-mono text-[11px]"
               />
-              <span className="text-[10px] text-mutedText mt-1 block">
-                Webhook Google Apps Script pour enregistrer automatiquement chaque commande en direct dans un tableur Google Sheets partagé.
-              </span>
             </div>
           </div>
         </div>
@@ -525,7 +493,7 @@ export const AdminSettingsPage: React.FC = () => {
             className="bg-deep hover:bg-rose-950 text-ivory font-semibold px-8 py-3 rounded-xl flex items-center gap-2 cursor-pointer shadow-md"
           >
             <Save className="w-4 h-4" />
-            <span>Enregistrer la configuration</span>
+            <span>{t('admin.settings.saveAll')}</span>
           </button>
         </div>
 
@@ -537,10 +505,10 @@ export const AdminSettingsPage: React.FC = () => {
           <KeyRound className="w-5 h-5 text-rose-600" />
           <div>
             <h2 className="font-serif text-base font-bold text-deep">
-              Sécurité & Mot de Passe Administrateur
+              {t('admin.settings.securityTitle')}
             </h2>
             <p className="text-[11px] text-mutedText">
-              Modifiez le mot de passe secret protégeant votre panneau d'administration.
+              {t('admin.settings.securityDesc')}
             </p>
           </div>
         </div>
@@ -563,7 +531,7 @@ export const AdminSettingsPage: React.FC = () => {
         <form onSubmit={handlePasswordChange} className="space-y-4 max-w-lg">
           <div>
             <label className="font-semibold text-deep block mb-1">
-              Mot de passe actuel *
+              {t('admin.settings.currentPassword')}
             </label>
             <input
               type="password"
@@ -578,7 +546,7 @@ export const AdminSettingsPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="font-semibold text-deep block mb-1">
-                Nouveau mot de passe *
+                {t('admin.settings.newPassword')}
               </label>
               <input
                 type="password"
@@ -592,7 +560,7 @@ export const AdminSettingsPage: React.FC = () => {
             </div>
             <div>
               <label className="font-semibold text-deep block mb-1">
-                Confirmer le nouveau mot de passe *
+                {t('admin.settings.confirmPassword')}
               </label>
               <input
                 type="password"
@@ -611,7 +579,7 @@ export const AdminSettingsPage: React.FC = () => {
             className="bg-stone-800 hover:bg-stone-900 text-white font-semibold px-5 py-2.5 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs transition"
           >
             <Lock className="w-3.5 h-3.5" />
-            <span>Mettre à jour le mot de passe</span>
+            <span>{t('admin.settings.changePasswordBtn')}</span>
           </button>
         </form>
       </div>
@@ -622,10 +590,10 @@ export const AdminSettingsPage: React.FC = () => {
           <FileJson className="w-5 h-5 text-rose-600" />
           <div>
             <h2 className="font-serif text-base font-bold text-deep">
-              Sauvegarde & Restauration Complète (Export JSON)
+              {t('admin.settings.backupTitle')}
             </h2>
             <p className="text-[11px] text-mutedText">
-              Téléchargez une copie intégrale de tous vos produits, commandes, clientes et réglages pour ne jamais rien perdre.
+              {t('admin.settings.backupDesc')}
             </p>
           </div>
         </div>
@@ -650,10 +618,10 @@ export const AdminSettingsPage: React.FC = () => {
           <div className="p-4 rounded-2xl border border-stone-200 bg-stone-50/50 space-y-3">
             <h3 className="font-semibold text-deep flex items-center gap-1.5">
               <Download className="w-4 h-4 text-rose-700" />
-              <span>Exporter mes données</span>
+              <span>{t('admin.settings.downloadBackup')}</span>
             </h3>
             <p className="text-mutedText text-[11px] leading-relaxed">
-              Crée un fichier de sauvegarde au format standard JSON contenant l'ensemble de votre catalogue, commandes et avis.
+              {language === 'ar' ? 'ملف قياسي بتنسيق JSON يضم كافة منتجاتك، طلبياتك، وزبائنك.' : 'Crée un fichier de sauvegarde au format standard JSON contenant l\'ensemble de votre catalogue, commandes et avis.'}
             </p>
             <button
               type="button"
@@ -661,7 +629,7 @@ export const AdminSettingsPage: React.FC = () => {
               className="bg-deep hover:bg-rose-950 text-ivory font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer shadow-xs transition"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Télécharger la Sauvegarde JSON</span>
+              <span>{t('admin.settings.downloadBackup')}</span>
             </button>
           </div>
 
@@ -669,14 +637,14 @@ export const AdminSettingsPage: React.FC = () => {
           <div className="p-4 rounded-2xl border border-stone-200 bg-stone-50/50 space-y-3">
             <h3 className="font-semibold text-deep flex items-center gap-1.5">
               <Upload className="w-4 h-4 text-emerald-700" />
-              <span>Restaurer une sauvegarde</span>
+              <span>{t('admin.settings.restoreBackup')}</span>
             </h3>
             <p className="text-mutedText text-[11px] leading-relaxed">
-              Sélectionnez un fichier JSON préalablement exporté pour réinjecter vos données.
+              {language === 'ar' ? 'اختر ملف JSON محفوظ مسبقاً لاسترجاع بيانات المتجر بالكامل.' : 'Sélectionnez un fichier JSON préalablement exporté pour réinjecter vos données.'}
             </p>
             <label className="inline-flex items-center gap-2 bg-white hover:bg-stone-50 text-stone-700 font-semibold px-4 py-2 rounded-xl border border-stone-200 shadow-xs cursor-pointer transition">
               <Upload className="w-3.5 h-3.5" />
-              <span>Importer un fichier JSON</span>
+              <span>{t('admin.settings.restoreBackup')}</span>
               <input
                 type="file"
                 accept=".json,application/json"

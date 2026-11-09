@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { adminTranslations } from '@/locales/adminTranslations';
 
 export type Language = 'fr' | 'ar';
 
@@ -116,6 +117,8 @@ const translations: Record<Language, Record<string, string>> = {
     'common.sort': 'Trier par',
     'common.loading': 'Chargement...',
     'common.back': 'Retour',
+
+    ...adminTranslations.fr,
   },
 
   ar: {
@@ -220,6 +223,8 @@ const translations: Record<Language, Record<string, string>> = {
     'common.sort': 'ترتيب حسب',
     'common.loading': 'جاري التحميل...',
     'common.back': 'رجوع',
+
+    ...adminTranslations.ar,
   },
 };
 

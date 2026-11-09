@@ -54,9 +54,35 @@ describe('Order Creation, Stock Management and Status History', () => {
     expect(updatedTarget?.stock).toBe(initialStock - 2);
   });
 
-  it('updates order status and records audit timeline history', () => {
+  const getOrCreateOrder = () => {
     const orders = StorageService.getOrders();
-    const order = orders[0];
+    if (orders.length > 0) return orders[0];
+    return StorageService.createOrder({
+      customerName: 'Test Customer',
+      customerPhone: '0550123456',
+      shippingAddress: {
+        id: 'addr-t0',
+        fullName: 'Test Customer',
+        phone: '0550123456',
+        wilayaCode: 16,
+        wilayaName: 'Alger',
+        commune: 'Hydra',
+        streetAddress: 'Rue Test',
+        deliveryType: 'home',
+      },
+      items: [],
+      subtotal: 3000,
+      discount: 0,
+      deliveryFee: 400,
+      total: 3400,
+      status: 'pending',
+      paymentMethod: 'cod',
+      paymentStatus: 'pending',
+    });
+  };
+
+  it('updates order status and records audit timeline history', () => {
+    const order = getOrCreateOrder();
 
     const updated = StorageService.updateOrderStatus(
       order.id, 
@@ -73,8 +99,7 @@ describe('Order Creation, Stock Management and Status History', () => {
   });
 
   it('assigns courier tracking carrier and tracking number', () => {
-    const orders = StorageService.getOrders();
-    const order = orders[0];
+    const order = getOrCreateOrder();
 
     const updated = StorageService.updateOrderPayment(
       order.id,

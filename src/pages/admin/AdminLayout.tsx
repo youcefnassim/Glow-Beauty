@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { StorageService } from '@/services/storage';
 import { 
   LayoutDashboard, ShoppingBag, FolderTree, Package, Users, 
   Tag, FileText, Settings, ArrowLeft, LogOut, ShieldAlert, Lock, 
   Eye, EyeOff, ChevronLeft, ChevronRight, Menu, X, PanelLeftClose, PanelLeftOpen,
-  UserCheck, Edit3 
+  UserCheck, Edit3, Globe 
 } from 'lucide-react';
 import { AdminProfileModal } from '@/components/admin/AdminProfileModal';
 
 export const AdminLayout: React.FC = () => {
   const { user, isAdmin, logout, loginAsDemoAdmin } = useAuth();
+  const { language, setLanguage, isRtl, t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -47,7 +49,7 @@ export const AdminLayout: React.FC = () => {
     setError(null);
 
     if (!password.trim()) {
-      setError('Veuillez saisir votre mot de passe administrateur.');
+      setError(t('admin.login.errorEmpty'));
       return;
     }
 
@@ -56,37 +58,51 @@ export const AdminLayout: React.FC = () => {
       loginAsDemoAdmin();
       navigate('/admin');
     } else {
-      setError('Mot de passe incorrect. Accès refusé.');
+      setError(t('admin.login.errorWrong'));
     }
   };
 
-  // Role Protection Guard with Secure Confidential Password Login (No password hint displayed)
+  // Role Protection Guard with Secure Password Login
   if (!user || !isAdmin) {
     return (
       <div className="min-h-screen bg-ivory flex items-center justify-center p-4">
-        <div className="bg-white p-8 sm:p-10 rounded-3xl border border-rose-200 shadow-luxury max-w-md w-full text-center space-y-6">
+        <div className="bg-white p-8 sm:p-10 rounded-3xl border border-rose-200 shadow-luxury max-w-md w-full text-center space-y-6 relative">
+          
+          {/* Language Switcher in Login Gate */}
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setLanguage(language === 'fr' ? 'ar' : 'fr')}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-stone-200 bg-stone-50 hover:bg-white text-deep text-xs font-bold transition shadow-2xs cursor-pointer"
+              title={language === 'fr' ? 'Passer en Arabe (العربية)' : 'Passer en Français'}
+            >
+              <Globe className="w-3.5 h-3.5 text-rose-700" />
+              <span>{language === 'fr' ? 'العربية' : 'Français'}</span>
+            </button>
+          </div>
+
           <div className="w-16 h-16 rounded-2xl bg-deep text-rose-300 mx-auto flex items-center justify-center shadow-soft">
             <Lock className="w-8 h-8" />
           </div>
 
           <div>
-            <h1 className="font-serif text-2xl font-bold text-deep">Accès Administrateur</h1>
+            <h1 className="font-serif text-2xl font-bold text-deep">{t('admin.login.title')}</h1>
             <p className="text-xs text-mutedText mt-1">
-              Zone confidentielle réservée à la gestion de Jin Makeup.
+              {t('admin.login.subtitle')}
             </p>
           </div>
 
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs flex items-center gap-2 text-left animate-shake">
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs flex items-center gap-2 text-start animate-shake">
               <ShieldAlert className="w-4 h-4 text-red-600 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          <form onSubmit={handleAdminLogin} className="space-y-4 text-left">
+          <form onSubmit={handleAdminLogin} className="space-y-4 text-start">
             <div>
               <label className="text-xs font-semibold text-deep block mb-1.5">
-                Mot de passe d'authentification
+                {t('admin.login.passwordLabel')}
               </label>
               <div className="relative">
                 <input
@@ -94,15 +110,15 @@ export const AdminLayout: React.FC = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full text-xs p-3.5 pr-10 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-none focus:border-rose-400 font-mono"
+                  placeholder={t('admin.login.passwordPlaceholder')}
+                  className="w-full text-xs p-3.5 pe-10 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-none focus:border-rose-400 font-mono"
                   autoFocus
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-3.5 text-stone-400 hover:text-stone-600 cursor-pointer"
-                  title={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  className="absolute end-3.5 top-3.5 text-stone-400 hover:text-stone-600 cursor-pointer"
+                  title={showPassword ? t('admin.login.hidePassword') : t('admin.login.showPassword')}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -114,7 +130,7 @@ export const AdminLayout: React.FC = () => {
               className="w-full bg-deep hover:bg-rose-950 text-ivory text-xs font-semibold py-3.5 px-4 rounded-xl transition shadow-md cursor-pointer flex items-center justify-center gap-2"
             >
               <Lock className="w-4 h-4" />
-              <span>S'authentifier</span>
+              <span>{t('admin.login.submit')}</span>
             </button>
           </form>
 
@@ -123,8 +139,8 @@ export const AdminLayout: React.FC = () => {
               to="/"
               className="inline-flex items-center gap-1.5 text-xs text-mutedText hover:text-deep transition"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Retourner à la boutique publique</span>
+              <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
+              <span>{t('admin.login.backToStore')}</span>
             </Link>
           </div>
         </div>
@@ -133,14 +149,14 @@ export const AdminLayout: React.FC = () => {
   }
 
   const menuItems = [
-    { label: 'Vue d’ensemble', path: '/admin', icon: LayoutDashboard },
-    { label: 'Produits', path: '/admin/products', icon: ShoppingBag },
-    { label: 'Catégories', path: '/admin/categories', icon: FolderTree },
-    { label: 'Commandes', path: '/admin/orders', icon: Package },
-    { label: 'Clientes', path: '/admin/customers', icon: Users },
-    { label: 'Codes Promo', path: '/admin/coupons', icon: Tag },
-    { label: 'Marketing & Bannières', path: '/admin/content', icon: FileText },
-    { label: 'Paramètres Boutique', path: '/admin/settings', icon: Settings },
+    { label: t('admin.nav.dashboard'), path: '/admin', icon: LayoutDashboard },
+    { label: t('admin.nav.products'), path: '/admin/products', icon: ShoppingBag },
+    { label: t('admin.nav.categories'), path: '/admin/categories', icon: FolderTree },
+    { label: t('admin.nav.orders'), path: '/admin/orders', icon: Package },
+    { label: t('admin.nav.customers'), path: '/admin/customers', icon: Users },
+    { label: t('admin.nav.coupons'), path: '/admin/coupons', icon: Tag },
+    { label: t('admin.nav.content'), path: '/admin/content', icon: FileText },
+    { label: t('admin.nav.settings'), path: '/admin/settings', icon: Settings },
   ];
 
   return (
@@ -156,11 +172,15 @@ export const AdminLayout: React.FC = () => {
 
       {/* Sidebar with Collapse / Close Controls */}
       <aside
-        className={`fixed lg:sticky top-0 z-50 h-screen bg-deep text-ivory shrink-0 border-r border-stone-800 flex flex-col justify-between transition-all duration-300 ease-in-out ${
-          isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed lg:sticky top-0 z-50 h-screen bg-deep text-ivory shrink-0 border-e border-stone-800 flex flex-col justify-between transition-all duration-300 ease-in-out ${
+          isMobileSidebarOpen
+            ? 'translate-x-0'
+            : isRtl
+            ? 'translate-x-full lg:translate-x-0'
+            : '-translate-x-full lg:translate-x-0'
         } ${
           isSidebarCollapsed ? 'lg:w-20' : 'lg:w-64'
-        } w-72`}
+        } w-72 ${isRtl ? 'right-0' : 'left-0'}`}
       >
         <div>
           {/* Sidebar Header with Brand & Close Button */}
@@ -175,7 +195,7 @@ export const AdminLayout: React.FC = () => {
                     Jin Makeup
                   </Link>
                   <p className="text-[9px] tracking-widest text-rose-300 uppercase font-semibold">
-                    Administration
+                    {t('admin.nav.title')}
                   </p>
                 </div>
               )}
@@ -185,7 +205,7 @@ export const AdminLayout: React.FC = () => {
             <button
               onClick={() => setIsMobileSidebarOpen(false)}
               className="lg:hidden p-1.5 rounded-lg text-stone-400 hover:text-white hover:bg-stone-800 transition"
-              title="Fermer le menu"
+              title={t('admin.nav.closeMenu')}
             >
               <X className="w-5 h-5" />
             </button>
@@ -194,9 +214,13 @@ export const AdminLayout: React.FC = () => {
             <button
               onClick={toggleSidebarCollapse}
               className="hidden lg:flex p-1.5 rounded-lg text-stone-400 hover:text-white hover:bg-stone-800 transition cursor-pointer"
-              title={isSidebarCollapsed ? "Développer le menu latéral" : "Réduire / Fermer le menu"}
+              title={isSidebarCollapsed ? t('admin.nav.expand') : t('admin.nav.collapse')}
             >
-              {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+              {isSidebarCollapsed ? (
+                isRtl ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
+              ) : (
+                isRtl ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />
+              )}
             </button>
           </div>
 
@@ -226,17 +250,34 @@ export const AdminLayout: React.FC = () => {
           </nav>
         </div>
 
-        {/* User info & Store Return Footer */}
+        {/* User info, Language Switcher & Store Return Footer */}
         <div className="p-3 border-t border-stone-800 space-y-2">
+          {/* Mobile Language Switcher inside Drawer */}
+          <div className="lg:hidden pb-1">
+            <button
+              type="button"
+              onClick={() => setLanguage(language === 'fr' ? 'ar' : 'fr')}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-stone-900 border border-stone-700 text-xs text-stone-300 hover:text-white"
+            >
+              <span className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-rose-400" />
+                <span>{language === 'fr' ? 'العربية' : 'Français'}</span>
+              </span>
+              <span className="text-[10px] uppercase font-bold text-rose-300 bg-rose-900/50 px-2 py-0.5 rounded">
+                {language.toUpperCase()}
+              </span>
+            </button>
+          </div>
+
           <Link
             to="/"
-            title="Voir la boutique publique"
+            title={t('admin.nav.viewStore')}
             className={`flex items-center gap-2 text-xs text-rose-300 hover:text-rose-100 px-3 py-2 rounded-xl hover:bg-stone-800/60 transition ${
               isSidebarCollapsed ? 'justify-center' : ''
             }`}
           >
-            <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
-            {!isSidebarCollapsed && <span className="truncate">Voir la boutique</span>}
+            <ArrowLeft className="w-3.5 h-3.5 shrink-0 rtl:rotate-180" />
+            {!isSidebarCollapsed && <span className="truncate">{t('admin.nav.viewStore')}</span>}
           </Link>
 
           <div className={`flex items-center justify-between pt-2 border-t border-stone-800/80 px-2 text-xs ${
@@ -246,8 +287,8 @@ export const AdminLayout: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsProfileModalOpen(true)}
-                className="text-left group cursor-pointer flex-1 min-w-0 mr-2 p-1.5 rounded-xl hover:bg-stone-800/80 transition"
-                title="Cliquer pour modifier les informations de l'administrateur"
+                className="text-start group cursor-pointer flex-1 min-w-0 me-2 p-1.5 rounded-xl hover:bg-stone-800/80 transition"
+                title={t('admin.nav.editProfile')}
               >
                 <div className="flex items-center justify-between gap-1">
                   <p className="font-semibold text-white truncate text-[11px] group-hover:text-rose-300 transition">
@@ -257,7 +298,7 @@ export const AdminLayout: React.FC = () => {
                 </div>
                 <p className="text-[10px] text-stone-400 flex items-center gap-1.5 mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                  <span className="truncate">Administrateur • Modifier</span>
+                  <span className="truncate">{t('admin.nav.role')} • {t('admin.nav.edit')}</span>
                 </p>
               </button>
             ) : (
@@ -265,7 +306,7 @@ export const AdminLayout: React.FC = () => {
                 type="button"
                 onClick={() => setIsProfileModalOpen(true)}
                 className="text-stone-400 hover:text-rose-300 p-1.5 rounded-lg hover:bg-stone-800 transition cursor-pointer"
-                title="Modifier mon profil administrateur"
+                title={t('admin.nav.editProfile')}
               >
                 <UserCheck className="w-4 h-4" />
               </button>
@@ -274,7 +315,7 @@ export const AdminLayout: React.FC = () => {
             <button
               onClick={() => logout()}
               className="text-stone-400 hover:text-red-400 p-1.5 rounded-lg hover:bg-stone-800 transition cursor-pointer shrink-0"
-              title="Déconnexion sécurisée"
+              title={t('admin.nav.logoutSecure')}
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -284,14 +325,14 @@ export const AdminLayout: React.FC = () => {
 
       {/* Main Content Area with Top Toggle Bar */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Navbar with Sidebar Toggle */}
+        {/* Top Navbar with Sidebar Toggle & Language Switcher */}
         <header className="bg-white/90 backdrop-blur-md border-b border-stone-200/80 px-4 sm:px-8 py-3 flex items-center justify-between sticky top-0 z-30">
           <div className="flex items-center gap-3">
             {/* Mobile Open Button */}
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
               className="lg:hidden p-2 rounded-xl border border-stone-200 hover:bg-stone-100 text-deep transition cursor-pointer"
-              title="Ouvrir le menu"
+              title={t('admin.nav.openMenu')}
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -300,41 +341,53 @@ export const AdminLayout: React.FC = () => {
             <button
               onClick={toggleSidebarCollapse}
               className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-stone-200 hover:bg-stone-100 text-xs font-semibold text-stone-700 transition cursor-pointer"
-              title={isSidebarCollapsed ? "Développer le menu latéral" : "Fermer / Réduire le menu"}
+              title={isSidebarCollapsed ? t('admin.nav.expand') : t('admin.nav.collapse')}
             >
               {isSidebarCollapsed ? (
                 <>
-                  <PanelLeftOpen className="w-4 h-4 text-rose-700" />
-                  <span>Afficher menu</span>
+                  <PanelLeftOpen className="w-4 h-4 text-rose-700 rtl:rotate-180" />
+                  <span>{t('admin.nav.expand')}</span>
                 </>
               ) : (
                 <>
-                  <PanelLeftClose className="w-4 h-4 text-stone-600" />
-                  <span>Réduire menu</span>
+                  <PanelLeftClose className="w-4 h-4 text-stone-600 rtl:rotate-180" />
+                  <span>{t('admin.nav.collapse')}</span>
                 </>
               )}
             </button>
 
             <span className="text-xs text-mutedText hidden sm:inline">
-              Administration Jin Makeup
+              {t('admin.nav.headerSubtitle')}
             </span>
           </div>
 
-          <div className="flex items-center gap-3 text-xs">
+          <div className="flex items-center gap-2 sm:gap-3 text-xs">
+            {/* Language Switcher Button (FR / AR) */}
+            <button
+              type="button"
+              onClick={() => setLanguage(language === 'fr' ? 'ar' : 'fr')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-white text-deep text-xs font-bold transition shadow-2xs cursor-pointer"
+              title={language === 'fr' ? 'Passer en Arabe (العربية)' : 'Passer en Français'}
+              aria-label="Changer la langue du tableau de bord"
+            >
+              <Globe className="w-3.5 h-3.5 text-rose-700 shrink-0" />
+              <span>{language === 'fr' ? 'العربية' : 'Français'}</span>
+            </button>
+
             <Link
               to="/"
               className="flex items-center gap-1.5 text-stone-600 hover:text-deep px-3 py-1.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-white transition"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Boutique publique</span>
+              <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
+              <span className="hidden sm:inline">{t('admin.nav.publicStore')}</span>
             </Link>
 
-            <div className="flex items-center gap-2 pl-3 border-l border-stone-200">
+            <div className="flex items-center gap-2 ps-2 sm:ps-3 border-s border-stone-200">
               <button
                 type="button"
                 onClick={() => setIsProfileModalOpen(true)}
                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200/80 text-deep transition cursor-pointer border border-stone-200/60"
-                title="Cliquer pour modifier les informations de l'administrateur"
+                title={t('admin.nav.editProfile')}
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
                 <span className="font-semibold text-deep text-[11px]">{user.fullName}</span>
@@ -344,7 +397,7 @@ export const AdminLayout: React.FC = () => {
               <button
                 onClick={() => logout()}
                 className="text-stone-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition cursor-pointer"
-                title="Déconnexion"
+                title={t('admin.nav.logout')}
               >
                 <LogOut className="w-4 h-4" />
               </button>
