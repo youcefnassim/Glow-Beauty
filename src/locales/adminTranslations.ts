@@ -210,7 +210,7 @@ export const adminTranslations = {
     'admin.categories.nameAr': 'Nom (Arabe) *',
     'admin.categories.slug': 'Identifiant URL (Slug) *',
     'admin.categories.description': 'Description du rayon',
-    'admin.categories.imageUrl': 'URL de l\'image d\'illustration',
+    'admin.categories.imageUrl': 'Image de la catégorie',
     'admin.categories.save': 'Enregistrer la catégorie',
     'admin.categories.cancel': 'Annuler',
     'admin.categories.count': '{count} produits',
@@ -219,6 +219,15 @@ export const adminTranslations = {
     'admin.categories.colSlug': 'Slug',
     'admin.categories.colCount': 'Articles Liés',
     'admin.categories.colActions': 'Actions',
+
+    // Image Upload Component
+    'admin.imageUpload.title': 'Téléverser une image',
+    'admin.imageUpload.dragDrop': 'Glissez-déposez une photo ici, ou cliquez pour parcourir vos fichiers',
+    'admin.imageUpload.change': 'Remplacer l\'image',
+    'admin.imageUpload.remove': 'Supprimer',
+    'admin.imageUpload.invalidFile': 'Veuillez sélectionner un fichier image valide (JPG, PNG, WEBP).',
+    'admin.imageUpload.fileTooLarge': 'Le fichier dépasse la taille maximale autorisée ({max} Mo).',
+    'admin.imageUpload.processing': 'Compression et optimisation de l\'image...',
 
     // Admin Customers Page
     'admin.customers.pageTitle': 'Gestion des Clientes',
@@ -538,7 +547,7 @@ export const adminTranslations = {
     'admin.categories.nameAr': 'الاسم (بالعربية) *',
     'admin.categories.slug': 'الرابط الدائم (Slug) *',
     'admin.categories.description': 'وصف القسم',
-    'admin.categories.imageUrl': 'رابط صورة القسم',
+    'admin.categories.imageUrl': 'صورة القسم',
     'admin.categories.save': 'حفظ القسم',
     'admin.categories.cancel': 'إلغاء',
     'admin.categories.count': '{count} منتج',
@@ -547,6 +556,15 @@ export const adminTranslations = {
     'admin.categories.colSlug': 'الرابط المختصر',
     'admin.categories.colCount': 'عدد المنتجات',
     'admin.categories.colActions': 'الإجراءات',
+
+    // Image Upload Component
+    'admin.imageUpload.title': 'رفع صورة من جهازك',
+    'admin.imageUpload.dragDrop': 'اسحبي وأفلتي الصورة هنا، أو انقري لاختيار ملف من جهازك',
+    'admin.imageUpload.change': 'تغيير الصورة',
+    'admin.imageUpload.remove': 'حذف',
+    'admin.imageUpload.invalidFile': 'يرجى اختيار ملف صورة صالح (JPG, PNG, WEBP).',
+    'admin.imageUpload.fileTooLarge': 'حجم الملف يتجاوز الحد الأقصى المسموح به ({max} ميغابايت).',
+    'admin.imageUpload.processing': 'جاري ضغط وتحسين جودة الصورة...',
 
     // Admin Customers Page
     'admin.customers.pageTitle': 'قاعدة بيانات الزبائن',

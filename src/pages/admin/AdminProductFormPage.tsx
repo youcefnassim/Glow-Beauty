@@ -5,6 +5,7 @@ import { CATEGORIES, BRANDS } from '@/data/categories';
 import { Product, ProductImage } from '@/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { ArrowLeft, Save, Package } from 'lucide-react';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
 
 export const AdminProductFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -218,27 +219,13 @@ export const AdminProductFormPage: React.FC = () => {
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-semibold text-deep block mb-1">
-              {t('admin.productForm.imageUrl')} *
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="url"
-                required
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://images.unsplash.com/..."
-                className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50"
-              />
-            </div>
-            {imageUrl && (
-              <div className="mt-3 flex items-center gap-3 p-2 bg-stone-50 rounded-xl border border-stone-200 max-w-sm">
-                <img src={imageUrl} alt="Aperçu" className="w-12 h-12 rounded-lg object-cover bg-white" />
-                <span className="text-xs text-mutedText">✓ OK</span>
-              </div>
-            )}
-          </div>
+          <ImageUploadField
+            label={t('admin.productForm.imageUrl')}
+            required
+            value={imageUrl}
+            onChange={setImageUrl}
+            aspectRatio="square"
+          />
         </div>
 
         {/* Pricing & Stock */}

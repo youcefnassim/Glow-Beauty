@@ -6,6 +6,7 @@ import {
   Megaphone, Mail, Save, CheckCircle2, Image as ImageIcon, Plus, 
   Trash2, Edit3, Sparkles, X, ArrowUp, ArrowDown, Eye, ExternalLink, Upload 
 } from 'lucide-react';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
 
 export const AdminContentPage: React.FC = () => {
   const { t, language } = useLanguage();
@@ -57,25 +58,6 @@ export const AdminContentPage: React.FC = () => {
     setBannerButtonLink('/shop');
     setBannerIsActive(true);
     setIsBannerFormOpen(false);
-  };
-
-  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      alert(language === 'ar' ? 'حجم الصورة كبير جداً (الأقصى 2 ميغابايت).' : 'Image trop volumineuse (max 2 Mo).');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const dataUrl = event.target?.result as string;
-      if (dataUrl) {
-        setBannerImageUrl(dataUrl);
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   const handleOpenAddBanner = () => {
@@ -218,32 +200,14 @@ export const AdminContentPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="font-semibold text-deep block mb-1">
-                  {t('admin.content.bannerImage')} *
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    required
-                    value={bannerImageUrl}
-                    onChange={(e) => setBannerImageUrl(e.target.value)}
-                    placeholder="https://..."
-                    className="flex-1 p-2.5 rounded-xl border border-stone-200 bg-white text-xs"
-                  />
-                  <label className="shrink-0 px-3 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 border border-stone-200 text-deep text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition">
-                    <Upload className="w-3.5 h-3.5 text-rose-600" />
-                    <span>{language === 'ar' ? 'رفع' : 'Téléverser'}</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageFileUpload}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-              </div>
+            <div className="space-y-4">
+              <ImageUploadField
+                label={t('admin.content.bannerImage')}
+                required
+                value={bannerImageUrl}
+                onChange={setBannerImageUrl}
+                aspectRatio="banner"
+              />
 
               <div>
                 <label className="font-semibold text-deep block mb-1">
@@ -258,23 +222,6 @@ export const AdminContentPage: React.FC = () => {
                 />
               </div>
             </div>
-
-            {bannerImageUrl && (
-              <div className="p-2.5 bg-white rounded-xl border border-stone-200 flex items-center gap-3 max-w-md">
-                <img
-                  src={bannerImageUrl}
-                  alt="Aperçu"
-                  className="w-16 h-12 object-cover rounded-lg border border-stone-100"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=400&q=80';
-                  }}
-                />
-                <div className="min-w-0">
-                  <p className="font-semibold text-deep truncate text-xs">{bannerTitle || 'Titre de la bannière'}</p>
-                  <p className="text-[10px] text-emerald-700">✓ OK</p>
-                </div>
-              </div>
-            )}
 
             <div>
               <label className="font-semibold text-deep block mb-1">

@@ -3,9 +3,10 @@ import { StorageService } from '@/services/storage';
 import { Category } from '@/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { Plus, Save, Edit2 } from 'lucide-react';
+import { ImageUploadField } from '@/components/admin/ImageUploadField';
 
 export const AdminCategoriesPage: React.FC = () => {
-  const { t, getCategoryName } = useLanguage();
+  const { t, getCategoryName, language } = useLanguage();
   const [categories, setCategories] = useState<Category[]>(() => StorageService.getCategories());
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
@@ -122,29 +123,28 @@ export const AdminCategoriesPage: React.FC = () => {
                   type="text"
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
+                  placeholder="ex: soins-visage"
                   className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-mono"
                 />
               </div>
               <div>
-                <label className="font-semibold text-deep block mb-1">{t('admin.categories.imageUrl')}</label>
+                <label className="font-semibold text-deep block mb-1">{t('admin.categories.description')}</label>
                 <input
-                  type="url"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
+                  type="text"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder={language === 'ar' ? 'وصف مختصر للقسم...' : 'Description courte du rayon...'}
                   className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="font-semibold text-deep block mb-1">{t('admin.categories.description')}</label>
-              <textarea
-                rows={2}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50"
-              />
-            </div>
+            <ImageUploadField
+              label={t('admin.categories.imageUrl')}
+              value={imageUrl}
+              onChange={setImageUrl}
+              aspectRatio="video"
+            />
 
             <div className="flex justify-end gap-2 pt-2">
               <button
