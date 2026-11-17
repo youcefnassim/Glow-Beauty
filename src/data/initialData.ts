@@ -19,6 +19,9 @@ export const INITIAL_SETTINGS: StoreSettings = {
   telegramBotToken: '',
   telegramChatId: '',
   googleSheetWebhook: '',
+  zimouEnabled: true,
+  zimouApiToken: '370582|R5ERsIBpfi3GoZIWMNaTPAPqN3fK7qL9qJwgDAaG612093a0',
+  zimouAutoCreatePackage: false,
 };
 
 export const INITIAL_COUPONS: Coupon[] = [

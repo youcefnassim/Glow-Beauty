@@ -4,6 +4,7 @@ import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { StorageService } from '@/services/storage';
 import { NotificationService } from '@/services/notificationService';
+import { ZimouService } from '@/services/zimouService';
 import { ALGERIA_WILAYAS, WILAYA_COMMUNES, formatPriceDZD } from '@/data/wilayas';
 import { Order, PaymentMethod } from '@/types';
 import confetti from 'canvas-confetti';
@@ -152,6 +153,12 @@ export const CheckoutPage: React.FC = () => {
       // Autonomous Notifications (Option 2: Telegram Bot & Google Sheet Webhook)
       NotificationService.sendTelegramNotification(newOrder).catch((e) => console.warn('Telegram notify error:', e));
       NotificationService.sendGoogleSheetWebhook(newOrder).catch((e) => console.warn('Sheet webhook error:', e));
+
+      // Autonomous Zimou Express parcel creation (if auto-mode enabled in settings)
+      const currentSettings = StorageService.getSettings();
+      if (currentSettings.zimouEnabled !== false && currentSettings.zimouAutoCreatePackage && currentSettings.zimouApiToken) {
+        ZimouService.createPackage(newOrder).catch((e) => console.warn('Zimou auto-create error:', e));
+      }
 
       // Confetti celebration
       try {

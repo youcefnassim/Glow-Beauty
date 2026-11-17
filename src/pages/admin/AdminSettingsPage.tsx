@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { StorageService } from '@/services/storage';
+import { ZimouService } from '@/services/zimouService';
 import { StoreSettings } from '@/types';
 import { 
   Save, CheckCircle2, ShieldAlert, Bell, 
   KeyRound, Download, Upload, FileJson, AlertCircle, Lock, Package,
-  UserCheck 
+  UserCheck, Truck, ExternalLink, RefreshCw 
 } from 'lucide-react';
 
 export const AdminSettingsPage: React.FC = () => {
@@ -48,6 +49,35 @@ export const AdminSettingsPage: React.FC = () => {
 
   // Backup / Restore Feedback
   const [backupFeedback, setBackupFeedback] = useState<{ success: boolean; msg: string } | null>(null);
+
+  const [isTestingZimou, setIsTestingZimou] = useState(false);
+  const [zimouTestResult, setZimouTestResult] = useState<{ success: boolean; msg: string } | null>(null);
+
+  const handleTestZimou = async () => {
+    setIsTestingZimou(true);
+    setZimouTestResult(null);
+    try {
+      const res = await ZimouService.testConnection(settings.zimouApiToken);
+      if (res.success) {
+        setZimouTestResult({
+          success: true,
+          msg: language === 'ar'
+            ? `تم الاتصال بنجاح مع حساب زيمو إكسبريس : ${res.name} (المتجر #${res.storeId || 14374})`
+            : `Connexion réussie avec Zimou Express ! Compte : ${res.name} (Boutique #${res.storeId || 14374})`,
+        });
+      } else {
+        setZimouTestResult({
+          success: false,
+          msg: res.message || (language === 'ar' ? 'فشل الاتصال بـ Zimou Express.' : 'Échec de connexion à Zimou Express.'),
+        });
+      }
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Erreur';
+      setZimouTestResult({ success: false, msg });
+    } finally {
+      setIsTestingZimou(false);
+    }
+  };
 
   const handleChange = (field: keyof StoreSettings, val: any) => {
     setSettings(prev => ({ ...prev, [field]: val }));
@@ -483,6 +513,136 @@ export const AdminSettingsPage: React.FC = () => {
                 placeholder="https://script.google.com/macros/s/..."
                 className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-mono text-[11px]"
               />
+            </div>
+          </div>
+        </div>
+
+        {/* Zimou Express Delivery Integration */}
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-2xl bg-rose-900 text-ivory flex items-center justify-center font-bold">
+                <Truck className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="font-serif text-base font-bold text-deep">
+                    {language === 'ar' ? 'ربط شركة التوصيل زيمو إكسبريس (Zimou Express)' : 'Intégration Transporteur Zimou Express'}
+                  </h2>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
+                    API Directe
+                  </span>
+                </div>
+                <p className="text-[11px] text-mutedText">
+                  {language === 'ar'
+                    ? 'إنشاء الطرود أوتوماتيكياً وطباعة بوليصة الشحن (Bordereau) مباشرة من لوحة التحكم.'
+                    : 'Exportation automatique des commandes vers votre compte Zimou et génération des bordereaux officiels.'}
+                </p>
+              </div>
+            </div>
+
+            <a
+              href="https://zimou.express"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-rose-800 hover:text-deep font-semibold"
+            >
+              <span>{language === 'ar' ? 'فتح حساب Zimou' : 'Ouvrir Zimou.express'}</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          </div>
+
+          <div className="space-y-4 text-xs">
+            {/* Enable Zimou Toggle */}
+            <div className="flex items-center justify-between p-3 bg-stone-50 rounded-2xl border border-stone-200">
+              <div>
+                <p className="font-bold text-deep">
+                  {language === 'ar' ? 'تفعيل الربط مع Zimou Express' : 'Activer l’intégration Zimou Express'}
+                </p>
+                <p className="text-[11px] text-mutedText">
+                  {language === 'ar'
+                    ? 'يتيح إنشاء الشحنات ومزامنة أرقام التتبع تلقائياً'
+                    : 'Permet l’envoi des colis et la génération des étiquettes de livraison'}
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={settings.zimouEnabled !== false}
+                  onChange={(e) => handleChange('zimouEnabled', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              </label>
+            </div>
+
+            {/* API Token Input & Test Connection */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="font-semibold text-deep block">
+                  {language === 'ar' ? 'رمز الوصول السري (API Token Bearer)' : 'Clé Secrète API Token (Bearer)'}
+                </label>
+                <button
+                  type="button"
+                  onClick={handleTestZimou}
+                  disabled={isTestingZimou}
+                  className="text-xs text-rose-800 hover:text-deep font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                >
+                  {isTestingZimou ? (
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  )}
+                  <span>{language === 'ar' ? 'اختبار الاتصال بالحساب' : 'Tester la connexion'}</span>
+                </button>
+              </div>
+
+              <input
+                type="password"
+                value={settings.zimouApiToken || ''}
+                onChange={(e) => handleChange('zimouApiToken', e.target.value)}
+                placeholder="Ex: 370582|R5ERsIBpfi3GoZIWMNaTPAPqN3fK7qL9qJwgDAaG612093a0"
+                className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50 font-mono text-[11px]"
+              />
+
+              {zimouTestResult && (
+                <div className={`mt-2 p-2.5 rounded-xl text-xs flex items-center gap-2 animate-fadeIn ${
+                  zimouTestResult.success 
+                    ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' 
+                    : 'bg-red-50 border border-red-200 text-red-800'
+                }`}>
+                  {zimouTestResult.success ? (
+                    <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                  )}
+                  <span className="font-semibold">{zimouTestResult.msg}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Auto Creation vs Manual Confirmation Mode */}
+            <div className="p-3 bg-rose-50/40 rounded-2xl border border-rose-100 space-y-2">
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={Boolean(settings.zimouAutoCreatePackage)}
+                  onChange={(e) => handleChange('zimouAutoCreatePackage', e.target.checked)}
+                  className="mt-0.5 rounded border-stone-300 text-rose-600 focus:ring-rose-500"
+                />
+                <div>
+                  <span className="font-semibold text-deep block">
+                    {language === 'ar'
+                      ? 'إنشاء الطرد فوراً عند إتمام الطلب من طرف الزبونة'
+                      : 'Création automatique immédiate du colis lors de la validation du panier'}
+                  </span>
+                  <p className="text-[11px] text-mutedText mt-0.5">
+                    {language === 'ar'
+                      ? 'ملاحظة: المستحسن تركه غير مفعّل، حتى تتصلوا بالزبونة لتأكيد الطلبية هاتفياً ثم الضغط على زر «إرسال إلى Zimou» بنقرة واحدة.'
+                      : 'Recommandation e-commerce Algérie : Laissez décoché si vous préférez confirmer par téléphone d’abord, puis créer le colis en 1 clic dans la page de commande.'}
+                  </p>
+                </div>
+              </label>
             </div>
           </div>
         </div>

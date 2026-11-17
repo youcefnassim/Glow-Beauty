@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { StorageService } from '@/services/storage';
+import { ZimouService } from '@/services/zimouService';
 import { Order, OrderStatus, PaymentStatus } from '@/types';
 import { useLanguage } from '@/context/LanguageContext';
 import { ALGERIA_WILAYAS } from '@/data/wilayas';
 import { 
   ArrowLeft, Save, CheckCircle2, 
-  MapPin, Phone, User, Printer 
+  MapPin, Phone, User, Printer, Truck, ExternalLink, RefreshCw, Send, AlertCircle 
 } from 'lucide-react';
 
 export const AdminOrderDetailPage: React.FC = () => {
@@ -19,8 +20,12 @@ export const AdminOrderDetailPage: React.FC = () => {
   const [statusNote, setStatusNote] = useState('');
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('pending');
   const [trackingNumber, setTrackingNumber] = useState('');
-  const [trackingCarrier, setTrackingCarrier] = useState('Yalidine Express');
+  const [trackingCarrier, setTrackingCarrier] = useState('Zimou Express');
   const [feedback, setFeedback] = useState<string | null>(null);
+
+  // Zimou Parcel Generation States
+  const [isCreatingZimou, setIsCreatingZimou] = useState(false);
+  const [zimouFeedback, setZimouFeedback] = useState<{ success: boolean; msg: string } | null>(null);
 
   const getWhatsAppCustomerUrl = (o: Order) => {
     let cleanPhone = o.customerPhone.replace(/\D/g, '');
@@ -82,6 +87,40 @@ export const AdminOrderDetailPage: React.FC = () => {
     setStatusNote('');
     setFeedback(t('admin.orderDetail.success'));
     setTimeout(() => setFeedback(null), 3000);
+  };
+
+  const handleCreateZimouPackage = async () => {
+    if (!order) return;
+    setIsCreatingZimou(true);
+    setZimouFeedback(null);
+    try {
+      const res = await ZimouService.createPackage(order);
+      if (res.success) {
+        setZimouFeedback({
+          success: true,
+          msg: language === 'ar'
+            ? `تم إنشاء الطرد بنجاح على زيمو إكسبريس ! رقم التتبع : ${res.trackingCode}`
+            : `Colis Zimou Express créé avec succès ! N° de suivi : ${res.trackingCode}`,
+        });
+        const reloaded = StorageService.getOrderById(order.id);
+        if (reloaded) {
+          setOrder(reloaded);
+          setTrackingNumber(reloaded.trackingNumber || '');
+          setTrackingCarrier('Zimou Express');
+          setNewStatus(reloaded.status);
+        }
+      } else {
+        setZimouFeedback({
+          success: false,
+          msg: res.message || (language === 'ar' ? 'فشل إنشاء الطرد في زيمو.' : 'Erreur lors de la création du colis Zimou.'),
+        });
+      }
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Erreur';
+      setZimouFeedback({ success: false, msg });
+    } finally {
+      setIsCreatingZimou(false);
+    }
   };
 
   const wilayaObj = ALGERIA_WILAYAS.find(w => w.code === order.shippingAddress.wilayaCode);
@@ -151,6 +190,99 @@ export const AdminOrderDetailPage: React.FC = () => {
         </div>
       )}
 
+      {/* Zimou Express Action & Status Banner */}
+      <div className="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-rose-900 text-ivory flex items-center justify-center font-bold">
+              <Truck className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-serif text-base font-bold text-deep">
+                  {language === 'ar' ? 'توصيل زيمو إكسبريس (Zimou Express)' : 'Expédition Zimou Express'}
+                </h3>
+                {order.zimouTrackingCode ? (
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold border border-emerald-200 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    <span>{language === 'ar' ? 'تم تسجيل الطرد' : 'Colis Enregistré'}</span>
+                  </span>
+                ) : (
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 font-bold border border-amber-200">
+                    {language === 'ar' ? 'جاهز للإرسال' : 'Prêt à être envoyé'}
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-mutedText">
+                {language === 'ar'
+                  ? 'مزامنة مباشرة مع حسابكم Zimou لإنشاء بوليصة الشحن وتتبع الطرد.'
+                  : 'Liaison directe avec votre compte Zimou pour créer le colis et obtenir le bordereau.'}
+              </p>
+            </div>
+          </div>
+
+          {order.zimouTrackingCode ? (
+            <div className="flex items-center gap-2">
+              {order.zimouBordereauUrl && (
+                <a
+                  href={order.zimouBordereauUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-deep hover:bg-rose-950 text-ivory text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>{language === 'ar' ? 'طباعة بوليصة الشحن (Bordereau)' : 'Imprimer Bordereau Zimou'}</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+            </div>
+          ) : (
+            <button
+              type="button"
+              disabled={isCreatingZimou}
+              onClick={handleCreateZimouPackage}
+              className="bg-rose-900 hover:bg-rose-950 text-ivory text-xs font-semibold px-5 py-2.5 rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer disabled:opacity-50 shrink-0"
+            >
+              {isCreatingZimou ? (
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Send className="w-3.5 h-3.5" />
+              )}
+              <span>{language === 'ar' ? 'إرسال الطلبية إلى Zimou Express' : 'Créer le colis sur Zimou Express'}</span>
+            </button>
+          )}
+        </div>
+
+        {order.zimouTrackingCode && (
+          <div className="p-3 bg-stone-50 rounded-2xl border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div>
+              <span className="text-mutedText text-[11px] block">{language === 'ar' ? 'رقم التتبع الرسمي :' : 'Numéro de suivi officiel :'}</span>
+              <span className="font-mono font-bold text-sm text-emerald-800">{order.zimouTrackingCode}</span>
+            </div>
+            <p className="text-[11px] text-mutedText">
+              {language === 'ar'
+                ? 'يظهر هذا الرقم للزبونة لتتبع طلبها في متجركم وفي منصة زيمو.'
+                : 'Visible par la cliente dans son suivi de commande en ligne.'}
+            </p>
+          </div>
+        )}
+
+        {zimouFeedback && (
+          <div className={`p-3 rounded-2xl text-xs flex items-center gap-2 animate-fadeIn ${
+            zimouFeedback.success 
+              ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' 
+              : 'bg-red-50 border border-red-200 text-red-800'
+          }`}>
+            {zimouFeedback.success ? (
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+            ) : (
+              <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+            )}
+            <span className="font-semibold">{zimouFeedback.msg}</span>
+          </div>
+        )}
+      </div>
+
       {/* Status & Fulfillment Controller Form */}
       <form onSubmit={handleUpdateStatus} className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200/80 shadow-xs space-y-6">
         <h2 className="font-serif text-base font-bold text-deep pb-3 border-b border-stone-100">
@@ -204,8 +336,9 @@ export const AdminOrderDetailPage: React.FC = () => {
             <select
               value={trackingCarrier}
               onChange={(e) => setTrackingCarrier(e.target.value)}
-              className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50"
+              className="w-full text-xs p-3 rounded-xl border border-stone-200 bg-stone-50 font-semibold text-deep"
             >
+              <option value="Zimou Express">Zimou Express (Recommandé)</option>
               <option value="Yalidine Express">Yalidine Express</option>
               <option value="ZR Express">ZR Express</option>
               <option value="Kazitour Express">Kazitour Express</option>

@@ -260,10 +260,23 @@ export const AdminOrdersPage: React.FC = () => {
                       </td>
 
                       <td className="py-3.5 px-4 text-start">
-                        {order.trackingNumber ? (
-                          <span className="font-mono text-[11px] text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
-                            {order.trackingNumber}
-                          </span>
+                        {order.zimouTrackingCode || order.trackingNumber ? (
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-mono text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold">
+                              🚚 {order.zimouTrackingCode || order.trackingNumber}
+                            </span>
+                            {order.zimouBordereauUrl && (
+                              <a
+                                href={order.zimouBordereauUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Imprimer le bordereau officiel Zimou"
+                                className="text-xs hover:scale-110 transition"
+                              >
+                                🖨️
+                              </a>
+                            )}
+                          </div>
                         ) : (
                           <span className="text-[10px] text-stone-400">—</span>
                         )}

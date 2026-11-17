@@ -191,6 +191,10 @@ export interface Order {
   paymentStatus: PaymentStatus;
   trackingNumber?: string;
   trackingCarrier?: string; // Yalidine, ZR Express, Kazitour, etc.
+  zimouTrackingCode?: string;
+  zimouBordereauUrl?: string;
+  zimouPackageUuid?: string;
+  zimouSyncedAt?: string;
   notes?: string;
   history: OrderStatusHistory[];
   createdAt: string;
@@ -231,6 +235,10 @@ export interface StoreSettings {
   telegramBotToken?: string;
   telegramChatId?: string;
   googleSheetWebhook?: string;
+  // Zimou Express Delivery Integration
+  zimouEnabled?: boolean;
+  zimouApiToken?: string;
+  zimouAutoCreatePackage?: boolean;
 }
 
 export interface HomepageBanner {

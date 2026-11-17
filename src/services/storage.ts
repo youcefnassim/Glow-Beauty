@@ -269,6 +269,37 @@ export const StorageService = {
     return order;
   },
 
+  updateOrderWithZimou(
+    orderId: string, 
+    data: { trackingCode: string; bordereauUrl?: string; uuid?: string; packageId?: number }
+  ): Order | null {
+    const orders = this.getOrders();
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return null;
+
+    order.trackingNumber = data.trackingCode;
+    order.trackingCarrier = 'Zimou Express';
+    order.zimouTrackingCode = data.trackingCode;
+    order.zimouBordereauUrl = data.bordereauUrl;
+    order.zimouPackageUuid = data.uuid;
+    order.zimouSyncedAt = new Date().toISOString();
+    order.updatedAt = new Date().toISOString();
+
+    if (order.status === 'pending') {
+      order.status = 'confirmed';
+    }
+
+    order.history.unshift({
+      status: order.status,
+      note: `Colis expédié avec Zimou Express (N° de suivi : ${data.trackingCode})`,
+      timestamp: new Date().toISOString(),
+      updatedBy: 'Zimou Express API',
+    });
+
+    saveToStorage(KEYS.ORDERS, orders);
+    return order;
+  },
+
   // Store Settings
   getSettings(): StoreSettings {
     return getFromStorage<StoreSettings>(KEYS.SETTINGS, INITIAL_SETTINGS);
