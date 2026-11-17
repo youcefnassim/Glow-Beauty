@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StorageService } from '@/services/storage';
-import { CATEGORIES } from '@/data/categories';
 import { ProductCard } from '@/components/product/ProductCard';
 import { HeroBannerSlider } from '@/components/home/HeroBannerSlider';
 import { useLanguage } from '@/context/LanguageContext';
@@ -13,6 +12,7 @@ import {
 export const HomePage: React.FC = () => {
   const { language, t, getCategoryName } = useLanguage();
   const products = StorageService.getProducts();
+  const categories = StorageService.getCategories();
   const reviews = StorageService.getReviews();
   const settings = StorageService.getSettings();
 
@@ -143,27 +143,34 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-          {CATEGORIES.slice(0, 5).map((category) => (
-            <Link
-              key={category.id}
-              to={`/categories/${category.slug}`}
-              className="group relative rounded-2xl overflow-hidden aspect-[3/4] bg-stone-100 shadow-card hover:shadow-luxury transition-all duration-300"
-            >
-              <img
-                src={category.imageUrl}
-                alt={getCategoryName(category)}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-deep/80 via-deep/20 to-transparent flex flex-col justify-end p-4 text-white">
-                <span className="text-[10px] text-rose-300 font-semibold uppercase tracking-wider">
-                  {category.productCount} {language === 'ar' ? 'منتج' : 'produits'}
-                </span>
-                <h3 className="font-serif text-base sm:text-lg font-bold leading-tight group-hover:text-rose-200 transition">
-                  {getCategoryName(category)}
-                </h3>
-              </div>
-            </Link>
-          ))}
+          {categories.slice(0, 5).map((category) => {
+            const count = products.filter(p => p.categorySlug === category.slug).length;
+            return (
+              <Link
+                key={category.id}
+                to={`/categories/${category.slug}`}
+                className="group relative rounded-2xl overflow-hidden aspect-[3/4] bg-stone-100 shadow-card hover:shadow-luxury transition-all duration-300"
+              >
+                <img
+                  src={category.imageUrl}
+                  alt={getCategoryName(category)}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-deep/80 via-deep/20 to-transparent flex flex-col justify-end p-4 text-white">
+                  <span className="text-[10px] text-rose-300 font-semibold uppercase tracking-wider">
+                    {count === 0 
+                      ? (language === 'ar' ? '0 منتج' : '0 produit')
+                      : count === 1 
+                        ? (language === 'ar' ? 'منتج واحد' : '1 produit')
+                        : `${count} ${language === 'ar' ? 'منتجات' : 'produits'}`}
+                  </span>
+                  <h3 className="font-serif text-base sm:text-lg font-bold leading-tight group-hover:text-rose-200 transition">
+                    {getCategoryName(category)}
+                  </h3>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 

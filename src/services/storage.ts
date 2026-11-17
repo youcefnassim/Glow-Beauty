@@ -151,7 +151,13 @@ export const StorageService = {
 
   // Categories
   getCategories(): Category[] {
-    return getFromStorage<Category[]>(KEYS.CATEGORIES, CATEGORIES);
+    const list = getFromStorage<Category[]>(KEYS.CATEGORIES, CATEGORIES);
+    const products = this.getProducts();
+    // Always compute live, accurate productCount based on real products
+    list.forEach(c => {
+      c.productCount = products.filter(p => p.categorySlug === c.slug).length;
+    });
+    return list;
   },
 
   saveCategory(category: Category): Category {

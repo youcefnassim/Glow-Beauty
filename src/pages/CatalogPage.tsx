@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useParams, Link } from 'react-router-dom';
 import { StorageService } from '@/services/storage';
-import { CATEGORIES, BRANDS } from '@/data/categories';
+import { BRANDS } from '@/data/categories';
 import { ProductCard } from '@/components/product/ProductCard';
 import { useLanguage } from '@/context/LanguageContext';
 import { 
@@ -43,12 +43,13 @@ export const CatalogPage: React.FC = () => {
   }, [slug, searchParams]);
 
   const allProducts = StorageService.getProducts();
+  const allCategories = useMemo(() => StorageService.getCategories(), []);
 
   // Active category info if on category page
   const activeCategoryInfo = useMemo(() => {
     if (selectedCategory === 'all') return null;
-    return CATEGORIES.find(c => c.slug === selectedCategory);
-  }, [selectedCategory]);
+    return allCategories.find(c => c.slug === selectedCategory);
+  }, [selectedCategory, allCategories]);
 
   // Filtering & Sorting
   const filteredProducts = useMemo(() => {
@@ -190,7 +191,7 @@ export const CatalogPage: React.FC = () => {
             <span className="text-xs text-mutedText">Filtres actifs :</span>
             {selectedCategory !== 'all' && (
               <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-900 text-xs px-2.5 py-1 rounded-full">
-                Catégorie: {CATEGORIES.find(c => c.slug === selectedCategory)?.nameFr || selectedCategory}
+                Catégorie: {allCategories.find(c => c.slug === selectedCategory)?.nameFr || selectedCategory}
                 <button onClick={() => setSelectedCategory('all')} className="hover:text-deep"><X className="w-3 h-3" /></button>
               </span>
             )}
@@ -284,7 +285,7 @@ export const CatalogPage: React.FC = () => {
                 <span>{language === 'ar' ? 'جميع الفئات' : 'Toutes les catégories'}</span>
                 <span className="text-[11px] text-mutedText">({allProducts.length})</span>
               </button>
-              {CATEGORIES.map(cat => {
+              {allCategories.map(cat => {
                 const count = allProducts.filter(p => p.categorySlug === cat.slug).length;
                 return (
                   <button
@@ -464,7 +465,7 @@ export const CatalogPage: React.FC = () => {
                     className="w-full text-xs p-2.5 rounded-xl border border-rose-200 bg-ivory text-deep"
                   >
                     <option value="all">{language === 'ar' ? 'جميع الفئات' : 'Toutes les catégories'}</option>
-                    {CATEGORIES.map(c => (
+                    {allCategories.map(c => (
                       <option key={c.id} value={c.slug}>{getCategoryName(c)}</option>
                     ))}
                   </select>
